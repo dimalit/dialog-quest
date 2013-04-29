@@ -1,0 +1,31 @@
+Animation flask.break
+{
+ texture="flask/normal2checked.png"
+ rect=0,0,32,32
+ frames=4
+ fps=16
+}
+
+Animation explosion
+{
+ texture="explosion.png"
+ rect=0,0,32,32
+ frames=7
+ fps=16
+}
+
+Animation DropArea
+{
+ texture="place/ani.png"
+ rect=0,0,85,28
+ frames=2
+ fps=1
+}
+
+Animation Start
+{
+ texture="start2.png"
+ rect=0,0,54,24
+ frames=2
+ fps=1
+}
