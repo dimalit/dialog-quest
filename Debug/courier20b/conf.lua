@@ -1,0 +1,5 @@
+normal = "normal.fnt"
+over="over.fnt"
+checked="checked.fnt"
+checked_over="checked_over.fnt"
+disabled="disabled.fnt"
