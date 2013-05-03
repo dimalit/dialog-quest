@@ -43,6 +43,9 @@
 #include "lua_layers.h"
 #include "lua_lib.h"
 
+//#define SKELETON
+
+#ifndef SKELETON
 int lua_error_handler(lua_State* L){
 	std::cerr << lua_tostring(L, -1) << std::endl;
 	lua_pop(L, 1);
@@ -62,10 +65,12 @@ int lua_error_handler(lua_State* L){
 	//}
 	return -1;
 }
+#endif
 
 FrameTimer* frame_timer = FrameTimer::getInstance();
 bool need_exit = false;
 
+#ifndef SKELETON
 class MainMenu: public Visual, private SingleSelectionMenu{
 public:
 	class Listener{
@@ -93,7 +98,7 @@ public:
 		hgeRect r = widget->getRect();
 		float w = r.x2 - r.x1;
 		float h = r.y2 - r.y1;
-		widget->move(50, 500);
+		widget->move(50, hge->GetScreenHeight() / 2);
 
 		this->setWidget(widget);
 
@@ -126,6 +131,7 @@ private:
 	Listener* listener;
 	std::vector<std::string> scripts;
 };
+#endif
 
 lua_State* L;
 int screen_width;
@@ -133,6 +139,7 @@ int screen_height;
 
 Tcl::interpreter interp;
 
+#ifndef SKELETON
 class MenuListener: public MainMenu::Listener{
 	virtual void onSelect(std::string script){
 		if(luaL_dofile(L, script.c_str()) != 0)
@@ -143,6 +150,7 @@ class MenuListener: public MainMenu::Listener{
 		need_exit = true;
 	}
 };
+#endif
 
 // Pointer to the HGE interface.
 // Helper classes require this to work.
@@ -158,7 +166,7 @@ MovableItem  *mover;
 void* video; DWORD video_size;
 
 // Some resource handles
-HEFFECT				snd;
+//HEFFECT				snd;
 HTEXTURE			tex;
 hgeQuad				quad;
 
@@ -223,10 +231,13 @@ bool RenderFunc()
 	return false;
 }
 
-#ifndef _DEBUG
+// #undef main
+// TODO: undef for a while...
+
+#ifdef WIN32
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 #else
-int main()
+int main(int argc, char *argv[])
 #endif
 {
 
@@ -245,8 +256,8 @@ int main()
 //	hge->System_SetState(HGE_FPS, HGEFPS_VSYNC);
 	hge->System_SetState(HGE_FPS, 60);
 
-	screen_width = hge->Ini_GetInt("system", "SCREEN_WIDTH", 1680);
-	screen_height = hge->Ini_GetInt("system", "SCREEN_HEIGHT", 1050);
+	screen_width = hge->Ini_GetInt("system", "SCREEN_WIDTH", 800);
+	screen_height = hge->Ini_GetInt("system", "SCREEN_HEIGHT", 480);
 	const int WINDOWED = hge->Ini_GetInt("system", "WINDOWED", 1);
 
 	hge->System_SetState(HGE_WINDOWED, WINDOWED);
@@ -279,7 +290,7 @@ int main()
 		// Load sound and textures
 		quad.tex=hge->Texture_Load(hge->Ini_GetString("system", "BACKGROUND", "bg_new.png"));
 		tex=hge->Texture_Load("cursor.png");
-		snd=hge->Effect_Load("menu.wav");
+//		snd=hge->Effect_Load("menu.wav");
 //		video=hge->Resource_Load((get_localdata_folder() + "\\I-15bis.ogg").c_str(), &video_size);
 		
 //		HTEXTURE circle;
@@ -313,7 +324,8 @@ int main()
 		Layers::luabind(L);
 
 		// Tcl
-		interp.eval("for {set i 0} {$i != 1} {incr i} { puts [pwd] }");
+		// no console - no puts :(
+		//interp.eval("for {set i 0} {$i != 1} {incr i} { puts [pwd] }");
 
 //		TextWidget::setParentVisual(&scene);
 //		TextWidget* t = new TextWidget("Hello\nthere", 360+100, 280, "courier20b");
@@ -353,7 +365,7 @@ int main()
 */
 		//////////////////////////////
 
-		if(!quad.tex || !tex || !snd)
+		if(!quad.tex || !tex)// || !snd)
 		{
 			// If one of the data files is not found, display
 			// an error message and shutdown.
@@ -416,7 +428,7 @@ int main()
 		delete spr;
 		hge->Resource_Free(video);
 //		hge->Texture_Free(circle);
-		hge->Effect_Free(snd);
+//		hge->Effect_Free(snd);
 		hge->Texture_Free(tex);
 		hge->Texture_Free(quad.tex);
 		hge->Resource_RemoveAllPacks();

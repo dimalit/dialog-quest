@@ -2,7 +2,7 @@
 
 SoundEffect::SoundEffect(std::string path)
 {
-	hef = hge->Effect_Load(path.c_str());
+	hef = 0;//!!!hge->Effect_Load(path.c_str());
 	channel = 0;
 }
 
@@ -18,6 +18,8 @@ void SoundEffect::play(int volume, int pan, float pitch, bool loop){
 }
 
 float SoundEffect::getLength(){
+	// !!!
+	return 1;
 	assert(channel);
 	return hge->Channel_GetLength(channel);
 }
