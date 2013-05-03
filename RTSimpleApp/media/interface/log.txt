@@ -1,0 +1,19 @@
+3/5 at 14:48:16: 
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+3/5 at 14:48:16: Saved out ./checkbox.rttex (64 X 32) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
+3/5 at 14:48:16: 
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+3/5 at 14:48:16: Compressing ./checkbox.rttex..
+3/5 at 14:48:16: Compressed to ./checkbox.rttex.  (0 kb, 8%%)
+3/5 at 14:48:16: 
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+3/5 at 14:48:16: Padding ./cosmo.jpg from 240X320 to be 256X512
+3/5 at 14:48:16: Saved out ./cosmo.rttex (240 X 320) with 1 mipmaps.  (Ultra compress RGB bit format)
+3/5 at 14:48:16: 
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+3/5 at 14:48:16: Compressing ./cosmo.rttex..
+3/5 at 14:48:16: Compressed to ./cosmo.rttex.  (15 kb, 94%%)
