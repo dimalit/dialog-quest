@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual C++ Express 2008
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "demo", "dq_project\dq_project.vcproj", "{2B5E5D03-4BA3-4014-94E4-4A20D4C7E234}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "hge_tut01", "dq_project\hge_tut01.vcproj", "{42A1EA3A-8D1D-4DA5-AAE8-6F5188F93617}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -15,10 +13,6 @@ Global
 		{2B5E5D03-4BA3-4014-94E4-4A20D4C7E234}.Debug|Win32.Build.0 = Debug|Win32
 		{2B5E5D03-4BA3-4014-94E4-4A20D4C7E234}.Release|Win32.ActiveCfg = Release|Win32
 		{2B5E5D03-4BA3-4014-94E4-4A20D4C7E234}.Release|Win32.Build.0 = Release|Win32
-		{42A1EA3A-8D1D-4DA5-AAE8-6F5188F93617}.Debug|Win32.ActiveCfg = Debug|Win32
-		{42A1EA3A-8D1D-4DA5-AAE8-6F5188F93617}.Debug|Win32.Build.0 = Debug|Win32
-		{42A1EA3A-8D1D-4DA5-AAE8-6F5188F93617}.Release|Win32.ActiveCfg = Release|Win32
-		{42A1EA3A-8D1D-4DA5-AAE8-6F5188F93617}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
