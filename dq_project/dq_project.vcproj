@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
+	Version="9.00"
 	Name="demo"
 	ProjectGUID="{2B5E5D03-4BA3-4014-94E4-4A20D4C7E234}"
 	RootNamespace="dq_project"
@@ -41,14 +41,16 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\tcl8.5.11\generic;&quot;C:\Program Files\boost&quot;;..\..\video\include;..\..\hge181\include;&quot;..\..\cpptcl-1.1.3&quot;"
+				AdditionalIncludeDirectories="..\..\tcl8.5.11\generic;&quot;C:\Program Files\boost&quot;;..\..\video\include;..\..\hge4android\include;&quot;..\..\cpptcl-1.1.3&quot;;..\..\hge4android/lib/SDL/include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;STATIC_BUILD"
 				MinimalRebuild="false"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
+				ProgramDataBaseFileName="$(TargetDir)$(TargetName).pdb"
+				BrowseInformation="1"
 				WarningLevel="3"
-				DebugInformationFormat="1"
+				DebugInformationFormat="4"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -61,14 +63,15 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="hge.lib hgehelp.lib lua51_static_d.lib luabind_static_d.lib tcl85sg.lib"
-				ShowProgress="0"
+				AdditionalDependencies="lua51_static_d.lib luabind_static_d.lib tcl85sg.lib opengl32.lib SDL.lib"
+				ShowProgress="2"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;C:\Program Files\boost\lib&quot;;..\..\video\lib;..\..\hge181\lib\vc;..\..\tcl8.5.11\win\Debug_VC9"
-				IgnoreDefaultLibraryNames="libc.lib"
+				AdditionalLibraryDirectories="&quot;C:\Program Files\boost\lib&quot;;..\..\video\lib;..\..\tcl8.5.11\win\Debug_VC9;..\..\hge4android\lib"
+				IgnoreAllDefaultLibraries="false"
+				IgnoreDefaultLibraryNames=""
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=""
-				SubSystem="1"
+				ProgramDatabaseFile="$(TargetDir)$(TargetName).pdb"
+				SubSystem="2"
 				SupportUnloadOfDelayLoadedDLL="false"
 				TargetMachine="1"
 			/>
@@ -521,6 +524,354 @@
 				RelativePath="..\Debug\scripts\shooter.lua"
 				>
 			</File>
+		</Filter>
+		<Filter
+			Name="HGE"
+			>
+			<Filter
+				Name="include"
+				>
+				<File
+					RelativePath="..\..\hge4android\include\hge.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\hge4android\include\hgeanim.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\hge4android\include\hgecolor.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\hge4android\include\hgedistort.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\hge4android\include\hgefont.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\hge4android\include\hgegui.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\hge4android\include\hgeguictrls.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\hge4android\include\hgeparticle.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\hge4android\include\hgerect.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\hge4android\include\hgeresource.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\hge4android\include\hgesprite.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\hge4android\include\hgestrings.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\hge4android\include\hgevector.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="src"
+				>
+				<Filter
+					Name="core"
+					>
+					<File
+						RelativePath="..\..\hge4android\src\core\demo.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\hge4android\src\core\dx2ogl.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\hge4android\src\core\graphics.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\hge4android\src\core\hge_impl.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\hge4android\src\core\ini.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\hge4android\src\core\input.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\hge4android\src\core\power.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\hge4android\src\core\random.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\hge4android\src\core\resource.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\hge4android\src\core\sound.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\hge4android\src\core\system.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\hge4android\src\core\target.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\hge4android\src\core\timer.cpp"
+						>
+					</File>
+					<Filter
+						Name="BASS"
+						>
+						<File
+							RelativePath="..\..\hge4android\src\core\BASS\bass.h"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="ZLIB"
+						>
+						<File
+							RelativePath="..\..\hge4android\src\core\ZLIB\adler32.c"
+							>
+						</File>
+						<File
+							RelativePath="..\..\hge4android\src\core\ZLIB\crc32.c"
+							>
+						</File>
+						<File
+							RelativePath="..\..\hge4android\src\core\ZLIB\crc32.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\hge4android\src\core\ZLIB\crypt.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\hge4android\src\core\ZLIB\deflate.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\hge4android\src\core\ZLIB\inffast.c"
+							>
+						</File>
+						<File
+							RelativePath="..\..\hge4android\src\core\ZLIB\inffast.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\hge4android\src\core\ZLIB\inffixed.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\hge4android\src\core\ZLIB\inflate.c"
+							>
+						</File>
+						<File
+							RelativePath="..\..\hge4android\src\core\ZLIB\inflate.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\hge4android\src\core\ZLIB\inftrees.c"
+							>
+						</File>
+						<File
+							RelativePath="..\..\hge4android\src\core\ZLIB\inftrees.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\hge4android\src\core\ZLIB\ioapi.c"
+							>
+						</File>
+						<File
+							RelativePath="..\..\hge4android\src\core\ZLIB\ioapi.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\hge4android\src\core\ZLIB\trees.c"
+							>
+						</File>
+						<File
+							RelativePath="..\..\hge4android\src\core\ZLIB\trees.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\hge4android\src\core\ZLIB\uncompr.c"
+							>
+						</File>
+						<File
+							RelativePath="..\..\hge4android\src\core\ZLIB\unzip.c"
+							>
+						</File>
+						<File
+							RelativePath="..\..\hge4android\src\core\ZLIB\unzip.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\hge4android\src\core\ZLIB\zconf.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\hge4android\src\core\ZLIB\zconf.in.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\hge4android\src\core\ZLIB\zip.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\hge4android\src\core\ZLIB\zlib.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\hge4android\src\core\ZLIB\zutil.c"
+							>
+						</File>
+						<File
+							RelativePath="..\..\hge4android\src\core\ZLIB\zutil.h"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="soil"
+						>
+						<File
+							RelativePath="..\..\hge4android\src\core\soil\image_DXT.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\hge4android\src\core\soil\image_DXT.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\hge4android\src\core\soil\image_helper.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\hge4android\src\core\soil\image_helper.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\hge4android\src\core\soil\SOIL.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\hge4android\src\core\soil\SOIL.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\hge4android\src\core\soil\stb_image_aug.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\hge4android\src\core\soil\stb_image_aug.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\hge4android\src\core\soil\stbi_DDS_aug.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\hge4android\src\core\soil\stbi_DDS_aug_c.h"
+							>
+						</File>
+					</Filter>
+				</Filter>
+				<Filter
+					Name="helpers"
+					>
+					<File
+						RelativePath="..\..\hge4android\src\helpers\hgeanim.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\hge4android\src\helpers\hgecolor.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\hge4android\src\helpers\hgedistort.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\hge4android\src\helpers\hgefont.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\hge4android\src\helpers\hgegui.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\hge4android\src\helpers\hgeguictrls.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\hge4android\src\helpers\hgeparticle.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\hge4android\src\helpers\hgepmanager.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\hge4android\src\helpers\hgerect.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\hge4android\src\helpers\hgeresource.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\hge4android\src\helpers\hgesprite.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\hge4android\src\helpers\hgestrings.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\hge4android\src\helpers\hgevector.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\hge4android\src\helpers\parser.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\hge4android\src\helpers\parser.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\hge4android\src\helpers\resources.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\hge4android\src\helpers\resources.h"
+						>
+					</File>
+				</Filter>
+			</Filter>
 		</Filter>
 	</Files>
 	<Globals>
