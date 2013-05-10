@@ -1,0 +1,56 @@
+3/5 at 13:37:57: 
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+3/5 at 13:37:57: Saved out ./interface/font_trajan_big_00.rttex (512 X 512) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
+3/5 at 13:37:58: Compressing ./interface/font_trajan_big.rtfont..
+3/5 at 13:37:58: Compressed to ./interface/font_trajan_big.rtfont.  (64 kb, 6%%)
+3/5 at 13:37:58: Finished creating ./interface/font_trajan_big.rtfont.  223 chars, 20 font state definitions.
+3/5 at 13:37:58: 
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+3/5 at 13:37:58: Saved out ./interface/font_trajan_00.rttex (512 X 256) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
+3/5 at 13:37:58: Compressing ./interface/font_trajan.rtfont..
+3/5 at 13:37:58: Compressed to ./interface/font_trajan.rtfont.  (30 kb, 6%%)
+3/5 at 13:37:58: Finished creating ./interface/font_trajan.rtfont.  223 chars, 20 font state definitions.
+3/5 at 14:3:31: 
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+3/5 at 14:3:31: Saved out ./interface/font_trajan_big_00.rttex (512 X 512) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
+3/5 at 14:3:32: Compressing ./interface/font_trajan_big.rtfont..
+3/5 at 14:3:32: Compressed to ./interface/font_trajan_big.rtfont.  (64 kb, 6%%)
+3/5 at 14:3:32: Finished creating ./interface/font_trajan_big.rtfont.  223 chars, 20 font state definitions.
+3/5 at 14:3:32: 
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+3/5 at 14:3:32: Saved out ./interface/font_trajan_00.rttex (512 X 256) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
+3/5 at 14:3:32: Compressing ./interface/font_trajan.rtfont..
+3/5 at 14:3:32: Compressed to ./interface/font_trajan.rtfont.  (30 kb, 6%%)
+3/5 at 14:3:32: Finished creating ./interface/font_trajan.rtfont.  223 chars, 20 font state definitions.
+3/5 at 14:43:57: 
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+3/5 at 14:43:57: Saved out ./interface/font_trajan_big_00.rttex (512 X 512) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
+3/5 at 14:43:57: Compressing ./interface/font_trajan_big.rtfont..
+3/5 at 14:43:58: Compressed to ./interface/font_trajan_big.rtfont.  (64 kb, 6%%)
+3/5 at 14:43:58: Finished creating ./interface/font_trajan_big.rtfont.  223 chars, 20 font state definitions.
+3/5 at 14:43:58: 
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+3/5 at 14:43:58: Saved out ./interface/font_trajan_00.rttex (512 X 256) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
+3/5 at 14:43:58: Compressing ./interface/font_trajan.rtfont..
+3/5 at 14:43:58: Compressed to ./interface/font_trajan.rtfont.  (30 kb, 6%%)
+3/5 at 14:43:58: Finished creating ./interface/font_trajan.rtfont.  223 chars, 20 font state definitions.
+3/5 at 14:48:14: 
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+3/5 at 14:48:15: Saved out ./interface/font_trajan_big_00.rttex (512 X 512) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
+3/5 at 14:48:15: Compressing ./interface/font_trajan_big.rtfont..
+3/5 at 14:48:15: Compressed to ./interface/font_trajan_big.rtfont.  (64 kb, 6%%)
+3/5 at 14:48:15: Finished creating ./interface/font_trajan_big.rtfont.  223 chars, 20 font state definitions.
+3/5 at 14:48:15: 
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+3/5 at 14:48:15: Saved out ./interface/font_trajan_00.rttex (512 X 256) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
+3/5 at 14:48:15: Compressing ./interface/font_trajan.rtfont..
+3/5 at 14:48:15: Compressed to ./interface/font_trajan.rtfont.  (30 kb, 6%%)
+3/5 at 14:48:15: Finished creating ./interface/font_trajan.rtfont.  223 chars, 20 font state definitions.
