@@ -1,6 +1,7 @@
 #pragma once
-#include <luabind/luabind.hpp>
 #include "screenitem.h"
+#include <luabind/luabind.hpp>
+extern lua_State* L;
 
 // needs to be public!
 // error C2243: 'type cast' : conversion from 'LuaScreenItem *' to 'ScreenItem *' exists, but is inaccessible

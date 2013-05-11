@@ -4,19 +4,22 @@
 #include <time.h>
 #include <stdio.h>
 
-#include <boost/asio.hpp>
+#ifdef WIN32
 #include <boost/filesystem.hpp>
-
+#include <boost/asio.hpp>
 #include <shlobj.h>
 
 using boost::asio::ip::tcp;
 using namespace boost::filesystem;
+
+#endif
 
 #include "main.h"
 
 std::string get_localdata_folder();
 
 void switch_to_english(){
+#ifdef WIN32
 	HKL buf[20];
 	// get list
 	unsigned n = GetKeyboardLayoutList(20, buf);
@@ -31,11 +34,13 @@ void switch_to_english(){
 			break;
 		}
 	}// for
+#endif
 }
 
 
 // returns true if need restart
 bool goto_localdata_folder(){
+#ifdef WIN32
 	path dst_path(get_localdata_folder());
 	path src_path(hge->Resource_MakePath());
 	if(equivalent(dst_path, src_path))return false;// it's OK
@@ -64,8 +69,10 @@ bool goto_localdata_folder(){
 	path dst_exe(dst_path); dst_exe /= path(str_module).filename();
     bool result = ::CreateProcess(dst_exe.string().c_str(), NULL, NULL, NULL, FALSE, NORMAL_PRIORITY_CLASS, NULL, dst_path.string().c_str() , &startupInfo, &processInformation);
 	return result;
+#endif
 }
 
+#ifdef WIN32
 bool file_present(const char* file_path){
 	path p(file_path);
 	try{
@@ -221,3 +228,4 @@ bool http2file(std::string from_path, std::string to_path){
   }
   return 1;
 }
+#endif

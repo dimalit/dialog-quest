@@ -1,3 +1,4 @@
+#include "PlatformPrecomp.h"
 #include "LuaScreenItem.h"
 #include <luabind/operator.hpp>
 #include <luabind/object.hpp>

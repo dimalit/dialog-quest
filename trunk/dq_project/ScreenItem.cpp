@@ -1,3 +1,4 @@
+#include "PlatformPrecomp.h"
 #include "ScreenItem.h"
 
 CompositeVisual* ScreenItem::parent_visual = 0;
@@ -7,6 +8,10 @@ ScreenItem::ScreenItem(float x, float y)
 	this->x = x; this->y = y;
 	this->rot = 0.0f;
 	hpx = 0.0f;	hpy = 0.0f;
+
+	entity = new Entity();
+	entity->GetVar("pos2d")->Set(x,y);
+
 	view = 0;
 	this->visible = true;
 	this->setParent(parent_visual);
@@ -14,15 +19,22 @@ ScreenItem::ScreenItem(float x, float y)
 
 ScreenItem::~ScreenItem(void)
 {
+	delete entity;
 }
 
 void ScreenItem::Render(){
 	if(visible && view){
 
+
+		// do it Proton way:
+		VariantList vl(Variant(0,0));
+		entity->GetFunction("OnRender")->sig_function(&vl);;
+		return;
+
 		// compute corner
 		float x1, y1;
 		compute_corner(1, x1, y1);
-		view->Render(x1, y1, rot);
+//!!!		view->Render(x1, y1, rot);
 
 		return;
 
@@ -36,11 +48,12 @@ void ScreenItem::Render(){
 		float x4, y4;
 		compute_corner(4, x4, y4);
 
-		unsigned long c = 0xFFFF0000;
-		hge->Gfx_RenderLine(x1, y1, x2, y2, c);
-		hge->Gfx_RenderLine(x2, y2, x3, y3, c);
-		hge->Gfx_RenderLine(x3, y3, x4, y4, c);
-		hge->Gfx_RenderLine(x4, y4, x1, y1, c);
+// debug box
+//		unsigned long c = 0xFFFF0000;
+//		hge->Gfx_RenderLine(x1, y1, x2, y2, c);
+//		hge->Gfx_RenderLine(x2, y2, x3, y3, c);
+//		hge->Gfx_RenderLine(x3, y3, x4, y4, c);
+//		hge->Gfx_RenderLine(x4, y4, x1, y1, c);
 
 	}
 }
@@ -56,8 +69,8 @@ bool ScreenItem::isPointIn(float mx, float my){
 
 // for internal use only
 void ScreenItem::takeCharFocus(){
-	UserInputDispatcher::getInstance()->setCharFocus(this);
+//!!!	UserInputDispatcher::getInstance()->setCharFocus(this);
 }
 void ScreenItem::giveCharFocus(){
-	UserInputDispatcher::getInstance()->setCharFocus(0);
+//!!!	UserInputDispatcher::getInstance()->setCharFocus(0);
 }

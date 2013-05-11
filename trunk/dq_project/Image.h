@@ -1,34 +1,40 @@
 #pragma once
-#include <hgeSprite.h>
-#include "main.h"
+
 #include "ScreenResource.h"
+#include "Entity/OverlayRenderComponent.h"
+#include <luabind/luabind.hpp>
 
 class Image: public ScreenResource
 {
+private:
+	void assignEntity(Entity* e){
+		e->AddComponent(comp);
+		// HACK: need to re-setup file name so component can catch it...
+		comp->GetVar("fileName")->Set(tex_file);
+	}
 public:
 	Image();
 	Image(std::string path);
 	~Image(){free_all();}
-	void Render(float x, float y, float rot);
+//	void Render(float x, float y, float rot);
 	float getWidth(){
-		float r = spr ? spr->GetWidth() : 0;
-		return r;
+		return comp->GetVar("frameSize2d")->GetVector2().x;
 	}
 	float getHeight(){
-		float r = spr ? spr->GetHeight() : 0;
-		return r;
+		return comp->GetVar("frameSize2d")->GetVector2().y;
 	}
 	void setFile(std::string);
 
 private:
-	HTEXTURE tex;
-	hgeSprite* spr;
+	std::string tex_file;
+	OverlayRenderComponent* comp;
 
+	// TODO Guess this will be deleted by Entity...
 	// utilitary
 	void free_all()
 	{
-		if(spr)delete spr;
-		if(tex)hge->Texture_Free(tex);
+		if(comp && comp->GetParent()==0)
+			delete comp;
 	}
 };
 
