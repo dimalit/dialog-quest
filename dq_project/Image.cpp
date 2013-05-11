@@ -1,33 +1,24 @@
+#include "PlatformPrecomp.h"
 #include "Image.h"
 #include <luabind/operator.hpp>
 
 Image::Image()
 {
-	tex = 0;
-	spr = 0;
+	comp = new OverlayRenderComponent();
 }
 
 Image::Image(std::string path){
-	tex = 0;
-	spr = 0;
+	comp = new OverlayRenderComponent();
 	setFile(path);
 }
 
-void Image::Render(float x, float y, float rot){
-	if(spr)spr->RenderEx(x, y, rot);
-}
+//void Image::Render(float x, float y, float rot){
+//	assert(0 && "Not implemented - just added to remove class abstractness.");
+////	if(spr)spr->RenderEx(x, y, rot);
+//}
 
 void Image::setFile(std::string path){
-	free_all();
-	tex = hge->Texture_Load(path.c_str());
-	if(tex){
-		float tw = hge->Texture_GetWidth(tex, true);		// true width
-		float th = hge->Texture_GetHeight(tex, true);		// true height
-		spr = new hgeSprite(tex, 0, 0, tw, th);
-		float hx, hy;
-//		spr->GetHotSpot(&hx, &hy);
-//		std::cout << hx << " -- " << hy << "\n";
-	}
+	tex_file = path;			// will be caught by Container from Item
 }
 
 LuaImage::LuaImage(std::string path):Image(path){

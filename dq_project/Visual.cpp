@@ -1,5 +1,6 @@
-#include <algorithm>
+#include "PlatformPrecomp.h"
 #include "Visual.h"
+#include <algorithm>
 
 Visual::Visual(CompositeVisual* parent)
 	:parent_visual(parent)

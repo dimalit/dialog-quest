@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\tcl8.5.11\generic;&quot;C:\Program Files\boost&quot;;..\..\..\video\include;..\..\..\hge4android\include;&quot;..\..\..\cpptcl-1.1.3&quot;;..\..\..\hge4android/lib/SDL/include"
+				AdditionalIncludeDirectories="..\..\..\tcl8.5.11\generic;&quot;C:\program files\boost&quot;;..\..\..\video\include;..\..\..\hge4android\include;&quot;..\..\..\cpptcl-1.1.3&quot;;..\..\..\hge4android/lib/SDL/include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;STATIC_BUILD"
 				MinimalRebuild="false"
 				BasicRuntimeChecks="3"

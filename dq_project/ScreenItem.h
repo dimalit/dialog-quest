@@ -2,16 +2,19 @@
 #include "Visual.h"
 #include "ScreenResource.h"
 #include "WantFrameUpdate.h"
-#include "UserInputDispatcher.h"
+//!!! #include "UserInputDispatcher.h"
 
-class ScreenItem: public Visual,
-	protected CharInputObject
+#include <limits>
+
+class ScreenItem: public Visual
+//!!!	,protected CharInputObject
 {
 public:
 	static CompositeVisual* getParentVisual(){return parent_visual;}
 	static void setParentVisual(CompositeVisual* v){parent_visual = v;}
 
-protected:
+//!!!protected: for a while:
+public:
 	ScreenItem(float x=0.0f, float y=0.0f);
 	~ScreenItem();
 
@@ -96,6 +99,8 @@ protected:
 		if(view){
 			setHotSpotX( getWidth() / 2  );
 			setHotSpotY( getHeight() / 2 );
+			// TODO how to remove component from Entity? (assign NULL?)
+			view->assignEntity(entity);
 		}
 	}
 	ScreenResource* getView(){
@@ -103,6 +108,8 @@ protected:
 	}
 
 protected:
+	Entity* entity;
+
 	float x, y, rot;
 	float hpx, hpy;
 	ScreenResource* view;

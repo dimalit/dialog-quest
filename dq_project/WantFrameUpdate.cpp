@@ -1,3 +1,4 @@
+#include "PlatformPrecomp.h"
 #include "FrameTimer.h"
 #include "WantFrameUpdate.h"
 
