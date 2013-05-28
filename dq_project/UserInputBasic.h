@@ -1,9 +1,13 @@
 #pragma once
 
-#include <cassert>
-
-#include "main.h"
 #include "WantFrameUpdate.h"
+//#include "main.h"
+#include "Entity/TouchHandlerComponent.h"
+#include "Entity/Component.h"
+#include "Entity/EntityUtils.h"
+#include "PlatformSetup.h"
+
+#include <cassert>
 
 class RawInputObject{
 public:
@@ -26,10 +30,14 @@ public:
 };
 
 // singleton for HGE user input processing
-class UserInputBasic: WantFrameUpdate
+class UserInputBasic//: WantFrameUpdate
 {
 public:
-	static UserInputBasic* getInstance(){ return &instance; }
+	static UserInputBasic* getInstance(){
+		if(instance == NULL)
+			instance = new UserInputBasic();
+		return instance;
+	}
 	void setClient(RawInputObject* c){
 		client = c;
 	}
@@ -38,17 +46,45 @@ public:
 	}
 
 private:
-	virtual void Update(float dt);				// called every frame
+//	virtual void Update(float dt);				// not needed anymore, but I need code...
+	Entity* entity;
+
 	RawInputObject::input_state state;			// ctrl, mouse, etc...
 	RawInputObject* client;						// events consumer
 
-	static UserInputBasic instance;
+	static UserInputBasic* instance;
 
 	UserInputBasic(){
 		client = 0;
+
+		// create entity
+		entity = new Entity();
+		AddFocusIfNeeded(entity);
+
+		// make it fullscreen
+		entity->GetVar("pos2d")->Set(0,0);
+//		entity->GetVar("size2d")->Set(GetPrimaryGLX(), GetPrimaryGLY());
+		entity->GetVar("size2d")->Set(GetScreenSizeX(), GetScreenSizeY());
+
+		// add touch handler
+		// TODO Who will delete? (memory management)
+		EntityComponent* c = new TouchHandlerComponent();
+		entity->AddComponent(c);
+
+		// connect callbacks
+		entity->GetFunction("OnOverMove")->sig_function.connect(boost::bind(&UserInputBasic::on_mouse_move, this, _1));
+		entity->GetFunction("OnTouchStart")->sig_function.connect(boost::bind(&UserInputBasic::on_mouse_down, this, _1));
+		entity->GetFunction("OnTouchEnd")->sig_function.connect(boost::bind(&UserInputBasic::on_mouse_up, this, _1));
+	}
+	~UserInputBasic(){
+		delete entity;
 	}
 
-	void on_mouse_move(float x, float y){
+	// point, entity, finger_id, true
+	void on_mouse_move(VariantList* args){
+
+		float x = args->Get(0).GetVector2().x;
+		float y = args->Get(0).GetVector2().y;
 
 		client->onMouseMove(x, y, state);
 
@@ -56,15 +92,26 @@ private:
 		state.my = y;
 	}
 
-	void on_mouse_down(int btn){
+	// point, entity, finger_id, true
+	void on_mouse_down(VariantList* args){
+
+		float x = args->Get(0).GetVector2().x;
+		float y = args->Get(0).GetVector2().y;
+		int btn = args->Get(2).GetUINT32();
 		assert(btn >= 0 && btn < 3);
 
+		// move it there - so UserInputDispatcher gets move event
+		// also update state with current coords
+		on_mouse_move(args);
 		client->onMouseDown(btn, state);
 
 		state.btn[btn] = true;
 	}
 
-	void on_mouse_up(int btn){
+	// point, entity, finger_id, true
+	void on_mouse_up(VariantList* args){
+
+		int btn = args->Get(2).GetUINT32();
 		assert(btn >= 0 && btn < 3);
 
 		client->onMouseUp(btn, state);
@@ -81,20 +128,20 @@ private:
 	}
 
 	void on_key_down(int key){
-		if(key == HGEK_SHIFT)
-			state.shift = true;
-		else if(key == HGEK_CTRL)
-			state.ctrl = true;
-		else if(key == HGEK_ALT)
-			state.alt = true;	
+		//if(key == HGEK_SHIFT)
+		//	state.shift = true;
+		//else if(key == HGEK_CTRL)
+		//	state.ctrl = true;
+		//else if(key == HGEK_ALT)
+		//	state.alt = true;	
 	}
 
 	void on_key_up(int key){
-		if(key == HGEK_SHIFT)
-			state.shift = false;
-		else if(key == HGEK_CTRL)
-			state.ctrl = false;
-		else if(key == HGEK_ALT)
-			state.alt = false;
+		//if(key == HGEK_SHIFT)
+		//	state.shift = false;
+		//else if(key == HGEK_CTRL)
+		//	state.ctrl = false;
+		//else if(key == HGEK_ALT)
+		//	state.alt = false;
 	}
 };

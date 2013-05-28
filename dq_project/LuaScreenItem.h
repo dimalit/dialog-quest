@@ -1,7 +1,7 @@
 #pragma once
-#include "screenitem.h"
+#include "ScreenItem.h"
+#include "App.h"
 #include <luabind/luabind.hpp>
-extern lua_State* L;
 
 // needs to be public!
 // error C2243: 'type cast' : conversion from 'LuaScreenItem *' to 'ScreenItem *' exists, but is inaccessible
@@ -52,7 +52,7 @@ private:
 		onChar_cb = luabind::object();
 		onFocusLose_cb = luabind::object();
 
-		visible = false;
+//		visible = false;
 	}
 
 	virtual void onDrag(float dx, float dy){

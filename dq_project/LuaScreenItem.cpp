@@ -1,13 +1,19 @@
 #include "PlatformPrecomp.h"
 #include "LuaScreenItem.h"
+#include "Image.h"
 #include <luabind/operator.hpp>
 #include <luabind/object.hpp>
 
 void LuaScreenItem::luabind(lua_State* L){
+
+	//luabind::module(L) [
+	//	luabind::class_<LuaScreenItem>("ScreenItem")
+	//];
+
 	luabind::module(L) [
 	luabind::class_<LuaScreenItem>("ScreenItem")
-		.def(luabind::constructor<>())
 		.def(luabind::constructor<float, float>())
+		.def(luabind::constructor<>())
 
 		.property("x", &LuaScreenItem::getX, &LuaScreenItem::setX)
 		.property("y", &LuaScreenItem::getY, &LuaScreenItem::setY)
@@ -35,7 +41,7 @@ void LuaScreenItem::luabind(lua_State* L){
 		.def_readwrite("onFocusLose", &LuaScreenItem::onFocusLose_cb)
 		
 		.property("view", &LuaScreenItem::getView, &LuaScreenItem::setView)
-		.def_readwrite("visible", &LuaScreenItem::visible)
+//		.def_readwrite("visible", &LuaScreenItem::visible)
 		.def("destroy", &LuaScreenItem::destroy)
  
 		.def(luabind::self == luabind::other<LuaScreenItem&>())				// remove operator ==

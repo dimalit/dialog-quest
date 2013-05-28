@@ -1,3 +1,4 @@
+#include "PlatformPrecomp.h"
 #include "LuaTimer.h"
 
 void Callback::operator()(){

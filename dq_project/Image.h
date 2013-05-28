@@ -4,38 +4,25 @@
 #include "Entity/OverlayRenderComponent.h"
 #include <luabind/luabind.hpp>
 
-class Image: public ScreenResource
+class Image: public OverlayRenderComponent
 {
-private:
-	void assignEntity(Entity* e){
-		e->AddComponent(comp);
-		// HACK: need to re-setup file name so component can catch it...
-		comp->GetVar("fileName")->Set(tex_file);
-	}
 public:
 	Image();
 	Image(std::string path);
-	~Image(){free_all();}
+	~Image(){}
+	bool operator==(const Image& rhs){return false;}
 //	void Render(float x, float y, float rot);
+	virtual void OnAdd(Entity* e);
 	float getWidth(){
-		return comp->GetVar("frameSize2d")->GetVector2().x;
+		return GetVar("frameSize2d")->GetVector2().x;
 	}
 	float getHeight(){
-		return comp->GetVar("frameSize2d")->GetVector2().y;
+		return GetVar("frameSize2d")->GetVector2().y;
 	}
 	void setFile(std::string);
 
 private:
 	std::string tex_file;
-	OverlayRenderComponent* comp;
-
-	// TODO Guess this will be deleted by Entity...
-	// utilitary
-	void free_all()
-	{
-		if(comp && comp->GetParent()==0)
-			delete comp;
-	}
 };
 
 class LuaImage: public Image{
