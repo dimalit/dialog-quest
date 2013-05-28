@@ -2,12 +2,13 @@
 #include "Visual.h"
 #include "ScreenResource.h"
 #include "WantFrameUpdate.h"
-//!!! #include "UserInputDispatcher.h"
+#include "Entity/Component.h"
+#include "UserInputDispatcher.h"
 
 #include <limits>
 
 class ScreenItem: public Visual
-//!!!	,protected CharInputObject
+	 ,protected CharInputObject
 {
 public:
 	static CompositeVisual* getParentVisual(){return parent_visual;}
@@ -19,38 +20,45 @@ public:
 	~ScreenItem();
 
 	// polymorphic
-	virtual void Render();
+//	virtual void Render();
 	virtual bool isPointIn(float mx, float my);
 
 	// position
 	void move(float dx, float dy){
-		x += dx; y += dy;
+		entity->GetVar("pos2d")->GetVector2() += CL_Vec2f(dx, dy);
 	}
-	void setX(float x){this->x = x;}
-	void setY(float y){this->y = y;}
-	float getX(){return x;}
-	float getY(){return y;}
+	// my hotSpot is also rotation center. Proton's - not.
+	void setX(float x){entity->GetVar("pos2d")->GetVector2().x = x - getHotSpotX();}
+	void setY(float y){entity->GetVar("pos2d")->GetVector2().y = y - getHotSpotY();}
+	float getX() const {return entity->GetVar("pos2d")->GetVector2().x + getHotSpotX();}
+	float getY() const {return entity->GetVar("pos2d")->GetVector2().y + getHotSpotY();}
 
 	// rotation
-	void rotate(float r){rot += r;}
-	void setRotation(float r){rot = r;}
-	float getRotation(){return rot;}
+	void rotate(float r){entity->GetVar("rotation")->GetFloat() += r * 180.0f / (float)M_PI;}
+	void setRotation(float r){entity->GetVar("rotation")->Set(r * 180.0f / (float)M_PI);}
+	float getRotation() const {return entity->GetVar("rotation")->GetFloat() / 180.0f * (float)M_PI;}
 
 	// dimensions and hot-spot
 	void setHotSpotX(float x) {
-		hpx = x;
+		// TODO: try to set by = and by Set() and see if it works!
+		// TODO: will it work with rotation?
+		float dx = x - getHotSpotX();
+		move(-dx, 0);
+		entity->GetVar("rotationCenter")->Set(x / getWidth(), getHotSpotY() / getHeight());
 	}
 	void setHotSpotY(float y) {
-		hpy = y;
+		float dy = y - getHotSpotY();
+		move(0, -dy);
+		entity->GetVar("rotationCenter")->Set(getHotSpotX() / getWidth(), y / getHeight());
 	}
 
-	float getWidth()	const {return view ? view->getWidth() : 0;}
-	float getHeight()	const {return view ? view->getHeight() : 0;}
+	float getWidth()	const {return view ? view->GetVar("frameSize2d")->GetVector2().x : 0;}
+	float getHeight()	const {return view ? view->GetVar("frameSize2d")->GetVector2().y : 0;}
 	float getHotSpotX()	const {
-		return hpx;
+		return entity->GetVar("rotationCenter")->GetVector2().x * getWidth();
 	}
 	float getHotSpotY()	const {
-		return hpy;
+		return entity->GetVar("rotationCenter")->GetVector2().y * getHeight();
 }
 	float getTop()		const {
 		float res = std::numeric_limits<float>::infinity();
@@ -94,31 +102,44 @@ public:
 	}
 
 	// aggregates
-	void setView(ScreenResource* r){
+	void setView(EntityComponent* r){
+		// remove old
+		if(view)
+			entity->RemoveComponentByAddress(view);
+		// set new
 		view = r;
+		// connect component
 		if(view){
+			entity->AddComponent(view);
+
+			// accomodate its size
 			setHotSpotX( getWidth() / 2  );
 			setHotSpotY( getHeight() / 2 );
-			// TODO how to remove component from Entity? (assign NULL?)
-			view->assignEntity(entity);
-		}
+
+			// prepare Entity
+//			entity->GetVar("pos2d")->Set(x, y);
+//			entity->GetVar("rotation")->Set(rot /(float) M_PI * 180.0f);
+//			entity->GetVar("rotationCenter")->Set(hpx / (float)getWidth(), hpy / (float)getHeight());
+
+		}// if view
 	}
-	ScreenResource* getView(){
+	EntityComponent* getView(){
 		return view;
 	}
 
 protected:
-	Entity* entity;
-
-	float x, y, rot;
-	float hpx, hpy;
-	ScreenResource* view;
-	bool visible;
+	EntityComponent* view;
 
 	// utilitary
 	void takeCharFocus();
 	void giveCharFocus();
 	void compute_corner(int no, float &rx, float &ry) const {
+
+		// local params
+		float x = getX(), y = getY();
+		float hpx = getHotSpotX(), hpy = getHotSpotY();
+		float rot = getRotation();
+
 		switch(no){
 		case 1:
 			rx = - hpx*cos(rot) - hpy*sin(rot) + x;

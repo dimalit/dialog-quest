@@ -1,8 +1,10 @@
+#include "PlatformPrecomp.h"
 #include "UserInputBasic.h"
 
 // singleton
-UserInputBasic UserInputBasic::instance;
+UserInputBasic* UserInputBasic::instance;
 
+/*
 void UserInputBasic::Update(float dt){
 	hgeInputEvent evt;
 	while(hge->Input_GetEvent(&evt)){
@@ -52,3 +54,4 @@ void UserInputBasic::Update(float dt){
 		}// key up/down
 	}// while event
 }
+*/

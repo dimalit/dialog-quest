@@ -30,7 +30,11 @@ public:
 class UserInputDispatcher: public RawInputObject
 {
 public:
-	static UserInputDispatcher* getInstance(){return &instance;}
+	static UserInputDispatcher* getInstance(){
+		if(instance == NULL)
+			instance = new UserInputDispatcher();
+		return instance;
+	}
 
 	// "raw" clients
 	void addClient(RawInputObject* c){
@@ -95,7 +99,7 @@ private:
 	// keyboard focus is on it
 	CharInputObject* char_focus_target;
 
-	static UserInputDispatcher instance;
+	static UserInputDispatcher* instance;
 	UserInputDispatcher(const UserInputDispatcher&){}
 	UserInputDispatcher* operator=(const UserInputDispatcher*){}
 };

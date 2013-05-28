@@ -1,8 +1,11 @@
-#include <list>
-#include "main.h"
-#include "UserInputDispatcher.h"
+#include "PlatformPrecomp.h"
 
-UserInputDispatcher UserInputDispatcher::instance;
+#include "UserInputDispatcher.h"
+#include "App.h"
+#include <list>
+//#include "main.h"
+
+UserInputDispatcher* UserInputDispatcher::instance;
 /*
 MouseInputObject* UserInputDispatcher::find_over_client(float x, float y){
 
@@ -92,6 +95,7 @@ void UserInputDispatcher::onMouseDown(int btn, input_state state){
 		if(d){
 			d->onDragStart();
 			drag_objects.insert(d);
+			std::cout << "added " << d << " to drags\n";
 		}
 	}// for over_objects
 }
@@ -109,6 +113,7 @@ void UserInputDispatcher::onMouseUp(int btn, input_state state){
 		(*i)->onDragEnd();
 	}
 	drag_objects.clear();
+	std::cout << "removed all drags\n";
 }
 
 void UserInputDispatcher::onDbClick(input_state state){

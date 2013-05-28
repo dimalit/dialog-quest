@@ -1,6 +1,8 @@
-#include <vector>
-#include "ScreenItem.h"
+#include "PlatformPrecomp.h"
+
 #include "lua_layers.h"
+#include "ScreenItem.h"
+#include <vector>
 
 namespace Layers{
 
@@ -9,6 +11,16 @@ struct layer{
 	CompositeVisual* visual;
 };
 
+CompositeVisual* root_visual(){
+	static CompositeVisual* root	= 0;
+	if(!root){
+		root = new CompositeVisual();
+		Entity* e = new Entity("root");
+		AddFocusIfNeeded(e);
+		root->acquireEntity(e);
+	}
+	return root;
+}
 std::vector<layer> layers;
 
 int find(std::string name){
@@ -22,6 +34,7 @@ int find(std::string name){
 void add_layer(std::string name){
 	layer l = {name, new CompositeVisual()};
 	layers.push_back(l);
+	l.visual->setParent(root_visual());
 	ScreenItem::setParentVisual(l.visual);
 }
 
