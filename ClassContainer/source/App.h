@@ -7,7 +7,10 @@
 
 #pragma once
 
+#include "Image.h"
 #include "BaseApp.h"
+#include <lua.hpp>
+#include <luabind/luabind.hpp>
 
 class App: public BaseApp
 {
@@ -44,6 +47,7 @@ private:
  
 
 extern App g_App;
+extern lua_State* L;
 
 App * GetApp();
 const char * GetAppName();

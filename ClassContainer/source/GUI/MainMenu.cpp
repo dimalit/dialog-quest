@@ -4,10 +4,27 @@
 #include "DebugMenu.h"
 #include "EnterNameMenu.h"
 #include "ParticleTestMenu.h"
-#include "TouchTestMenu.h"
 #include "Entity/CustomInputComponent.h"
 #include "AboutMenu.h"
 #include "Renderer/SoftSurface.h"
+
+#include "ImageTestMenu.h"
+
+void StartImageTest(VariantList *pVList) //0=vec2 point of click, 1=entity sent from
+{
+	Entity *pEntClicked = pVList->m_variant[1].GetEntity();
+
+	LogMsg("Clicked %s entity at %s", pEntClicked->GetName().c_str(),pVList->m_variant[1].Print().c_str());
+
+	assert(pEntClicked->GetName() == "ImageTest");
+	
+	//slide it off the screen and then kill the whole menu tree
+	pEntClicked->GetParent()->RemoveComponentByName("FocusInput");
+// TODO: how to call it without MessageManager
+	GetMessageManager()->CallEntityFunction(pEntClicked->GetParent(), 0, "OnDelete", NULL);
+//	pEntClicked->GetParent()->GetFunction("OnDelete")->sig_function(NULL);
+	ImageTestMenuCreate(pEntClicked->GetParent()->GetParent());
+}
 
 void MainMenuOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity sent from
 {
@@ -31,15 +48,6 @@ void MainMenuOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity sen
 		SlideScreen(pEntClicked->GetParent(), false);
 		GetMessageManager()->CallEntityFunction(pEntClicked->GetParent(), 500, "OnDelete", NULL);
 		EnterNameMenuCreate(pEntClicked->GetParent()->GetParent());
-	}
-	
-	if (pEntClicked->GetName() == "TouchTest")
-	{
-		//slide it off the screen and then kill the whole menu tree
-		pEntClicked->GetParent()->RemoveComponentByName("FocusInput");
-		SlideScreen(pEntClicked->GetParent(), false);
-		GetMessageManager()->CallEntityFunction(pEntClicked->GetParent(), 500, "OnDelete", NULL);
-		TouchTestMenuCreate(pEntClicked->GetParent()->GetParent());
 	}
 
 	if (pEntClicked->GetName() == "Debug")
@@ -86,7 +94,7 @@ Entity * MainMenuCreate(Entity *pParentEnt)
 	*/
 
 
-	//Entity *pBG = CreateOverlayEntity(pParentEnt, "MainMenu", "interface/summary_bg.rttex", 0,0);
+//	Entity *pBG = CreateOverlayEntity(pParentEnt, "MainMenu", "interface/summary_bg.rttex", 0,0);
 	Entity *pBG = pParentEnt->AddEntity(new Entity);
 	
 	AddFocusIfNeeded(pBG);
@@ -100,14 +108,17 @@ Entity * MainMenuCreate(Entity *pParentEnt)
 	Entity *pButtonEntity;
 	float x = 50;
 	float y = 40;
-	float ySpacer = 45;
-	
-	
+	float ySpacer = 30;
+		
 	//If we wanted a rect color bg we could do the folowing
 	//CreateOverlayRectEntity(pBG,GetScreenRect(),MAKE_RGBA(255,0,0,255));
 	
 	//let's add a background image to test the jpg loading
-	CreateOverlayEntity(pBG, "Cosmo", "interface/cosmo.jpg",0,0);
+
+// !!! commented it out - but it works!
+//	CreateOverlayEntity(pBG, "Cosmo", "interface/cosmo.jpg",0,0);
+	Entity* f = CreateOverlayEntity(pBG, "Flask", "interface/test.bmp",0,0);
+	f->GetVar("rotation")->Set(45.0f);
 
 	pButtonEntity = CreateTextButtonEntity(pBG, "ParticleTest", x, y, "ParticleTest"); y += ySpacer;
 	pButtonEntity->GetShared()->GetFunction("OnButtonSelected")->sig_function.connect(&MainMenuOnSelect);
@@ -115,17 +126,18 @@ Entity * MainMenuCreate(Entity *pParentEnt)
 	pButtonEntity = CreateTextButtonEntity(pBG, "InputTest", x, y, "Text Input Test"); y += ySpacer;
 	pButtonEntity->GetShared()->GetFunction("OnButtonSelected")->sig_function.connect(&MainMenuOnSelect);
 
-	pButtonEntity = CreateTextButtonEntity(pBG, "TouchTest", x, y, "Multitouch Input Test"); y += ySpacer;
-	pButtonEntity->GetShared()->GetFunction("OnButtonSelected")->sig_function.connect(&MainMenuOnSelect);
-
-	pButtonEntity = CreateTextButtonEntity(pBG, "Debug", x, y, "Debug and music test"); y += ySpacer;
-	pButtonEntity->GetShared()->GetFunction("OnButtonSelected")->sig_function.connect(&MainMenuOnSelect);
+	//pButtonEntity = CreateTextButtonEntity(pBG, "Debug", x, y, "Debug and music test"); y += ySpacer;
+	//pButtonEntity->GetShared()->GetFunction("OnButtonSelected")->sig_function.connect(&MainMenuOnSelect);
 
 	pButtonEntity = CreateTextButtonEntity(pBG, "About", x, y, "About (scroll bar test)"); y += ySpacer;
 	pButtonEntity->GetShared()->GetFunction("OnButtonSelected")->sig_function.connect(&MainMenuOnSelect);
 
-	SlideScreen(pBG, true);
-	
+	pButtonEntity = CreateTextButtonEntity(pBG, "ImageTest", x, y, "My Image Test"); y += ySpacer;
+	pButtonEntity->GetShared()->GetFunction("OnButtonSelected")->sig_function.connect(&StartImageTest);
+
+
+//	SlideScreen(pBG, true);
+
 	return pBG;
 }
 

@@ -8,10 +8,19 @@
 #include "PlatformPrecomp.h"
 #include "App.h"
 #include "GUI/MainMenu.h"
+#include "GUI/ImageTestMenu.h"
 #include "Renderer/LinearParticle.h"
 #include "Entity/EntityUtils.h"//create the classes that our globally library expects to exist somewhere.
 #include "Renderer/SoftSurface.h"
 #include "GUI/AboutMenu.h"
+
+#include "Image.h"
+#include "LuaScreenItem.h"
+#include "LuaTimer.h"
+#include "lua_layers.h"
+#include "lua_lib.h"
+
+#include <stdio.h>
 
 SurfaceAnim g_surf;
  
@@ -20,6 +29,8 @@ MessageManager * GetMessageManager() {return &g_messageManager;}
 
 FileManager g_fileManager;
 FileManager * GetFileManager() {return &g_fileManager;}
+
+lua_State* L;
 
 #ifdef __APPLE__
 
@@ -126,6 +137,18 @@ void App::OnExitApp(VariantList *pVarList)
 	GetBaseApp()->AddOSMessage(o);
 }
 
+int lua_error_handler(lua_State* L){
+	std::cerr << lua_tostring(L, -1) << std::endl;
+	lua_pop(L, 1);
+
+	luaL_dostring(L, "print(debug.traceback(\"\", 4))");
+
+	lua_Debug d;
+	lua_getinfo(L, "Sln", &d);
+	std::cerr << d.short_src << ":" << d.currentline;
+	return -1;
+}
+
 bool App::Init()
 {
 	//SetDefaultAudioClickSound("audio/enter.wav");
@@ -208,6 +231,24 @@ else
 	//preload audio
 	GetAudioManager()->Preload("audio/click.wav");
 	//GetAudioManager()->Preload("audio/techno.mp3");
+
+//	freopen("xtree.txt", "wb", stdout);
+
+	L = lua_open();
+	luaL_openlibs(L);
+	luabind::open(L);
+
+	Lualib::luabind(L);
+	Layers::luabind(L);
+	LuaImage::luabind(L);
+	LuaScreenItem::luabind(L);
+	LuaTimer::luabind(L, "Timer");	// TODO: Why name?
+
+	if(luaL_dofile(L, "lib.lua") != 0){
+		std::cerr << lua_tostring(L,-1) << "\n";
+		return false;
+	}
+
 	return true;
 }
 
@@ -228,6 +269,12 @@ void App::Update()
 {
 	BaseApp::Update();
 
+	luaL_dostring(
+	L,
+	"si.x+=1\n"
+	"si.y+=1\n"
+	);
+
 	if (!m_bDidPostInit)
 	{
 		m_bDidPostInit = true;
@@ -235,8 +282,8 @@ void App::Update()
 
 		//build a dummy entity called "GUI" to put our GUI menu entities under
 		Entity *pGUIEnt = GetEntityRoot()->AddEntity(new Entity("GUI"));
-		MainMenuCreate(pGUIEnt);
-		
+		//MainMenuCreate(pGUIEnt);
+		ImageTestMenuCreate(pGUIEnt);
 	}
     
 }
@@ -246,7 +293,7 @@ void App::Draw()
 	PrepareForGL();
 //	glClearColor(0.6,0.6,0.6,1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
+
 	BaseApp::Draw();
 }
 

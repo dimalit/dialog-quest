@@ -43,7 +43,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\source;..\..\shared;..\..\shared\win\;..\..\shared\win\powerVR\OGLES\Include;..\..\shared\win\powerVR\OGLES\Windows\Include;..\..\shared\win\include;..\..\shared\util\boost;&quot;..\..\shared\ClanLib-2.0\Sources&quot;;..\..\shared\FliteTTS\include;..\..\shared\Irrlicht\include"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;BOOST_ALL_NO_LIB;_USE_32BIT_TIME_T;_HAS_ITERATOR_DEBUGGING=0;_SECURE_SCL=0;_NO_DEBUG_HEAP=1;RT_JPG_SUPPORT"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;BOOST_ALL_NO_LIB;_USE_32BIT_TIME_T;_SECURE_SCL=0;_NO_DEBUG_HEAP=1;RT_JPG_SUPPORT"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
@@ -203,15 +203,20 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions="/d1reportSingleClassLayoutconstruct_aux"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\source;..\..\shared;..\..\shared\win\;..\..\shared\util\boost;&quot;..\..\shared\ClanLib-2.0\Sources&quot;;..\..\shared\win\include;..\..\shared\FliteTTS\include;..\..\shared\Irrlicht\include"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;BOOST_ALL_NO_LIB;_USE_32BIT_TIME_T;C_GL_MODE;_HAS_ITERATOR_DEBUGGING=0;_SECURE_SCL=0;_NO_DEBUG_HEAP=1;RT_JPG_SUPPORT"
+				AdditionalIncludeDirectories="c:\program files\boost;..\source;..\..\shared;..\..\shared\win\;&quot;..\..\shared\ClanLib-2.0\Sources&quot;;..\..\shared\win\include;..\..\shared\FliteTTS\include;..\..\shared\Irrlicht\include;..\..\..\luabind-0.9.1;..\..\..\lua-5.1.4\src;..\..\..\video\include; ..\..\trunk\dq_project"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_USE_32BIT_TIME_T;C_GL_MODE;_SECURE_SCL=0;_NO_DEBUG_HEAP=1;RT_JPG_SUPPORT"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
+				StructMemberAlignment="0"
 				BufferSecurityCheck="true"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderThrough="PlatformPrecomp.h"
+				AssemblerOutput="0"
+				ProgramDataBaseFileName="$(OutDir)/RTSimpleApp.pdb"
+				BrowseInformation="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="4"
@@ -227,13 +232,15 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="opengl32.lib  audiere.lib zdll.lib wsock32.lib"
+				AdditionalDependencies="libcmtd.lib opengl32.lib  audiere.lib zdll.lib wsock32.lib lua51_static_d.lib luabind_static_d.lib"
 				OutputFile="../bin/winRTSimpleApp.exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\..\shared\win\lib;..\..\shared\win\fmod\api\lib;..\..\shared\win\audiere\lib"
+				AdditionalLibraryDirectories="c:\program files\boost\lib;..\..\..\video\lib;..\..\shared\win\lib;..\..\shared\win\fmod\api\lib;..\..\shared\win\audiere\lib"
+				IgnoreDefaultLibraryNames="msvcrtd.lib;libcmtd.lib"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/RTSimpleApp.pdb"
-				SubSystem="2"
+				GenerateMapFile="true"
+				SubSystem="1"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
 				TargetMachine="1"
@@ -367,7 +374,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\source;..\..\shared;..\..\shared\win\;..\..\shared\win\include;..\..\shared\util\boost;&quot;..\..\shared\ClanLib-2.0\Sources&quot;;..\..\shared\FliteTTS\include;..\..\shared\Irrlicht\include;&quot;$(PalmPDK)\include\SDL&quot;;&quot;$(PalmPDK)\include&quot;"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;BOOST_ALL_NO_LIB;_USE_32BIT_TIME_T;_HAS_ITERATOR_DEBUGGING=0;_SECURE_SCL=0;_NO_DEBUG_HEAP=1;RT_WEBOS;RT_JPG_SUPPORT"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;BOOST_ALL_NO_LIB;_USE_32BIT_TIME_T;_SECURE_SCL=0;_NO_DEBUG_HEAP=1;RT_WEBOS;RT_JPG_SUPPORT"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -450,7 +457,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\source;..\..\shared;..\..\shared\win\;..\..\shared\win\powerVR\OGLES\Include;..\..\shared\win\powerVR\OGLES\Windows\Include;..\..\shared\win\include;..\..\shared\util\boost;&quot;..\..\shared\ClanLib-2.0\Sources&quot;;..\..\shared\FliteTTS\include;..\..\shared\Irrlicht\include"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;BOOST_ALL_NO_LIB;_USE_32BIT_TIME_T;_HAS_ITERATOR_DEBUGGING=0;_SECURE_SCL=0;_NO_DEBUG_HEAP=1;RT_JPG_SUPPORT;RT_FLASH_TEST;RT_GLES_ADAPTOR_MODE"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;BOOST_ALL_NO_LIB;_USE_32BIT_TIME_T;_SECURE_SCL=0;_NO_DEBUG_HEAP=1;RT_JPG_SUPPORT;RT_FLASH_TEST;RT_GLES_ADAPTOR_MODE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
@@ -562,6 +569,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\source\GUI\ImageTestMenu.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\source\GUI\ImageTestMenu.h"
+					>
+				</File>
+				<File
 					RelativePath="..\source\GUI\MainMenu.cpp"
 					>
 				</File>
@@ -575,14 +590,6 @@
 				</File>
 				<File
 					RelativePath="..\source\GUI\ParticleTestMenu.h"
-					>
-				</File>
-				<File
-					RelativePath="..\source\GUI\TouchTestMenu.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\source\GUI\TouchTestMenu.h"
 					>
 				</File>
 			</Filter>
@@ -5873,12 +5880,112 @@
 				</Filter>
 			</Filter>
 		</Filter>
-		<File
-			RelativePath="..\..\license.txt"
+		<Filter
+			Name="dq"
 			>
-		</File>
+			<File
+				RelativePath="..\..\trunk\dq_project\FrameTimer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\trunk\dq_project\Image.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\trunk\dq_project\lua_layers.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\trunk\dq_project\lua_lib.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\trunk\dq_project\LuaScreenItem.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\trunk\dq_project\LuaTimer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\trunk\dq_project\ScreenItem.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\trunk\dq_project\UserInputBasic.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\trunk\dq_project\UserInputDispatcher.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\trunk\dq_project\Visual.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\trunk\dq_project\WantFrameUpdate.cpp"
+				>
+			</File>
+			<Filter
+				Name="include"
+				>
+				<File
+					RelativePath="..\..\trunk\dq_project\FrameTimer.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\trunk\dq_project\Image.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\trunk\dq_project\lua_layers.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\trunk\dq_project\lua_lib.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\trunk\dq_project\LuaScreenItem.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\trunk\dq_project\LuaTimer.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\trunk\dq_project\ScreenItem.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\trunk\dq_project\ScreenResource.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\trunk\dq_project\Timer.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\trunk\dq_project\UserInputBasic.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\trunk\dq_project\UserInputDispatcher.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\trunk\dq_project\Visual.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\trunk\dq_project\WantFrameUpdate.h"
+					>
+				</File>
+			</Filter>
+		</Filter>
 		<File
-			RelativePath="..\..\Programmer Readme.txt"
+			RelativePath="..\bin\lib.lua"
 			>
 		</File>
 	</Files>
