@@ -15,6 +15,8 @@
 #include "GUI/AboutMenu.h"
 
 #include "Image.h"
+#include "Animation.h"
+#include "Text.h"
 #include "LuaScreenItem.h"
 #include "LuaTimer.h"
 #include "lua_layers.h"
@@ -149,6 +151,10 @@ int lua_error_handler(lua_State* L){
 	return -1;
 }
 
+void gc_on_update(VariantList*){
+	lua_gc(L, LUA_GCCOLLECT, 0);
+}
+
 bool App::Init()
 {
 	//SetDefaultAudioClickSound("audio/enter.wav");
@@ -237,10 +243,14 @@ else
 	L = lua_open();
 	luaL_openlibs(L);
 	luabind::open(L);
+	luabind::set_pcall_callback(&lua_error_handler);
+	this->m_sig_update.connect(1, &gc_on_update);
 
 	Lualib::luabind(L);
 	Layers::luabind(L);
 	LuaImage::luabind(L);
+	LuaAnimation::luabind(L);
+	LuaText::luabind(L);
 	LuaScreenItem::luabind(L);
 	LuaTimer::luabind(L, "Timer");	// TODO: Why name?
 

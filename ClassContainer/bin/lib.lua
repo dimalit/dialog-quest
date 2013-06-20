@@ -125,6 +125,47 @@ ImageItem = function(x, y, path)
   return self
 end
 
+TextItem = function(x, y, text, font)
+  local item = ScreenItem(x, y)
+  local txt
+--  if font ~= nil then
+--    txt = Text(text, font)
+--   else
+    txt = Text(text)
+--  end
+
+  local self = {}
+  setmetatable(self, inherit(item, txt))
+  self.item = item
+  self.view = txt
+  return self
+end
+
+-- make playing animation item
+AnimatedItem = function(x, y, name)
+  local item = ScreenItem(x, y)
+  local anim = Animation(load_config(name))
+ 
+  local self = {}
+  setmetatable(self, inherit(item, anim))
+  self.item = item
+  self.view = anim
+
+  -- moved this after self.view=anim because of Components
+  anim.loop = true
+  anim:play()
+ 
+  -- methods are not inherited :(
+  -- TODO find why methods do not inherit
+  self.play = function()
+    self.view:play()
+  end
+--  self.pause = function()
+--    self.view:pause()
+--  end  
+  
+  return self
+end
 ---------- MakeMover -----------
 
 function MakeMover(self)
@@ -153,6 +194,23 @@ function MakeMover(self)
 end
 
 ----------- DropArea & Mover ----------
+
+function TwoStateAnimation(anim)
+  assert(anim.num_frames >= 2)
+  -- THINK can't call stop before attaching to Entity:
+  --anim:stop()
+  anim.over = function(self, arg)
+    if arg then
+      self.frame = 1
+    elseif arg==false
+    then
+      self.frame = 0
+    else
+      return (self.frame > 0)
+    end
+  end
+  return anim
+end
 
 function DropArea(x, y, view)
   local item = ScreenItem(x, y)
@@ -287,6 +345,24 @@ function Mover(x, y, view)
   return self
 end -- Mover
 
+------------- button ------------------
+Button = function(x, y, view)
+  local item = ScreenItem(x, y)
+  local self = {}
+  setmetatable(self, inherit(item, view))
+  self.view = view
+  
+  item.onDragStart = function(item)
+    view:over(true)
+  end
+  item.onDragEnd = function(item)
+    view:over(false)
+    if self.onClick then self:onClick() end
+  end
+  
+  return self
+end
+
 -------- debug functions ----------
 function print_table(t, shift)
   if not t then print("nil") return end
@@ -323,4 +399,4 @@ end
 
 ----------- initialization ------------
 add_layer("default")
---dofile("scene.lua")
+dofile("scene.lua")
