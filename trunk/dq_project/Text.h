@@ -1,37 +1,35 @@
 #pragma once
-#include <hgeFont.h>
-#include "main.h"
-#include "ScreenResource.h"
 
-class Text: public ScreenResource
+#include "Entity/TextRenderComponent.h"
+#include <luabind/luabind.hpp>
+
+class Text: public TextRenderComponent
 {
 public:
-	Text(std::string, std::string="font1.fnt");
+	Text(std::string/*, std::string="font1.fnt"*/);
 	~Text();
 
-	void setText(std::string txt){this->text = txt;}
-	std::string getText(){return this->text;}
-	void setFont(std::string fnt){load_font(fnt);}
+	void OnAdd(Entity* e);
 
-	void Render(float x, float y, float rot);
-	float getWidth(){return fnt->GetStringWidth(text.c_str());}
-	float getHeight(){return fnt->GetHeight();}
+	void setText(std::string txt){GetVar("text")->Set(txt);}
+	std::string getText(){return GetVar("text")->GetString();}
+//	void setFont(std::string fnt){load_font(fnt);}
 
-private:
-	std::string text;
-	hgeFont *fnt;
-
-	// utilitary
-	void load_font(std::string path);
+	float getWidth(){
+		return GetParent()->GetVar("size2d")->GetVector2().x;
+	}
+	float getHeight(){
+		return GetParent()->GetVar("size2d")->GetVector2().y;
+	}
 };
 
 class LuaText: public Text{
 public:
-	LuaText(std::string, std::string);
+//	LuaText(std::string, std::string);
 	LuaText(std::string);
 	static void luabind(lua_State* L);
 
 private:
-	LuaText(const LuaText&):Text("", ""){assert(false);}
+	LuaText(const LuaText&):Text(""){assert(false);}
 	LuaText& operator=(const LuaText&){assert(false);}
 };

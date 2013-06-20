@@ -3,6 +3,8 @@
 #include "Image.h"
 #include <luabind/operator.hpp>
 #include <luabind/object.hpp>
+#include <luabind/adopt_policy.hpp>
+#include <luabind/dependency_policy.hpp>
 
 void LuaScreenItem::luabind(lua_State* L){
 
@@ -39,8 +41,9 @@ void LuaScreenItem::luabind(lua_State* L){
 		.def("takeCharFocus", &LuaScreenItem::takeCharFocus)
 		.def("giveCharFocus", &LuaScreenItem::giveCharFocus)
 		.def_readwrite("onFocusLose", &LuaScreenItem::onFocusLose_cb)
-		
-		.property("view", &LuaScreenItem::getView, &LuaScreenItem::setView)
+
+		// TODO How to adopt back to lua when assigning NULL?
+		.property("view", &LuaScreenItem::getView, &LuaScreenItem::setView, luabind::detail::null_type(), luabind::adopt(_2))
 //		.def_readwrite("visible", &LuaScreenItem::visible)
 		.def("destroy", &LuaScreenItem::destroy)
  

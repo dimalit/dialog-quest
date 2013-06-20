@@ -1,36 +1,31 @@
+#include "PlatformPrecomp.h"
 #include "Text.h"
 
-Text::Text(std::string txt, std::string fnt)
+Text::Text(std::string txt)
 {
-	this->text = txt;
-	this->fnt = 0;
-	load_font(fnt);
+	GetVar("text")->Set(txt);
 }
 
 Text::~Text()
 {
-	if(fnt)delete fnt;
 }
 
-void Text::Render(float x, float y, float rot){
-	// x, y must be upper left corner
-	fnt->Render(x + getWidth() / 2, y, HGETEXT_CENTER, text.c_str());
+void Text::OnAdd(Entity* e){
+	TextRenderComponent::OnAdd(e);
+	// HACK: components need all parameters AFTER attach...
+	std::string t = GetVar("text")->GetString();
+	GetVar("text")->Set(t);
 }
-
-void Text::load_font(std::string path){
-	if(fnt)delete fnt;
-	this->fnt = new hgeFont(path.c_str());
-}
-
-LuaText::LuaText(std::string text, std::string font):Text(text, font){}
 
 LuaText::LuaText(std::string text):Text(text){}
 
 void LuaText::luabind(lua_State* L){
 	luabind::module(L) [
-		luabind::class_<LuaText, ScreenResource>("Text")
-			.def(luabind::constructor<std::string, std::string>())
+		luabind::class_<LuaText, EntityComponent>("Text")
+//			.def(luabind::constructor<std::string, std::string>())
 			.def(luabind::constructor<std::string>())
+			.property("width", &LuaText::getWidth)
+			.property("height", &LuaText::getHeight)
 			.property("text", &LuaText::getText, &LuaText::setText)
 	];	
 }

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "ScreenResource.h"
 #include "Entity/OverlayRenderComponent.h"
 #include <luabind/luabind.hpp>
 
@@ -10,7 +9,7 @@ public:
 	Image();
 	Image(std::string path);
 	~Image(){}
-	bool operator==(const Image& rhs){return false;}
+	bool operator==(Image& rhs){return false;}
 //	void Render(float x, float y, float rot);
 	virtual void OnAdd(Entity* e);
 	float getWidth(){
@@ -29,6 +28,7 @@ class LuaImage: public Image{
 public:
 	LuaImage(std::string path);
 	static void luabind(lua_State* L);
+	bool operator==(Image& rhs){return false;}
 
 private:
 	LuaImage(const LuaImage&){assert(false);}
