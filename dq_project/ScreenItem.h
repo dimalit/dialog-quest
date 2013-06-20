@@ -1,6 +1,5 @@
 #pragma once
 #include "Visual.h"
-#include "ScreenResource.h"
 #include "WantFrameUpdate.h"
 #include "Entity/Component.h"
 #include "UserInputDispatcher.h"
@@ -26,10 +25,21 @@ public:
 	// position
 	void move(float dx, float dy){
 		entity->GetVar("pos2d")->GetVector2() += CL_Vec2f(dx, dy);
+		hp_pos += CL_Vec2f(dx, dy);
 	}
 	// my hotSpot is also rotation center. Proton's - not.
-	void setX(float x){entity->GetVar("pos2d")->GetVector2().x = x - getHotSpotX();}
-	void setY(float y){entity->GetVar("pos2d")->GetVector2().y = y - getHotSpotY();}
+	void setX(float x){
+		CL_Vec2f v = entity->GetVar("pos2d")->GetVector2();
+		v.x = x - getHotSpotX();
+		entity->GetVar("pos2d")->Set(v);
+		hp_pos.x = x;
+	}
+	void setY(float y){
+		CL_Vec2f v = entity->GetVar("pos2d")->GetVector2();
+		v.y = y - getHotSpotY();
+		entity->GetVar("pos2d")->Set(v);
+		hp_pos.y = y;
+	}
 	float getX() const {return entity->GetVar("pos2d")->GetVector2().x + getHotSpotX();}
 	float getY() const {return entity->GetVar("pos2d")->GetVector2().y + getHotSpotY();}
 
@@ -43,22 +53,39 @@ public:
 		// TODO: try to set by = and by Set() and see if it works!
 		// TODO: will it work with rotation?
 		float dx = x - getHotSpotX();
-		move(-dx, 0);
-		entity->GetVar("rotationCenter")->Set(x / getWidth(), getHotSpotY() / getHeight());
+		entity->GetVar("pos2d")->GetVector2() += CL_Vec2f(-dx, 0);
+
+		float xx = getWidth() > 0 ? x / getWidth() : 0;
+		float yy = getHeight() > 0 ? getHotSpotY() / getHeight() : 0;
+		entity->GetVar("rotationCenter")->Set(xx, yy);
 	}
 	void setHotSpotY(float y) {
 		float dy = y - getHotSpotY();
-		move(0, -dy);
-		entity->GetVar("rotationCenter")->Set(getHotSpotX() / getWidth(), y / getHeight());
+		entity->GetVar("pos2d")->GetVector2() += CL_Vec2f(0, -dy);
+
+		float xx = getWidth() > 0 ? getHotSpotX() / getWidth() : 0;
+		float yy = getHeight() > 0 ? y / getHeight() : 0;
+
+		entity->GetVar("rotationCenter")->Set(xx, yy);
 	}
 
-	float getWidth()	const {return view ? view->GetVar("frameSize2d")->GetVector2().x : 0;}
-	float getHeight()	const {return view ? view->GetVar("frameSize2d")->GetVector2().y : 0;}
+	float getWidth()	const {
+		if(view == NULL)
+			return 0;
+		// TODO: GetParent() is me - so..?
+		return entity->GetVar("size2d")->GetVector2().x;
+	}
+	float getHeight()	const {
+		if(view == NULL)
+			return 0;
+		// TODO: GetParent() is me - so..?
+		return entity->GetVar("size2d")->GetVector2().y;
+	}
 	float getHotSpotX()	const {
-		return entity->GetVar("rotationCenter")->GetVector2().x * getWidth();
+		return hp_pos.x - entity->GetVar("pos2d")->GetVector2().x;//entity->GetVar("rotationCenter")->GetVector2().x * getWidth();
 	}
 	float getHotSpotY()	const {
-		return entity->GetVar("rotationCenter")->GetVector2().y * getHeight();
+		return hp_pos.y - entity->GetVar("pos2d")->GetVector2().y;//entity->GetVar("rotationCenter")->GetVector2().y * getHeight();
 }
 	float getTop()		const {
 		float res = std::numeric_limits<float>::infinity();
@@ -111,17 +138,15 @@ public:
 		// connect component
 		if(view){
 			entity->AddComponent(view);
+		}
+		// accomodate its size
+		OnSizeChange(NULL);
 
-			// accomodate its size
-			setHotSpotX( getWidth() / 2  );
-			setHotSpotY( getHeight() / 2 );
+		// prepare Entity
+//		entity->GetVar("pos2d")->Set(x, y);
+//		entity->GetVar("rotation")->Set(rot /(float) M_PI * 180.0f);
+//		entity->GetVar("rotationCenter")->Set(hpx / (float)getWidth(), hpy / (float)getHeight());
 
-			// prepare Entity
-//			entity->GetVar("pos2d")->Set(x, y);
-//			entity->GetVar("rotation")->Set(rot /(float) M_PI * 180.0f);
-//			entity->GetVar("rotationCenter")->Set(hpx / (float)getWidth(), hpy / (float)getHeight());
-
-		}// if view
 	}
 	EntityComponent* getView(){
 		return view;
@@ -129,6 +154,15 @@ public:
 
 protected:
 	EntityComponent* view;
+
+	void OnSizeChange(Variant* /*NULL*/){
+		float w = getWidth();
+		float h = getHeight();
+		setHotSpotX( w / 2  );
+		setHotSpotY( h / 2 );
+	}
+
+	void OnPosChange(Variant* /*NULL*/);
 
 	// utilitary
 	void takeCharFocus();
@@ -167,4 +201,5 @@ private:
 	// no value semantic!
 	ScreenItem& operator=(const ScreenItem&){assert(false);}
 	ScreenItem(const ScreenItem&){assert(false);}
+	CL_Vec2f hp_pos;	// used when it changes
 };

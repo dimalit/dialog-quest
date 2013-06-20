@@ -12,11 +12,20 @@ ScreenItem::ScreenItem(float x, float y)
 	
 	// add then init
 	this->setParent(parent_visual);
-	entity->GetVar("pos2d")->Set(x,y);
+
+	entity->GetVar("size2d")->GetSigOnChanged()->connect(1, boost::bind(&ScreenItem::OnSizeChange, this, _1));
+	entity->GetVar("pos2d")->GetSigOnChanged()->connect(1, boost::bind(&ScreenItem::OnPosChange, this, _1));
 }
 
 ScreenItem::~ScreenItem(void)
 {
+}
+#include "Text.h"
+void ScreenItem::OnPosChange(Variant* /*NULL*/){
+	int x;
+	if(view && dynamic_cast<Text*>(view) && view->GetVar("text")->GetString().size()==3){
+		x = 2;
+	}
 }
 
 //void ScreenItem::Render(){

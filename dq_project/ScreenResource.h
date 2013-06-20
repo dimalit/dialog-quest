@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Entity/Component.h>
+
 // something with visual representation
 // but without screen position
 class ScreenResource

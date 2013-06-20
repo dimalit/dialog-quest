@@ -18,6 +18,7 @@ public:
 	CompositeVisual* getParent(){return parent_visual;}
 protected:
 	CompositeVisual* parent_visual;
+public: //!!! temporary
 	Entity* entity;
 	friend class CompositeVisual;
 };

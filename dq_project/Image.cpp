@@ -23,6 +23,7 @@ void Image::OnAdd(Entity* e){
 
 void Image::setFile(std::string path){
 	tex_file = path;			// will be caught by Container from Item
+	GetVar("fileName")->Set(tex_file);
 }
 
 LuaImage::LuaImage(std::string path):Image(path){
@@ -42,7 +43,7 @@ void LuaImage::luabind(lua_State* L){
 
 	luabind::module(L) [
 		luabind::class_<EntityComponent>("_DoNotUse_EntityComponent")
-			.def(luabind::self == luabind::other<OverlayRenderComponent&>())		// remove operator == (C2678)
+			.def(luabind::self == luabind::other<EntityComponent&>())		// remove operator == (C2678)
 	];
 
 	luabind::module(L) [
@@ -50,7 +51,7 @@ void LuaImage::luabind(lua_State* L){
 			.def(luabind::constructor<std::string>())
 			.property("width", &Image::getWidth)
 			.property("height", &Image::getHeight)
-			.def(luabind::self == luabind::other<Image&>())		// remove operator ==
+			.def(luabind::self == luabind::other<LuaImage&>())		// remove operator ==
 	];
 }
 

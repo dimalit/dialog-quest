@@ -1,72 +1,94 @@
 #pragma once
-#include "WantFrameUpdate.h"
-#include "screenresource.h"
+#include "Entity/OverlayRenderComponent.h"
+#include "Entity/InterpolateComponent.h"
+#include <luabind/luabind.hpp>
 
-class Animation: public ScreenResource, WantFrameUpdate
+class Animation: public OverlayRenderComponent
 {
 public:
-	Animation(std::string tex, float w, float h, float tex_x, float tex_y, float nframes, float fps);
-	Animation(hgeAnimation*);
+	Animation(std::string tex, int frames_x, int frames_y, float tex_x, float tex_y, float nframes, float fps);
 	~Animation();
 
-	virtual void Render(float x, float y, float rot);
-	virtual void Update(float dt);
+	virtual void OnAdd(Entity* e);
+	virtual void OnRemove();
+	void OnFrameChange(Variant* val);
+
+	// TODO Make everything const.
 	virtual float getWidth(){
-		return ani->GetWidth();
+//		return frame_w;
+		return GetVar("frameSize2d")->GetVector2().x;
 	}
 	virtual float getHeight(){
-		return ani->GetHeight();
+		//return frame_h;
+		return GetVar("frameSize2d")->GetVector2().y;
 	}
 
 	int getNumFrames(){
-		if(ani)
-			return ani->GetFrames();
-		else
-			return 0;
+		return nframes;
 	}
 	void play(){
-		if(ani)ani->Play();
+		assert(GetVar("frame")->GetFloat() == 0.0f);
+		int dur = 1000 * getNumFrames() / fps;
+		ic->GetVar("duration_ms")->Set((uint32)dur);
 	}
-	void pause(){
-		if(ani)ani->Stop();
+	void stop(){
+		ic->GetVar("duration_ms")->Set((uint32)0);
 	}
-	void setFrame(int n){
-		ani->SetFrame(n);
+	// TODO Implement pause? In ic?
+	void setFrame(float n){
+		GetVar("frame")->Set(n);
 	}
-	int getFrame(){
-		return ani->GetFrame();
+	float getFrame(){
+		return GetVar("frame")->GetFloat();
 	}
 	bool getLoop(){
-		return ani->GetMode() & HGEANIM_LOOP;
+		return mode_loop;
 	}
 	void setLoop(bool l){
-		if(l)
-			ani->SetMode( ani->GetMode() | HGEANIM_LOOP );
-		else
-			ani->SetMode( ani->GetMode() & (~HGEANIM_LOOP) );
+		mode_loop = l;
+		update_ic_target();
 	}
-	// we keep REV=PINGPONG
 	bool getReverse(){
-		return ani->GetMode() & HGEANIM_REV;
+		return mode_reverse;
 	}
 	void setReverse(bool r){
-		if(r)
-			ani->SetMode( ani->GetMode() | HGEANIM_REV | HGEANIM_PINGPONG );
-		else
-			ani->SetMode( ani->GetMode() & ~(HGEANIM_REV | HGEANIM_PINGPONG) );
+		mode_reverse = r;
+		update_ic_target();
 	}
 protected:
 	virtual void onFinish(){}
 private:
-	hgeAnimation* ani;
-	HTEXTURE tex;
-	bool need_delete;		// need to delete ani
+	std::string tex_file;
+	int frames_x, frames_y;
+	int nframes;
+
+	InterpolateComponent* ic;
+	float fps;
+	bool mode_loop, mode_reverse;
+
+private:
+	void update_ic_target(){
+		InterpolateComponent::eOnFinish mode;
+		if(mode_loop == 0 && mode_reverse==0)
+			mode = InterpolateComponent::ON_FINISH_STOP;
+		else if(mode_loop == 0 && mode_reverse){
+			assert(0 && "Cannot do animation reverse when no looping");
+		}
+		else if(mode_loop && mode_reverse==0){
+			mode = InterpolateComponent::ON_FINISH_REPEAT;
+		}
+		else if(mode_loop && mode_reverse){
+			mode = InterpolateComponent::ON_FINISH_BOUNCE;
+		}
+			
+		ic->GetVar("on_finish")->Set((uint32)mode);
+	}
 };
 
 class LuaAnimation: public Animation{
 public:
 	LuaAnimation(luabind::object conf);
-	LuaAnimation(std::string name);
+	~LuaAnimation();
 	static void luabind(lua_State* L);
 
 private:
