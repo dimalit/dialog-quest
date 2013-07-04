@@ -307,9 +307,9 @@ function Mover(x, y, view)
   local drop = nil
 
   item.onFrame = function(dummy, dt)
---    print(self.x, self.y, self.ox, self.oy, dt)
+    --print(self.x, self.y, self.ox, self.oy, dt)
     local norm = dist(ox, oy, item.x, item.y)
-    if norm < 50 then
+    if norm > self.prev_norm then	-- if passed over!
       item.x = ox; item.y = oy
       item:stop()
     else
@@ -317,6 +317,7 @@ function Mover(x, y, view)
       local dy = (oy - self.y) / norm * 2000 * dt
       item:move(dx, dy)
     end
+	self.prev_norm = norm
   end
 
   local empty = function(o) end
@@ -337,6 +338,7 @@ function Mover(x, y, view)
   end
 
   self.goHome = function(self)
+    self.prev_norm = 1e+9
     item:start()
   end -- goHome
 

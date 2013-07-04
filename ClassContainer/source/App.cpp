@@ -251,6 +251,7 @@ else
 	LuaImage::luabind(L);
 	LuaAnimation::luabind(L);
 	LuaText::luabind(L);
+	LuaTextBox::luabind(L);
 	LuaScreenItem::luabind(L);
 	LuaTimer::luabind(L, "Timer");	// TODO: Why name?
 
@@ -292,8 +293,9 @@ void App::Update()
 
 		//build a dummy entity called "GUI" to put our GUI menu entities under
 		Entity *pGUIEnt = GetEntityRoot()->AddEntity(new Entity("GUI"));
-		//MainMenuCreate(pGUIEnt);
-		ImageTestMenuCreate(pGUIEnt);
+		// TODO: Where should I put initialization: here or App:Init?
+		MainMenuCreate(pGUIEnt);
+		//ImageTestMenuCreate(pGUIEnt);
 	}
     
 }

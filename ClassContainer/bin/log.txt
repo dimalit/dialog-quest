@@ -5204,3 +5204,1131 @@ App shutting down from getting the X clicked
 Entering background
 Saving our stuff
 Saving our stuff
+Setting native video mode to 640, 480 - Fullscreen: 0  Aspect Ratio: 0.00
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+GL Version = 2.1 Chromium 1.9
+
+GL Vendor = Humper
+
+GL Renderer = Chromium
+
+GL Extensions = GL_EXT_texture_compression_s3tc GL_EXT_draw_range_elements GL_EXT_framebuffer_object GL_EXT_compiled_vertex_array GL_ARB_depth_texture GL_ARB_fragment_program GL_ARB_multisample GL_ARB_multitexture GL_ARB_occlusion_query GL_ARB_point_parameters GL_ARB_point_sprite GL_ARB_shadow GL_ARB_shadow_ambient GL_ARB_texture_border_clamp GL_ARB_texture_compression GL_ARB_texture_cube_map GL_ARB_texture_env_add GL_ARB_texture_env_combine GL_EXT_texture_env_combine GL_ARB_texture_env_crossbar GL_ARB_texture_env_dot3 GL_EXT_texture_env_dot3 GL_ARB_texture_mirrored_repeat GL_IBM_texture_mirrored_repeat GL_ATI_texture_mirror_once GL_ARB_texture_non_power_of_two GL_ARB_transpose_matrix GL_ARB_vertex_buffer_object GL_ARB_pixel_buffer_object GL_ARB_vertex_program GL_ARB_window_pos GL_EXT_blend_color GL_EXT_blend_minmax GL_EXT_blend_func_separate GL_EXT_blend_subtract GL_EXT_texture_env_add GL_EXT_fog_coord GL_EXT_multi_draw_arrays GL_EXT_secondary_color GL_EXT_shadow_funcs GL_EXT_stencil_wrap GL_EXT_texture_cube_map GL_EXT_texture_edge_clamp GL_EXT_texture_filter_anisotropic GL_EXT_texture_lod_bias GL_EXT_texture_object GL_EXT_texture3D GL_NV_texgen_reflection GL_EXT_texture_rectangle GL_ARB_texture_rectangle GL_SGIS_generate_mipmap GL_SGIS_texture_edge_clamp GL_ARB_shading_language_100 GL_ARB_shader_objects GL_ARB_vertex_shader GL_ARB_fragment_shader GL_EXT_texture_sRGB GL_EXT_framebuffer_blit GL_EXT_blend_equation_separate GL_CR_state_parameter GL_CR_cursor_position GL_CR_bounding_box GL_CR_print_string GL_CR_tilesort_info GL_CR_synchronization GL_CR_head_spu_name GL_CR_performance_info GL_CR_window_size GL_CR_tile_info GL_CR_saveframe GL_CR_readback_barrier_size GL_CR_server_id_sharing GL_CR_server_matrix 
+
+GL depth buffer: 24 bit
+Save path is 
+Got WM cancel mode
+Entering background
+Saving our stuff
+Setting native video mode to 640, 480 - Fullscreen: 0  Aspect Ratio: 0.00
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+GL Version = 2.1 Chromium 1.9
+
+GL Vendor = Humper
+
+GL Renderer = Chromium
+
+GL Extensions = GL_EXT_texture_compression_s3tc GL_EXT_draw_range_elements GL_EXT_framebuffer_object GL_EXT_compiled_vertex_array GL_ARB_depth_texture GL_ARB_fragment_program GL_ARB_multisample GL_ARB_multitexture GL_ARB_occlusion_query GL_ARB_point_parameters GL_ARB_point_sprite GL_ARB_shadow GL_ARB_shadow_ambient GL_ARB_texture_border_clamp GL_ARB_texture_compression GL_ARB_texture_cube_map GL_ARB_texture_env_add GL_ARB_texture_env_combine GL_EXT_texture_env_combine GL_ARB_texture_env_crossbar GL_ARB_texture_env_dot3 GL_EXT_texture_env_dot3 GL_ARB_texture_mirrored_repeat GL_IBM_texture_mirrored_repeat GL_ATI_texture_mirror_once GL_ARB_texture_non_power_of_two GL_ARB_transpose_matrix GL_ARB_vertex_buffer_object GL_ARB_pixel_buffer_object GL_ARB_vertex_program GL_ARB_window_pos GL_EXT_blend_color GL_EXT_blend_minmax GL_EXT_blend_func_separate GL_EXT_blend_subtract GL_EXT_texture_env_add GL_EXT_fog_coord GL_EXT_multi_draw_arrays GL_EXT_secondary_color GL_EXT_shadow_funcs GL_EXT_stencil_wrap GL_EXT_texture_cube_map GL_EXT_texture_edge_clamp GL_EXT_texture_filter_anisotropic GL_EXT_texture_lod_bias GL_EXT_texture_object GL_EXT_texture3D GL_NV_texgen_reflection GL_EXT_texture_rectangle GL_ARB_texture_rectangle GL_SGIS_generate_mipmap GL_SGIS_texture_edge_clamp GL_ARB_shading_language_100 GL_ARB_shader_objects GL_ARB_vertex_shader GL_ARB_fragment_shader GL_EXT_texture_sRGB GL_EXT_framebuffer_blit GL_EXT_blend_equation_separate GL_CR_state_parameter GL_CR_cursor_position GL_CR_bounding_box GL_CR_print_string GL_CR_tilesort_info GL_CR_synchronization GL_CR_head_spu_name GL_CR_performance_info GL_CR_window_size GL_CR_tile_info GL_CR_saveframe GL_CR_readback_barrier_size GL_CR_server_id_sharing GL_CR_server_matrix 
+
+GL depth buffer: 24 bit
+Save path is 
+Got WM cancel mode
+Entering background
+Saving our stuff
+Entering foreground
+Setting native video mode to 640, 480 - Fullscreen: 0  Aspect Ratio: 0.00
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+GL Version = 2.1 Chromium 1.9
+
+GL Vendor = Humper
+
+GL Renderer = Chromium
+
+GL Extensions = GL_EXT_texture_compression_s3tc GL_EXT_draw_range_elements GL_EXT_framebuffer_object GL_EXT_compiled_vertex_array GL_ARB_depth_texture GL_ARB_fragment_program GL_ARB_multisample GL_ARB_multitexture GL_ARB_occlusion_query GL_ARB_point_parameters GL_ARB_point_sprite GL_ARB_shadow GL_ARB_shadow_ambient GL_ARB_texture_border_clamp GL_ARB_texture_compression GL_ARB_texture_cube_map GL_ARB_texture_env_add GL_ARB_texture_env_combine GL_EXT_texture_env_combine GL_ARB_texture_env_crossbar GL_ARB_texture_env_dot3 GL_EXT_texture_env_dot3 GL_ARB_texture_mirrored_repeat GL_IBM_texture_mirrored_repeat GL_ATI_texture_mirror_once GL_ARB_texture_non_power_of_two GL_ARB_transpose_matrix GL_ARB_vertex_buffer_object GL_ARB_pixel_buffer_object GL_ARB_vertex_program GL_ARB_window_pos GL_EXT_blend_color GL_EXT_blend_minmax GL_EXT_blend_func_separate GL_EXT_blend_subtract GL_EXT_texture_env_add GL_EXT_fog_coord GL_EXT_multi_draw_arrays GL_EXT_secondary_color GL_EXT_shadow_funcs GL_EXT_stencil_wrap GL_EXT_texture_cube_map GL_EXT_texture_edge_clamp GL_EXT_texture_filter_anisotropic GL_EXT_texture_lod_bias GL_EXT_texture_object GL_EXT_texture3D GL_NV_texgen_reflection GL_EXT_texture_rectangle GL_ARB_texture_rectangle GL_SGIS_generate_mipmap GL_SGIS_texture_edge_clamp GL_ARB_shading_language_100 GL_ARB_shader_objects GL_ARB_vertex_shader GL_ARB_fragment_shader GL_EXT_texture_sRGB GL_EXT_framebuffer_blit GL_EXT_blend_equation_separate GL_CR_state_parameter GL_CR_cursor_position GL_CR_bounding_box GL_CR_print_string GL_CR_tilesort_info GL_CR_synchronization GL_CR_head_spu_name GL_CR_performance_info GL_CR_window_size GL_CR_tile_info GL_CR_saveframe GL_CR_readback_barrier_size GL_CR_server_id_sharing GL_CR_server_matrix 
+
+GL depth buffer: 24 bit
+Save path is 
+Initializing extensions
+Loading texture interface/test.bmp
+Clicked ParticleTest entity at An entity
+Loading texture interface/summary_bg.rttex
+Loading texture interface/particle/light16p.rttex
+Loading texture interface/particle/small.rttex
+Loading texture interface/particle/explosion.rttex
+root
+  GUI
+     (FocusUpdate, FocusRender, CustomInput, Interpolate)
+      Flask (OverlayRender)
+      ParticleTest (TextRender, TouchHandler, Button2D, UnderlineRender)
+      InputTest (TextRender, TouchHandler, Button2D, UnderlineRender)
+      About (TextRender, TouchHandler, Button2D, UnderlineRender)
+      ImageTest (TextRender, TouchHandler, Button2D, UnderlineRender)
+    ParticleTest (OverlayRender, FocusUpdate, FocusRender, FocusInput, Interpolate)
+       (ParticleTest)
+      Back (TextRender, TouchHandler, Button2D, UnderlineRender, SelectButtonWithCustomInput)
+App shutting down from getting the X clicked
+Entering background
+Saving our stuff
+Saving our stuff
+Setting native video mode to 640, 480 - Fullscreen: 0  Aspect Ratio: 0.00
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+GL Version = 2.1 Chromium 1.9
+
+GL Vendor = Humper
+
+GL Renderer = Chromium
+
+GL Extensions = GL_EXT_texture_compression_s3tc GL_EXT_draw_range_elements GL_EXT_framebuffer_object GL_EXT_compiled_vertex_array GL_ARB_depth_texture GL_ARB_fragment_program GL_ARB_multisample GL_ARB_multitexture GL_ARB_occlusion_query GL_ARB_point_parameters GL_ARB_point_sprite GL_ARB_shadow GL_ARB_shadow_ambient GL_ARB_texture_border_clamp GL_ARB_texture_compression GL_ARB_texture_cube_map GL_ARB_texture_env_add GL_ARB_texture_env_combine GL_EXT_texture_env_combine GL_ARB_texture_env_crossbar GL_ARB_texture_env_dot3 GL_EXT_texture_env_dot3 GL_ARB_texture_mirrored_repeat GL_IBM_texture_mirrored_repeat GL_ATI_texture_mirror_once GL_ARB_texture_non_power_of_two GL_ARB_transpose_matrix GL_ARB_vertex_buffer_object GL_ARB_pixel_buffer_object GL_ARB_vertex_program GL_ARB_window_pos GL_EXT_blend_color GL_EXT_blend_minmax GL_EXT_blend_func_separate GL_EXT_blend_subtract GL_EXT_texture_env_add GL_EXT_fog_coord GL_EXT_multi_draw_arrays GL_EXT_secondary_color GL_EXT_shadow_funcs GL_EXT_stencil_wrap GL_EXT_texture_cube_map GL_EXT_texture_edge_clamp GL_EXT_texture_filter_anisotropic GL_EXT_texture_lod_bias GL_EXT_texture_object GL_EXT_texture3D GL_NV_texgen_reflection GL_EXT_texture_rectangle GL_ARB_texture_rectangle GL_SGIS_generate_mipmap GL_SGIS_texture_edge_clamp GL_ARB_shading_language_100 GL_ARB_shader_objects GL_ARB_vertex_shader GL_ARB_fragment_shader GL_EXT_texture_sRGB GL_EXT_framebuffer_blit GL_EXT_blend_equation_separate GL_CR_state_parameter GL_CR_cursor_position GL_CR_bounding_box GL_CR_print_string GL_CR_tilesort_info GL_CR_synchronization GL_CR_head_spu_name GL_CR_performance_info GL_CR_window_size GL_CR_tile_info GL_CR_saveframe GL_CR_readback_barrier_size GL_CR_server_id_sharing GL_CR_server_matrix 
+
+GL depth buffer: 24 bit
+Save path is 
+Initializing extensions
+Loading texture interface/test.bmp
+Clicked About entity at An entity
+Loading texture interface/bkgd_stone.rttex
+Loading texture interface/scroll_bar_caps.rttex
+Loading texture interface/proton-128.rttex
+root
+  GUI
+     (FocusUpdate, FocusRender, FocusInput, CustomInput, Interpolate)
+      Flask (OverlayRender)
+      ParticleTest (TextRender, TouchHandler, Button2D, UnderlineRender)
+      InputTest (TextRender, TouchHandler, Button2D, UnderlineRender)
+      About (TextRender, TouchHandler, Button2D, UnderlineRender)
+      ImageTest (TextRender, TouchHandler, Button2D, UnderlineRender)
+    AboutMenu (OverlayRender, FocusUpdate, FocusRender, FocusRender, Interpolate)
+      scroll (TouchHandler, Scroll, ScrollBarRender, RenderScissor, FilterInput)
+        scroll_child
+          Title (TextRender)
+          SomeTextBox (TextBoxRender)
+          plogo (OverlayRender, TouchHandler, Button2D)
+      Back (TextRender, TouchHandler, Button2D, SelectButtonWithCustomInput)
+App shutting down from getting the X clicked
+Entering background
+Saving our stuff
+Saving our stuff
+Setting native video mode to 640, 480 - Fullscreen: 0  Aspect Ratio: 0.00
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+GL Version = 2.1 Chromium 1.9
+
+GL Vendor = Humper
+
+GL Renderer = Chromium
+
+GL Extensions = GL_EXT_texture_compression_s3tc GL_EXT_draw_range_elements GL_EXT_framebuffer_object GL_EXT_compiled_vertex_array GL_ARB_depth_texture GL_ARB_fragment_program GL_ARB_multisample GL_ARB_multitexture GL_ARB_occlusion_query GL_ARB_point_parameters GL_ARB_point_sprite GL_ARB_shadow GL_ARB_shadow_ambient GL_ARB_texture_border_clamp GL_ARB_texture_compression GL_ARB_texture_cube_map GL_ARB_texture_env_add GL_ARB_texture_env_combine GL_EXT_texture_env_combine GL_ARB_texture_env_crossbar GL_ARB_texture_env_dot3 GL_EXT_texture_env_dot3 GL_ARB_texture_mirrored_repeat GL_IBM_texture_mirrored_repeat GL_ATI_texture_mirror_once GL_ARB_texture_non_power_of_two GL_ARB_transpose_matrix GL_ARB_vertex_buffer_object GL_ARB_pixel_buffer_object GL_ARB_vertex_program GL_ARB_window_pos GL_EXT_blend_color GL_EXT_blend_minmax GL_EXT_blend_func_separate GL_EXT_blend_subtract GL_EXT_texture_env_add GL_EXT_fog_coord GL_EXT_multi_draw_arrays GL_EXT_secondary_color GL_EXT_shadow_funcs GL_EXT_stencil_wrap GL_EXT_texture_cube_map GL_EXT_texture_edge_clamp GL_EXT_texture_filter_anisotropic GL_EXT_texture_lod_bias GL_EXT_texture_object GL_EXT_texture3D GL_NV_texgen_reflection GL_EXT_texture_rectangle GL_ARB_texture_rectangle GL_SGIS_generate_mipmap GL_SGIS_texture_edge_clamp GL_ARB_shading_language_100 GL_ARB_shader_objects GL_ARB_vertex_shader GL_ARB_fragment_shader GL_EXT_texture_sRGB GL_EXT_framebuffer_blit GL_EXT_blend_equation_separate GL_CR_state_parameter GL_CR_cursor_position GL_CR_bounding_box GL_CR_print_string GL_CR_tilesort_info GL_CR_synchronization GL_CR_head_spu_name GL_CR_performance_info GL_CR_window_size GL_CR_tile_info GL_CR_saveframe GL_CR_readback_barrier_size GL_CR_server_id_sharing GL_CR_server_matrix 
+
+GL depth buffer: 24 bit
+Save path is 
+Initializing extensions
+Loading texture interface/test.bmp
+Clicked ImageTest entity at An entity
+Setting native video mode to 640, 480 - Fullscreen: 0  Aspect Ratio: 0.00
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+GL Version = 2.1 Chromium 1.9
+
+GL Vendor = Humper
+
+GL Renderer = Chromium
+
+GL Extensions = GL_EXT_texture_compression_s3tc GL_EXT_draw_range_elements GL_EXT_framebuffer_object GL_EXT_compiled_vertex_array GL_ARB_depth_texture GL_ARB_fragment_program GL_ARB_multisample GL_ARB_multitexture GL_ARB_occlusion_query GL_ARB_point_parameters GL_ARB_point_sprite GL_ARB_shadow GL_ARB_shadow_ambient GL_ARB_texture_border_clamp GL_ARB_texture_compression GL_ARB_texture_cube_map GL_ARB_texture_env_add GL_ARB_texture_env_combine GL_EXT_texture_env_combine GL_ARB_texture_env_crossbar GL_ARB_texture_env_dot3 GL_EXT_texture_env_dot3 GL_ARB_texture_mirrored_repeat GL_IBM_texture_mirrored_repeat GL_ATI_texture_mirror_once GL_ARB_texture_non_power_of_two GL_ARB_transpose_matrix GL_ARB_vertex_buffer_object GL_ARB_pixel_buffer_object GL_ARB_vertex_program GL_ARB_window_pos GL_EXT_blend_color GL_EXT_blend_minmax GL_EXT_blend_func_separate GL_EXT_blend_subtract GL_EXT_texture_env_add GL_EXT_fog_coord GL_EXT_multi_draw_arrays GL_EXT_secondary_color GL_EXT_shadow_funcs GL_EXT_stencil_wrap GL_EXT_texture_cube_map GL_EXT_texture_edge_clamp GL_EXT_texture_filter_anisotropic GL_EXT_texture_lod_bias GL_EXT_texture_object GL_EXT_texture3D GL_NV_texgen_reflection GL_EXT_texture_rectangle GL_ARB_texture_rectangle GL_SGIS_generate_mipmap GL_SGIS_texture_edge_clamp GL_ARB_shading_language_100 GL_ARB_shader_objects GL_ARB_vertex_shader GL_ARB_fragment_shader GL_EXT_texture_sRGB GL_EXT_framebuffer_blit GL_EXT_blend_equation_separate GL_CR_state_parameter GL_CR_cursor_position GL_CR_bounding_box GL_CR_print_string GL_CR_tilesort_info GL_CR_synchronization GL_CR_head_spu_name GL_CR_performance_info GL_CR_window_size GL_CR_tile_info GL_CR_saveframe GL_CR_readback_barrier_size GL_CR_server_id_sharing GL_CR_server_matrix 
+
+GL depth buffer: 24 bit
+Save path is 
+Initializing extensions
+Loading texture interface/test.bmp
+Clicked ImageTest entity at An entity
+ERROR: MeasureTextAndAddByLinesIntoDeque: Can't word wrap with boundsX being 0!
+LuaAnimation() 04A2FA20
+
+Loading texture start2.jpg
+LuaAnimation() 04A15C98
+
+Loading texture place_ani.jpg
+LuaAnimation() 049FE750
+
+LuaAnimation() 049F81C0
+
+LuaAnimation() 049E6B80
+
+LuaAnimation() 03D3EF28
+
+LuaAnimation() 04A48618
+
+LuaAnimation() 04A5B1C8
+
+LuaAnimation() 04A6B458
+
+LuaAnimation() 04A7E470
+
+~LuaAnimation() 049E6B80
+
+~LuaAnimation() 04A2FA20
+
+App shutting down from getting the X clicked
+Entering background
+Saving our stuff
+Saving our stuff
+Setting native video mode to 640, 480 - Fullscreen: 0  Aspect Ratio: 0.00
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+GL Version = 2.1 Chromium 1.9
+
+GL Vendor = Humper
+
+GL Renderer = Chromium
+
+GL Extensions = GL_EXT_texture_compression_s3tc GL_EXT_draw_range_elements GL_EXT_framebuffer_object GL_EXT_compiled_vertex_array GL_ARB_depth_texture GL_ARB_fragment_program GL_ARB_multisample GL_ARB_multitexture GL_ARB_occlusion_query GL_ARB_point_parameters GL_ARB_point_sprite GL_ARB_shadow GL_ARB_shadow_ambient GL_ARB_texture_border_clamp GL_ARB_texture_compression GL_ARB_texture_cube_map GL_ARB_texture_env_add GL_ARB_texture_env_combine GL_EXT_texture_env_combine GL_ARB_texture_env_crossbar GL_ARB_texture_env_dot3 GL_EXT_texture_env_dot3 GL_ARB_texture_mirrored_repeat GL_IBM_texture_mirrored_repeat GL_ATI_texture_mirror_once GL_ARB_texture_non_power_of_two GL_ARB_transpose_matrix GL_ARB_vertex_buffer_object GL_ARB_pixel_buffer_object GL_ARB_vertex_program GL_ARB_window_pos GL_EXT_blend_color GL_EXT_blend_minmax GL_EXT_blend_func_separate GL_EXT_blend_subtract GL_EXT_texture_env_add GL_EXT_fog_coord GL_EXT_multi_draw_arrays GL_EXT_secondary_color GL_EXT_shadow_funcs GL_EXT_stencil_wrap GL_EXT_texture_cube_map GL_EXT_texture_edge_clamp GL_EXT_texture_filter_anisotropic GL_EXT_texture_lod_bias GL_EXT_texture_object GL_EXT_texture3D GL_NV_texgen_reflection GL_EXT_texture_rectangle GL_ARB_texture_rectangle GL_SGIS_generate_mipmap GL_SGIS_texture_edge_clamp GL_ARB_shading_language_100 GL_ARB_shader_objects GL_ARB_vertex_shader GL_ARB_fragment_shader GL_EXT_texture_sRGB GL_EXT_framebuffer_blit GL_EXT_blend_equation_separate GL_CR_state_parameter GL_CR_cursor_position GL_CR_bounding_box GL_CR_print_string GL_CR_tilesort_info GL_CR_synchronization GL_CR_head_spu_name GL_CR_performance_info GL_CR_window_size GL_CR_tile_info GL_CR_saveframe GL_CR_readback_barrier_size GL_CR_server_id_sharing GL_CR_server_matrix 
+
+GL depth buffer: 24 bit
+Save path is 
+Initializing extensions
+Loading texture interface/test.bmp
+Clicked ImageTest entity at An entity
+ERROR: MeasureTextAndAddByLinesIntoDeque: Can't word wrap with boundsX being 0!
+Setting native video mode to 640, 480 - Fullscreen: 0  Aspect Ratio: 0.00
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+GL Version = 2.1 Chromium 1.9
+
+GL Vendor = Humper
+
+GL Renderer = Chromium
+
+GL Extensions = GL_EXT_texture_compression_s3tc GL_EXT_draw_range_elements GL_EXT_framebuffer_object GL_EXT_compiled_vertex_array GL_ARB_depth_texture GL_ARB_fragment_program GL_ARB_multisample GL_ARB_multitexture GL_ARB_occlusion_query GL_ARB_point_parameters GL_ARB_point_sprite GL_ARB_shadow GL_ARB_shadow_ambient GL_ARB_texture_border_clamp GL_ARB_texture_compression GL_ARB_texture_cube_map GL_ARB_texture_env_add GL_ARB_texture_env_combine GL_EXT_texture_env_combine GL_ARB_texture_env_crossbar GL_ARB_texture_env_dot3 GL_EXT_texture_env_dot3 GL_ARB_texture_mirrored_repeat GL_IBM_texture_mirrored_repeat GL_ATI_texture_mirror_once GL_ARB_texture_non_power_of_two GL_ARB_transpose_matrix GL_ARB_vertex_buffer_object GL_ARB_pixel_buffer_object GL_ARB_vertex_program GL_ARB_window_pos GL_EXT_blend_color GL_EXT_blend_minmax GL_EXT_blend_func_separate GL_EXT_blend_subtract GL_EXT_texture_env_add GL_EXT_fog_coord GL_EXT_multi_draw_arrays GL_EXT_secondary_color GL_EXT_shadow_funcs GL_EXT_stencil_wrap GL_EXT_texture_cube_map GL_EXT_texture_edge_clamp GL_EXT_texture_filter_anisotropic GL_EXT_texture_lod_bias GL_EXT_texture_object GL_EXT_texture3D GL_NV_texgen_reflection GL_EXT_texture_rectangle GL_ARB_texture_rectangle GL_SGIS_generate_mipmap GL_SGIS_texture_edge_clamp GL_ARB_shading_language_100 GL_ARB_shader_objects GL_ARB_vertex_shader GL_ARB_fragment_shader GL_EXT_texture_sRGB GL_EXT_framebuffer_blit GL_EXT_blend_equation_separate GL_CR_state_parameter GL_CR_cursor_position GL_CR_bounding_box GL_CR_print_string GL_CR_tilesort_info GL_CR_synchronization GL_CR_head_spu_name GL_CR_performance_info GL_CR_window_size GL_CR_tile_info GL_CR_saveframe GL_CR_readback_barrier_size GL_CR_server_id_sharing GL_CR_server_matrix 
+
+GL depth buffer: 24 bit
+Save path is 
+Initializing extensions
+Loading texture interface/test.bmp
+Clicked ImageTest entity at An entity
+ERROR: MeasureTextAndAddByLinesIntoDeque: Can't word wrap with boundsX being 0!
+LuaAnimation() 019D32A8
+
+Loading texture start2.jpg
+LuaAnimation() 019CF548
+
+Loading texture place_ani.jpg
+LuaAnimation() 019CFDF0
+
+LuaAnimation() 019D2628
+
+LuaAnimation() 019FFA08
+
+LuaAnimation() 019D68E8
+
+LuaAnimation() 019DE1E8
+
+LuaAnimation() 019D1660
+
+LuaAnimation() 019C8B18
+
+LuaAnimation() 04B1A620
+
+~LuaAnimation() 019FFA08
+
+~LuaAnimation() 019D32A8
+
+Entering background
+Saving our stuff
+Entering foreground
+App shutting down from getting the X clicked
+Entering background
+Saving our stuff
+Saving our stuff
+Setting native video mode to 640, 480 - Fullscreen: 0  Aspect Ratio: 0.00
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+GL Version = 2.1 Chromium 1.9
+
+GL Vendor = Humper
+
+GL Renderer = Chromium
+
+GL Extensions = GL_EXT_texture_compression_s3tc GL_EXT_draw_range_elements GL_EXT_framebuffer_object GL_EXT_compiled_vertex_array GL_ARB_depth_texture GL_ARB_fragment_program GL_ARB_multisample GL_ARB_multitexture GL_ARB_occlusion_query GL_ARB_point_parameters GL_ARB_point_sprite GL_ARB_shadow GL_ARB_shadow_ambient GL_ARB_texture_border_clamp GL_ARB_texture_compression GL_ARB_texture_cube_map GL_ARB_texture_env_add GL_ARB_texture_env_combine GL_EXT_texture_env_combine GL_ARB_texture_env_crossbar GL_ARB_texture_env_dot3 GL_EXT_texture_env_dot3 GL_ARB_texture_mirrored_repeat GL_IBM_texture_mirrored_repeat GL_ATI_texture_mirror_once GL_ARB_texture_non_power_of_two GL_ARB_transpose_matrix GL_ARB_vertex_buffer_object GL_ARB_pixel_buffer_object GL_ARB_vertex_program GL_ARB_window_pos GL_EXT_blend_color GL_EXT_blend_minmax GL_EXT_blend_func_separate GL_EXT_blend_subtract GL_EXT_texture_env_add GL_EXT_fog_coord GL_EXT_multi_draw_arrays GL_EXT_secondary_color GL_EXT_shadow_funcs GL_EXT_stencil_wrap GL_EXT_texture_cube_map GL_EXT_texture_edge_clamp GL_EXT_texture_filter_anisotropic GL_EXT_texture_lod_bias GL_EXT_texture_object GL_EXT_texture3D GL_NV_texgen_reflection GL_EXT_texture_rectangle GL_ARB_texture_rectangle GL_SGIS_generate_mipmap GL_SGIS_texture_edge_clamp GL_ARB_shading_language_100 GL_ARB_shader_objects GL_ARB_vertex_shader GL_ARB_fragment_shader GL_EXT_texture_sRGB GL_EXT_framebuffer_blit GL_EXT_blend_equation_separate GL_CR_state_parameter GL_CR_cursor_position GL_CR_bounding_box GL_CR_print_string GL_CR_tilesort_info GL_CR_synchronization GL_CR_head_spu_name GL_CR_performance_info GL_CR_window_size GL_CR_tile_info GL_CR_saveframe GL_CR_readback_barrier_size GL_CR_server_id_sharing GL_CR_server_matrix 
+
+GL depth buffer: 24 bit
+Save path is 
+Initializing extensions
+Loading texture interface/test.bmp
+Clicked ImageTest entity at An entity
+ERROR: MeasureTextAndAddByLinesIntoDeque: Can't word wrap with boundsX being 0!
+LuaAnimation() 04B14FF8
+
+Loading texture start2.jpg
+LuaAnimation() 0199E5E0
+
+Loading texture place_ani.jpg
+LuaAnimation() 04B21D80
+
+LuaAnimation() 019AF5F0
+
+LuaAnimation() 019B0C20
+
+LuaAnimation() 019BFC28
+
+LuaAnimation() 019BD5D0
+
+LuaAnimation() 019A8DA0
+
+LuaAnimation() 04B6E350
+
+LuaAnimation() 04B6E6F0
+
+~LuaAnimation() 019B0C20
+
+~LuaAnimation() 04B14FF8
+
+LuaAnimation() 019B0C20
+
+~LuaAnimation() 04B6E6F0
+
+Loading texture doll/normal.jpg
+ERROR: Proton FileManager says can't open d:\dimalit\Desktop\dq\svn\ClassContainer\bin\doll/normal.jpg
+Couldn't load surface doll/normal.jpg
+ResourceManager::GetSurfaceResource: Unable to load doll/normal.jpg
+LuaAnimation() 04B4D140
+
+LuaAnimation() 04B21860
+
+LuaAnimation() 04B14E90
+
+LuaAnimation() 04B15180
+
+LuaAnimation() 04B6EF80
+
+LuaAnimation() 04B6F270
+
+LuaAnimation() 04BA9890
+
+LuaAnimation() 04BB9A48
+
+LuaAnimation() 04BB9BD0
+
+LuaAnimation() 04BB9D58
+
+LuaAnimation() 04BB9EE0
+
+~LuaAnimation() 04B6EF80
+
+~LuaAnimation() 019B0C20
+
+Entering background
+Saving our stuff
+Entering foreground
+Entering background
+Saving our stuff
+Entering foreground
+LuaAnimation() 04BBA068
+
+~LuaAnimation() 04BB9EE0
+
+Entering background
+Saving our stuff
+Entering foreground
+~LuaAnimation() 04BBA068
+
+App shutting down from getting the X clicked
+Entering background
+Saving our stuff
+Saving our stuff
+Setting native video mode to 640, 480 - Fullscreen: 0  Aspect Ratio: 0.00
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+GL Version = 2.1 Chromium 1.9
+
+GL Vendor = Humper
+
+GL Renderer = Chromium
+
+GL Extensions = GL_EXT_texture_compression_s3tc GL_EXT_draw_range_elements GL_EXT_framebuffer_object GL_EXT_compiled_vertex_array GL_ARB_depth_texture GL_ARB_fragment_program GL_ARB_multisample GL_ARB_multitexture GL_ARB_occlusion_query GL_ARB_point_parameters GL_ARB_point_sprite GL_ARB_shadow GL_ARB_shadow_ambient GL_ARB_texture_border_clamp GL_ARB_texture_compression GL_ARB_texture_cube_map GL_ARB_texture_env_add GL_ARB_texture_env_combine GL_EXT_texture_env_combine GL_ARB_texture_env_crossbar GL_ARB_texture_env_dot3 GL_EXT_texture_env_dot3 GL_ARB_texture_mirrored_repeat GL_IBM_texture_mirrored_repeat GL_ATI_texture_mirror_once GL_ARB_texture_non_power_of_two GL_ARB_transpose_matrix GL_ARB_vertex_buffer_object GL_ARB_pixel_buffer_object GL_ARB_vertex_program GL_ARB_window_pos GL_EXT_blend_color GL_EXT_blend_minmax GL_EXT_blend_func_separate GL_EXT_blend_subtract GL_EXT_texture_env_add GL_EXT_fog_coord GL_EXT_multi_draw_arrays GL_EXT_secondary_color GL_EXT_shadow_funcs GL_EXT_stencil_wrap GL_EXT_texture_cube_map GL_EXT_texture_edge_clamp GL_EXT_texture_filter_anisotropic GL_EXT_texture_lod_bias GL_EXT_texture_object GL_EXT_texture3D GL_NV_texgen_reflection GL_EXT_texture_rectangle GL_ARB_texture_rectangle GL_SGIS_generate_mipmap GL_SGIS_texture_edge_clamp GL_ARB_shading_language_100 GL_ARB_shader_objects GL_ARB_vertex_shader GL_ARB_fragment_shader GL_EXT_texture_sRGB GL_EXT_framebuffer_blit GL_EXT_blend_equation_separate GL_CR_state_parameter GL_CR_cursor_position GL_CR_bounding_box GL_CR_print_string GL_CR_tilesort_info GL_CR_synchronization GL_CR_head_spu_name GL_CR_performance_info GL_CR_window_size GL_CR_tile_info GL_CR_saveframe GL_CR_readback_barrier_size GL_CR_server_id_sharing GL_CR_server_matrix 
+
+GL depth buffer: 24 bit
+Save path is 
+Initializing extensions
+Loading texture interface/test.bmp
+Clicked ImageTest entity at An entity
+ERROR: MeasureTextAndAddByLinesIntoDeque: Can't word wrap with boundsX being 0!
+LuaAnimation() 04B18050
+
+Loading texture start2.jpg
+LuaAnimation() 00AFF850
+
+Loading texture place_ani.jpg
+LuaAnimation() 00AD6630
+
+LuaAnimation() 00ADCEE0
+
+LuaAnimation() 00AD18A0
+
+LuaAnimation() 00ADD238
+
+LuaAnimation() 00AD6E28
+
+LuaAnimation() 00AC88F8
+
+LuaAnimation() 04B4DAF0
+
+LuaAnimation() 04B59860
+
+~LuaAnimation() 00AD18A0
+
+~LuaAnimation() 04B18050
+
+Entering background
+Saving our stuff
+Entering foreground
+Finger 0 is down, sending fake release
+App shutting down from getting the X clicked
+Entering background
+Saving our stuff
+Saving our stuff
+Setting native video mode to 640, 480 - Fullscreen: 0  Aspect Ratio: 0.00
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+GL Version = 2.1 Chromium 1.9
+
+GL Vendor = Humper
+
+GL Renderer = Chromium
+
+GL Extensions = GL_EXT_texture_compression_s3tc GL_EXT_draw_range_elements GL_EXT_framebuffer_object GL_EXT_compiled_vertex_array GL_ARB_depth_texture GL_ARB_fragment_program GL_ARB_multisample GL_ARB_multitexture GL_ARB_occlusion_query GL_ARB_point_parameters GL_ARB_point_sprite GL_ARB_shadow GL_ARB_shadow_ambient GL_ARB_texture_border_clamp GL_ARB_texture_compression GL_ARB_texture_cube_map GL_ARB_texture_env_add GL_ARB_texture_env_combine GL_EXT_texture_env_combine GL_ARB_texture_env_crossbar GL_ARB_texture_env_dot3 GL_EXT_texture_env_dot3 GL_ARB_texture_mirrored_repeat GL_IBM_texture_mirrored_repeat GL_ATI_texture_mirror_once GL_ARB_texture_non_power_of_two GL_ARB_transpose_matrix GL_ARB_vertex_buffer_object GL_ARB_pixel_buffer_object GL_ARB_vertex_program GL_ARB_window_pos GL_EXT_blend_color GL_EXT_blend_minmax GL_EXT_blend_func_separate GL_EXT_blend_subtract GL_EXT_texture_env_add GL_EXT_fog_coord GL_EXT_multi_draw_arrays GL_EXT_secondary_color GL_EXT_shadow_funcs GL_EXT_stencil_wrap GL_EXT_texture_cube_map GL_EXT_texture_edge_clamp GL_EXT_texture_filter_anisotropic GL_EXT_texture_lod_bias GL_EXT_texture_object GL_EXT_texture3D GL_NV_texgen_reflection GL_EXT_texture_rectangle GL_ARB_texture_rectangle GL_SGIS_generate_mipmap GL_SGIS_texture_edge_clamp GL_ARB_shading_language_100 GL_ARB_shader_objects GL_ARB_vertex_shader GL_ARB_fragment_shader GL_EXT_texture_sRGB GL_EXT_framebuffer_blit GL_EXT_blend_equation_separate GL_CR_state_parameter GL_CR_cursor_position GL_CR_bounding_box GL_CR_print_string GL_CR_tilesort_info GL_CR_synchronization GL_CR_head_spu_name GL_CR_performance_info GL_CR_window_size GL_CR_tile_info GL_CR_saveframe GL_CR_readback_barrier_size GL_CR_server_id_sharing GL_CR_server_matrix 
+
+GL depth buffer: 24 bit
+Save path is 
+Initializing extensions
+Loading texture interface/test.bmp
+Clicked ImageTest entity at An entity
+ERROR: MeasureTextAndAddByLinesIntoDeque: Can't word wrap with boundsX being 0!
+LuaAnimation() 019C3A30
+
+Loading texture start2.jpg
+Clicked About entity at An entity
+Loading texture interface/bkgd_stone.rttex
+Loading texture interface/scroll_bar_caps.rttex
+Loading texture interface/proton-128.rttex
+root
+  GUI
+     (FocusUpdate, FocusRender, CustomInput, Interpolate)
+      Flask (OverlayRender)
+      ParticleTest (TextRender, TouchHandler, Button2D, UnderlineRender)
+      InputTest (TextRender, TouchHandler, Button2D, UnderlineRender)
+      About (TextRender, TouchHandler, Button2D, UnderlineRender)
+      ImageTest (TextRender, TouchHandler, Button2D, UnderlineRender)
+    AboutMenu (OverlayRender, FocusUpdate, FocusRender, FocusRender, Interpolate)
+      scroll (TouchHandler, Scroll, ScrollBarRender, RenderScissor, FilterInput)
+        scroll_child
+          Title (TextRender)
+          SomeTextBox (TextBoxRender)
+          plogo (OverlayRender, TouchHandler, Button2D)
+      Back (TextRender, TouchHandler, Button2D, SelectButtonWithCustomInput)
+App shutting down from getting the X clicked
+Entering background
+Saving our stuff
+Saving our stuff
+Setting native video mode to 640, 480 - Fullscreen: 0  Aspect Ratio: 0.00
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+GL Version = 2.1 Chromium 1.9
+
+GL Vendor = Humper
+
+GL Renderer = Chromium
+
+GL Extensions = GL_EXT_texture_compression_s3tc GL_EXT_draw_range_elements GL_EXT_framebuffer_object GL_EXT_compiled_vertex_array GL_ARB_depth_texture GL_ARB_fragment_program GL_ARB_multisample GL_ARB_multitexture GL_ARB_occlusion_query GL_ARB_point_parameters GL_ARB_point_sprite GL_ARB_shadow GL_ARB_shadow_ambient GL_ARB_texture_border_clamp GL_ARB_texture_compression GL_ARB_texture_cube_map GL_ARB_texture_env_add GL_ARB_texture_env_combine GL_EXT_texture_env_combine GL_ARB_texture_env_crossbar GL_ARB_texture_env_dot3 GL_EXT_texture_env_dot3 GL_ARB_texture_mirrored_repeat GL_IBM_texture_mirrored_repeat GL_ATI_texture_mirror_once GL_ARB_texture_non_power_of_two GL_ARB_transpose_matrix GL_ARB_vertex_buffer_object GL_ARB_pixel_buffer_object GL_ARB_vertex_program GL_ARB_window_pos GL_EXT_blend_color GL_EXT_blend_minmax GL_EXT_blend_func_separate GL_EXT_blend_subtract GL_EXT_texture_env_add GL_EXT_fog_coord GL_EXT_multi_draw_arrays GL_EXT_secondary_color GL_EXT_shadow_funcs GL_EXT_stencil_wrap GL_EXT_texture_cube_map GL_EXT_texture_edge_clamp GL_EXT_texture_filter_anisotropic GL_EXT_texture_lod_bias GL_EXT_texture_object GL_EXT_texture3D GL_NV_texgen_reflection GL_EXT_texture_rectangle GL_ARB_texture_rectangle GL_SGIS_generate_mipmap GL_SGIS_texture_edge_clamp GL_ARB_shading_language_100 GL_ARB_shader_objects GL_ARB_vertex_shader GL_ARB_fragment_shader GL_EXT_texture_sRGB GL_EXT_framebuffer_blit GL_EXT_blend_equation_separate GL_CR_state_parameter GL_CR_cursor_position GL_CR_bounding_box GL_CR_print_string GL_CR_tilesort_info GL_CR_synchronization GL_CR_head_spu_name GL_CR_performance_info GL_CR_window_size GL_CR_tile_info GL_CR_saveframe GL_CR_readback_barrier_size GL_CR_server_id_sharing GL_CR_server_matrix 
+
+GL depth buffer: 24 bit
+Save path is 
+Initializing extensions
+Loading texture interface/test.bmp
+Clicked ImageTest entity at An entity
+ERROR: MeasureTextAndAddByLinesIntoDeque: Can't word wrap with boundsX being 0!
+LuaAnimation() 00AFEF78
+
+Loading texture start2.jpg
+LuaAnimation() 04B81060
+
+Loading texture place_ani.jpg
+LuaAnimation() 00B0D900
+
+LuaAnimation() 00AFFAD0
+
+LuaAnimation() 00B0C670
+
+LuaAnimation() 00B0CCA8
+
+LuaAnimation() 00B05270
+
+LuaAnimation() 00B00A00
+
+LuaAnimation() 04BCD620
+
+LuaAnimation() 04BD9390
+
+~LuaAnimation() 00B0C670
+
+~LuaAnimation() 00AFEF78
+
+App shutting down from getting the X clicked
+Entering background
+Saving our stuff
+Saving our stuff
+Setting native video mode to 640, 480 - Fullscreen: 0  Aspect Ratio: 0.00
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+GL Version = 2.1 Chromium 1.9
+
+GL Vendor = Humper
+
+GL Renderer = Chromium
+
+GL Extensions = GL_EXT_texture_compression_s3tc GL_EXT_draw_range_elements GL_EXT_framebuffer_object GL_EXT_compiled_vertex_array GL_ARB_depth_texture GL_ARB_fragment_program GL_ARB_multisample GL_ARB_multitexture GL_ARB_occlusion_query GL_ARB_point_parameters GL_ARB_point_sprite GL_ARB_shadow GL_ARB_shadow_ambient GL_ARB_texture_border_clamp GL_ARB_texture_compression GL_ARB_texture_cube_map GL_ARB_texture_env_add GL_ARB_texture_env_combine GL_EXT_texture_env_combine GL_ARB_texture_env_crossbar GL_ARB_texture_env_dot3 GL_EXT_texture_env_dot3 GL_ARB_texture_mirrored_repeat GL_IBM_texture_mirrored_repeat GL_ATI_texture_mirror_once GL_ARB_texture_non_power_of_two GL_ARB_transpose_matrix GL_ARB_vertex_buffer_object GL_ARB_pixel_buffer_object GL_ARB_vertex_program GL_ARB_window_pos GL_EXT_blend_color GL_EXT_blend_minmax GL_EXT_blend_func_separate GL_EXT_blend_subtract GL_EXT_texture_env_add GL_EXT_fog_coord GL_EXT_multi_draw_arrays GL_EXT_secondary_color GL_EXT_shadow_funcs GL_EXT_stencil_wrap GL_EXT_texture_cube_map GL_EXT_texture_edge_clamp GL_EXT_texture_filter_anisotropic GL_EXT_texture_lod_bias GL_EXT_texture_object GL_EXT_texture3D GL_NV_texgen_reflection GL_EXT_texture_rectangle GL_ARB_texture_rectangle GL_SGIS_generate_mipmap GL_SGIS_texture_edge_clamp GL_ARB_shading_language_100 GL_ARB_shader_objects GL_ARB_vertex_shader GL_ARB_fragment_shader GL_EXT_texture_sRGB GL_EXT_framebuffer_blit GL_EXT_blend_equation_separate GL_CR_state_parameter GL_CR_cursor_position GL_CR_bounding_box GL_CR_print_string GL_CR_tilesort_info GL_CR_synchronization GL_CR_head_spu_name GL_CR_performance_info GL_CR_window_size GL_CR_tile_info GL_CR_saveframe GL_CR_readback_barrier_size GL_CR_server_id_sharing GL_CR_server_matrix 
+
+GL depth buffer: 24 bit
+Save path is 
+Initializing extensions
+Loading texture interface/test.bmp
+Ignoring click to ImageTest, button is disabled or not visible
+Clicked ImageTest entity at An entity
+ERROR: MeasureTextAndAddByLinesIntoDeque: Can't word wrap with boundsX being 0!
+LuaAnimation() 018AEF78
+
+Loading texture start2.jpg
+LuaAnimation() 04A51060
+
+Loading texture place_ani.jpg
+LuaAnimation() 018BD900
+
+LuaAnimation() 018AFAD0
+
+LuaAnimation() 018BC670
+
+LuaAnimation() 018BCCA8
+
+LuaAnimation() 018B5270
+
+LuaAnimation() 018B0A30
+
+LuaAnimation() 04A9B4A0
+
+LuaAnimation() 04A9C040
+
+~LuaAnimation() 018BC670
+
+~LuaAnimation() 018AEF78
+
+App shutting down from getting the X clicked
+Entering background
+Saving our stuff
+Saving our stuff
+Setting native video mode to 640, 480 - Fullscreen: 0  Aspect Ratio: 0.00
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+GL Version = 2.1 Chromium 1.9
+
+GL Vendor = Humper
+
+GL Renderer = Chromium
+
+GL Extensions = GL_EXT_texture_compression_s3tc GL_EXT_draw_range_elements GL_EXT_framebuffer_object GL_EXT_compiled_vertex_array GL_ARB_depth_texture GL_ARB_fragment_program GL_ARB_multisample GL_ARB_multitexture GL_ARB_occlusion_query GL_ARB_point_parameters GL_ARB_point_sprite GL_ARB_shadow GL_ARB_shadow_ambient GL_ARB_texture_border_clamp GL_ARB_texture_compression GL_ARB_texture_cube_map GL_ARB_texture_env_add GL_ARB_texture_env_combine GL_EXT_texture_env_combine GL_ARB_texture_env_crossbar GL_ARB_texture_env_dot3 GL_EXT_texture_env_dot3 GL_ARB_texture_mirrored_repeat GL_IBM_texture_mirrored_repeat GL_ATI_texture_mirror_once GL_ARB_texture_non_power_of_two GL_ARB_transpose_matrix GL_ARB_vertex_buffer_object GL_ARB_pixel_buffer_object GL_ARB_vertex_program GL_ARB_window_pos GL_EXT_blend_color GL_EXT_blend_minmax GL_EXT_blend_func_separate GL_EXT_blend_subtract GL_EXT_texture_env_add GL_EXT_fog_coord GL_EXT_multi_draw_arrays GL_EXT_secondary_color GL_EXT_shadow_funcs GL_EXT_stencil_wrap GL_EXT_texture_cube_map GL_EXT_texture_edge_clamp GL_EXT_texture_filter_anisotropic GL_EXT_texture_lod_bias GL_EXT_texture_object GL_EXT_texture3D GL_NV_texgen_reflection GL_EXT_texture_rectangle GL_ARB_texture_rectangle GL_SGIS_generate_mipmap GL_SGIS_texture_edge_clamp GL_ARB_shading_language_100 GL_ARB_shader_objects GL_ARB_vertex_shader GL_ARB_fragment_shader GL_EXT_texture_sRGB GL_EXT_framebuffer_blit GL_EXT_blend_equation_separate GL_CR_state_parameter GL_CR_cursor_position GL_CR_bounding_box GL_CR_print_string GL_CR_tilesort_info GL_CR_synchronization GL_CR_head_spu_name GL_CR_performance_info GL_CR_window_size GL_CR_tile_info GL_CR_saveframe GL_CR_readback_barrier_size GL_CR_server_id_sharing GL_CR_server_matrix 
+
+GL depth buffer: 24 bit
+Save path is 
+Initializing extensions
+Loading texture interface/test.bmp
+Clicked ImageTest entity at An entity
+ERROR: MeasureTextAndAddByLinesIntoDeque: Can't word wrap with boundsX being 0!
+LuaAnimation() 018DF9E0
+
+Loading texture start2.jpg
+LuaAnimation() 018BCB38
+
+Loading texture place_ani.jpg
+LuaAnimation() 018BEF38
+
+LuaAnimation() 018B3790
+
+LuaAnimation() 018C3950
+
+LuaAnimation() 018AF960
+
+LuaAnimation() 018B5898
+
+LuaAnimation() 018AF170
+
+LuaAnimation() 04AE47E0
+
+LuaAnimation() 04B29548
+
+~LuaAnimation() 018C3950
+
+~LuaAnimation() 018DF9E0
+
+Entering background
+Saving our stuff
+Entering foreground
+Entering background
+Saving our stuff
+Entering foreground
+Entering background
+Saving our stuff
+Entering foreground
+Entering background
+Saving our stuff
+Setting native video mode to 640, 480 - Fullscreen: 0  Aspect Ratio: 0.00
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+GL Version = 2.1 Chromium 1.9
+
+GL Vendor = Humper
+
+GL Renderer = Chromium
+
+GL Extensions = GL_EXT_texture_compression_s3tc GL_EXT_draw_range_elements GL_EXT_framebuffer_object GL_EXT_compiled_vertex_array GL_ARB_depth_texture GL_ARB_fragment_program GL_ARB_multisample GL_ARB_multitexture GL_ARB_occlusion_query GL_ARB_point_parameters GL_ARB_point_sprite GL_ARB_shadow GL_ARB_shadow_ambient GL_ARB_texture_border_clamp GL_ARB_texture_compression GL_ARB_texture_cube_map GL_ARB_texture_env_add GL_ARB_texture_env_combine GL_EXT_texture_env_combine GL_ARB_texture_env_crossbar GL_ARB_texture_env_dot3 GL_EXT_texture_env_dot3 GL_ARB_texture_mirrored_repeat GL_IBM_texture_mirrored_repeat GL_ATI_texture_mirror_once GL_ARB_texture_non_power_of_two GL_ARB_transpose_matrix GL_ARB_vertex_buffer_object GL_ARB_pixel_buffer_object GL_ARB_vertex_program GL_ARB_window_pos GL_EXT_blend_color GL_EXT_blend_minmax GL_EXT_blend_func_separate GL_EXT_blend_subtract GL_EXT_texture_env_add GL_EXT_fog_coord GL_EXT_multi_draw_arrays GL_EXT_secondary_color GL_EXT_shadow_funcs GL_EXT_stencil_wrap GL_EXT_texture_cube_map GL_EXT_texture_edge_clamp GL_EXT_texture_filter_anisotropic GL_EXT_texture_lod_bias GL_EXT_texture_object GL_EXT_texture3D GL_NV_texgen_reflection GL_EXT_texture_rectangle GL_ARB_texture_rectangle GL_SGIS_generate_mipmap GL_SGIS_texture_edge_clamp GL_ARB_shading_language_100 GL_ARB_shader_objects GL_ARB_vertex_shader GL_ARB_fragment_shader GL_EXT_texture_sRGB GL_EXT_framebuffer_blit GL_EXT_blend_equation_separate GL_CR_state_parameter GL_CR_cursor_position GL_CR_bounding_box GL_CR_print_string GL_CR_tilesort_info GL_CR_synchronization GL_CR_head_spu_name GL_CR_performance_info GL_CR_window_size GL_CR_tile_info GL_CR_saveframe GL_CR_readback_barrier_size GL_CR_server_id_sharing GL_CR_server_matrix 
+
+GL depth buffer: 24 bit
+Setting native video mode to 640, 480 - Fullscreen: 0  Aspect Ratio: 0.00
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+GL Version = 2.1 Chromium 1.9
+
+GL Vendor = Humper
+
+GL Renderer = Chromium
+
+GL Extensions = GL_EXT_texture_compression_s3tc GL_EXT_draw_range_elements GL_EXT_framebuffer_object GL_EXT_compiled_vertex_array GL_ARB_depth_texture GL_ARB_fragment_program GL_ARB_multisample GL_ARB_multitexture GL_ARB_occlusion_query GL_ARB_point_parameters GL_ARB_point_sprite GL_ARB_shadow GL_ARB_shadow_ambient GL_ARB_texture_border_clamp GL_ARB_texture_compression GL_ARB_texture_cube_map GL_ARB_texture_env_add GL_ARB_texture_env_combine GL_EXT_texture_env_combine GL_ARB_texture_env_crossbar GL_ARB_texture_env_dot3 GL_EXT_texture_env_dot3 GL_ARB_texture_mirrored_repeat GL_IBM_texture_mirrored_repeat GL_ATI_texture_mirror_once GL_ARB_texture_non_power_of_two GL_ARB_transpose_matrix GL_ARB_vertex_buffer_object GL_ARB_pixel_buffer_object GL_ARB_vertex_program GL_ARB_window_pos GL_EXT_blend_color GL_EXT_blend_minmax GL_EXT_blend_func_separate GL_EXT_blend_subtract GL_EXT_texture_env_add GL_EXT_fog_coord GL_EXT_multi_draw_arrays GL_EXT_secondary_color GL_EXT_shadow_funcs GL_EXT_stencil_wrap GL_EXT_texture_cube_map GL_EXT_texture_edge_clamp GL_EXT_texture_filter_anisotropic GL_EXT_texture_lod_bias GL_EXT_texture_object GL_EXT_texture3D GL_NV_texgen_reflection GL_EXT_texture_rectangle GL_ARB_texture_rectangle GL_SGIS_generate_mipmap GL_SGIS_texture_edge_clamp GL_ARB_shading_language_100 GL_ARB_shader_objects GL_ARB_vertex_shader GL_ARB_fragment_shader GL_EXT_texture_sRGB GL_EXT_framebuffer_blit GL_EXT_blend_equation_separate GL_CR_state_parameter GL_CR_cursor_position GL_CR_bounding_box GL_CR_print_string GL_CR_tilesort_info GL_CR_synchronization GL_CR_head_spu_name GL_CR_performance_info GL_CR_window_size GL_CR_tile_info GL_CR_saveframe GL_CR_readback_barrier_size GL_CR_server_id_sharing GL_CR_server_matrix 
+
+GL depth buffer: 24 bit
+Save path is 
+Initializing extensions
+Loading texture interface/test.bmp
+Clicked ImageTest entity at An entity
+ERROR: MeasureTextAndAddByLinesIntoDeque: Can't word wrap with boundsX being 0!
+LuaAnimation() 018FD858
+
+Loading texture start2.jpg
+LuaAnimation() 018FC7D0
+
+Loading texture place_ani.jpg
+LuaAnimation() 01903E80
+
+LuaAnimation() 018F3900
+
+LuaAnimation() 018FCB38
+
+LuaAnimation() 018F4F98
+
+LuaAnimation() 04C362F8
+
+LuaAnimation() 018E86C0
+
+LuaAnimation() 04C54070
+
+LuaAnimation() 04C990A8
+
+~LuaAnimation() 018FCB38
+
+~LuaAnimation() 018FD858
+
+Entering background
+Saving our stuff
+Entering foreground
+App shutting down from getting the X clicked
+Entering background
+Saving our stuff
+Saving our stuff
+Setting native video mode to 640, 480 - Fullscreen: 0  Aspect Ratio: 0.00
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+GL Version = 2.1 Chromium 1.9
+
+GL Vendor = Humper
+
+GL Renderer = Chromium
+
+GL Extensions = GL_EXT_texture_compression_s3tc GL_EXT_draw_range_elements GL_EXT_framebuffer_object GL_EXT_compiled_vertex_array GL_ARB_depth_texture GL_ARB_fragment_program GL_ARB_multisample GL_ARB_multitexture GL_ARB_occlusion_query GL_ARB_point_parameters GL_ARB_point_sprite GL_ARB_shadow GL_ARB_shadow_ambient GL_ARB_texture_border_clamp GL_ARB_texture_compression GL_ARB_texture_cube_map GL_ARB_texture_env_add GL_ARB_texture_env_combine GL_EXT_texture_env_combine GL_ARB_texture_env_crossbar GL_ARB_texture_env_dot3 GL_EXT_texture_env_dot3 GL_ARB_texture_mirrored_repeat GL_IBM_texture_mirrored_repeat GL_ATI_texture_mirror_once GL_ARB_texture_non_power_of_two GL_ARB_transpose_matrix GL_ARB_vertex_buffer_object GL_ARB_pixel_buffer_object GL_ARB_vertex_program GL_ARB_window_pos GL_EXT_blend_color GL_EXT_blend_minmax GL_EXT_blend_func_separate GL_EXT_blend_subtract GL_EXT_texture_env_add GL_EXT_fog_coord GL_EXT_multi_draw_arrays GL_EXT_secondary_color GL_EXT_shadow_funcs GL_EXT_stencil_wrap GL_EXT_texture_cube_map GL_EXT_texture_edge_clamp GL_EXT_texture_filter_anisotropic GL_EXT_texture_lod_bias GL_EXT_texture_object GL_EXT_texture3D GL_NV_texgen_reflection GL_EXT_texture_rectangle GL_ARB_texture_rectangle GL_SGIS_generate_mipmap GL_SGIS_texture_edge_clamp GL_ARB_shading_language_100 GL_ARB_shader_objects GL_ARB_vertex_shader GL_ARB_fragment_shader GL_EXT_texture_sRGB GL_EXT_framebuffer_blit GL_EXT_blend_equation_separate GL_CR_state_parameter GL_CR_cursor_position GL_CR_bounding_box GL_CR_print_string GL_CR_tilesort_info GL_CR_synchronization GL_CR_head_spu_name GL_CR_performance_info GL_CR_window_size GL_CR_tile_info GL_CR_saveframe GL_CR_readback_barrier_size GL_CR_server_id_sharing GL_CR_server_matrix 
+
+GL depth buffer: 24 bit
+Save path is 
+Initializing extensions
+Loading texture interface/test.bmp
+Clicked ImageTest entity at An entity
+ERROR: MeasureTextAndAddByLinesIntoDeque: Can't word wrap with boundsX being 0!
+LuaAnimation() 018DFB08
+
+Loading texture start2.jpg
+LuaAnimation() 018BD6B8
+
+Loading texture place_ani.jpg
+LuaAnimation() 018BC7E0
+
+LuaAnimation() 018C3F20
+
+LuaAnimation() 018B3900
+
+LuaAnimation() 018BCB38
+
+LuaAnimation() 018B5100
+
+LuaAnimation() 018B59B0
+
+LuaAnimation() 018A88E0
+
+LuaAnimation() 04A690B0
+
+~LuaAnimation() 018B3900
+
+~LuaAnimation() 018DFB08
+
+Setting native video mode to 640, 480 - Fullscreen: 0  Aspect Ratio: 0.00
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+GL Version = 2.1 Chromium 1.9
+
+GL Vendor = Humper
+
+GL Renderer = Chromium
+
+GL Extensions = GL_EXT_texture_compression_s3tc GL_EXT_draw_range_elements GL_EXT_framebuffer_object GL_EXT_compiled_vertex_array GL_ARB_depth_texture GL_ARB_fragment_program GL_ARB_multisample GL_ARB_multitexture GL_ARB_occlusion_query GL_ARB_point_parameters GL_ARB_point_sprite GL_ARB_shadow GL_ARB_shadow_ambient GL_ARB_texture_border_clamp GL_ARB_texture_compression GL_ARB_texture_cube_map GL_ARB_texture_env_add GL_ARB_texture_env_combine GL_EXT_texture_env_combine GL_ARB_texture_env_crossbar GL_ARB_texture_env_dot3 GL_EXT_texture_env_dot3 GL_ARB_texture_mirrored_repeat GL_IBM_texture_mirrored_repeat GL_ATI_texture_mirror_once GL_ARB_texture_non_power_of_two GL_ARB_transpose_matrix GL_ARB_vertex_buffer_object GL_ARB_pixel_buffer_object GL_ARB_vertex_program GL_ARB_window_pos GL_EXT_blend_color GL_EXT_blend_minmax GL_EXT_blend_func_separate GL_EXT_blend_subtract GL_EXT_texture_env_add GL_EXT_fog_coord GL_EXT_multi_draw_arrays GL_EXT_secondary_color GL_EXT_shadow_funcs GL_EXT_stencil_wrap GL_EXT_texture_cube_map GL_EXT_texture_edge_clamp GL_EXT_texture_filter_anisotropic GL_EXT_texture_lod_bias GL_EXT_texture_object GL_EXT_texture3D GL_NV_texgen_reflection GL_EXT_texture_rectangle GL_ARB_texture_rectangle GL_SGIS_generate_mipmap GL_SGIS_texture_edge_clamp GL_ARB_shading_language_100 GL_ARB_shader_objects GL_ARB_vertex_shader GL_ARB_fragment_shader GL_EXT_texture_sRGB GL_EXT_framebuffer_blit GL_EXT_blend_equation_separate GL_CR_state_parameter GL_CR_cursor_position GL_CR_bounding_box GL_CR_print_string GL_CR_tilesort_info GL_CR_synchronization GL_CR_head_spu_name GL_CR_performance_info GL_CR_window_size GL_CR_tile_info GL_CR_saveframe GL_CR_readback_barrier_size GL_CR_server_id_sharing GL_CR_server_matrix 
+
+GL depth buffer: 24 bit
+Save path is 
+Initializing extensions
+Loading texture interface/test.bmp
+Clicked ImageTest entity at An entity
+ERROR: MeasureTextAndAddByLinesIntoDeque: Can't word wrap with boundsX being 0!
+LuaAnimation() 018DFB10
+
+Loading texture start2.jpg
+LuaAnimation() 018BD6B8
+
+Loading texture place_ani.jpg
+LuaAnimation() 018BC7E0
+
+LuaAnimation() 018C3F28
+
+LuaAnimation() 018B3900
+
+LuaAnimation() 018BCB38
+
+LuaAnimation() 018B5100
+
+LuaAnimation() 018B59B0
+
+LuaAnimation() 018A88E0
+
+LuaAnimation() 04B990B0
+
+~LuaAnimation() 018B3900
+
+~LuaAnimation() 018DFB10
+
+LuaAnimation() 018B3900
+
+~LuaAnimation() 04B990B0
+
+Entering background
+Saving our stuff
+Entering foreground
+Loading texture doll/normal.jpg
+ERROR: Proton FileManager says can't open D:\dimalit\Desktop\dq\svn\ClassContainer\bin\doll/normal.jpg
+Couldn't load surface doll/normal.jpg
+ResourceManager::GetSurfaceResource: Unable to load doll/normal.jpg
+LuaAnimation() 04B36868
+
+LuaAnimation() 018DF9B8
+
+LuaAnimation() 018DFCA8
+
+LuaAnimation() 04B998B0
+
+LuaAnimation() 04B99BA0
+
+LuaAnimation() 04B99E90
+
+LuaAnimation() 04BCC8A0
+
+LuaAnimation() 04BC09C0
+
+LuaAnimation() 04BEDFC8
+
+LuaAnimation() 04BEE150
+
+LuaAnimation() 04BEE2D8
+
+App shutting down from getting the X clicked
+Entering background
+Saving our stuff
+Saving our stuff
+Setting native video mode to 640, 480 - Fullscreen: 0  Aspect Ratio: 0.00
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+GL Version = 2.1 Chromium 1.9
+
+GL Vendor = Humper
+
+GL Renderer = Chromium
+
+GL Extensions = GL_EXT_texture_compression_s3tc GL_EXT_draw_range_elements GL_EXT_framebuffer_object GL_EXT_compiled_vertex_array GL_ARB_depth_texture GL_ARB_fragment_program GL_ARB_multisample GL_ARB_multitexture GL_ARB_occlusion_query GL_ARB_point_parameters GL_ARB_point_sprite GL_ARB_shadow GL_ARB_shadow_ambient GL_ARB_texture_border_clamp GL_ARB_texture_compression GL_ARB_texture_cube_map GL_ARB_texture_env_add GL_ARB_texture_env_combine GL_EXT_texture_env_combine GL_ARB_texture_env_crossbar GL_ARB_texture_env_dot3 GL_EXT_texture_env_dot3 GL_ARB_texture_mirrored_repeat GL_IBM_texture_mirrored_repeat GL_ATI_texture_mirror_once GL_ARB_texture_non_power_of_two GL_ARB_transpose_matrix GL_ARB_vertex_buffer_object GL_ARB_pixel_buffer_object GL_ARB_vertex_program GL_ARB_window_pos GL_EXT_blend_color GL_EXT_blend_minmax GL_EXT_blend_func_separate GL_EXT_blend_subtract GL_EXT_texture_env_add GL_EXT_fog_coord GL_EXT_multi_draw_arrays GL_EXT_secondary_color GL_EXT_shadow_funcs GL_EXT_stencil_wrap GL_EXT_texture_cube_map GL_EXT_texture_edge_clamp GL_EXT_texture_filter_anisotropic GL_EXT_texture_lod_bias GL_EXT_texture_object GL_EXT_texture3D GL_NV_texgen_reflection GL_EXT_texture_rectangle GL_ARB_texture_rectangle GL_SGIS_generate_mipmap GL_SGIS_texture_edge_clamp GL_ARB_shading_language_100 GL_ARB_shader_objects GL_ARB_vertex_shader GL_ARB_fragment_shader GL_EXT_texture_sRGB GL_EXT_framebuffer_blit GL_EXT_blend_equation_separate GL_CR_state_parameter GL_CR_cursor_position GL_CR_bounding_box GL_CR_print_string GL_CR_tilesort_info GL_CR_synchronization GL_CR_head_spu_name GL_CR_performance_info GL_CR_window_size GL_CR_tile_info GL_CR_saveframe GL_CR_readback_barrier_size GL_CR_server_id_sharing GL_CR_server_matrix 
+
+GL depth buffer: 24 bit
+Save path is 
+Initializing extensions
+Loading texture interface/test.bmp
+Clicked ImageTest entity at An entity
+ERROR: MeasureTextAndAddByLinesIntoDeque: Can't word wrap with boundsX being 0!
+Loading texture doll/normal.jpg
+ERROR: Proton FileManager says can't open D:\dimalit\Desktop\dq\svn\ClassContainer\bin\doll/normal.jpg
+Couldn't load surface doll/normal.jpg
+ResourceManager::GetSurfaceResource: Unable to load doll/normal.jpg
+LuaAnimation() 018DFB10
+
+Loading texture place_ani.jpg
+LuaAnimation() 04A36708
+
+LuaAnimation() 04A3B360
+
+LuaAnimation() 04A3B5C0
+
+LuaAnimation() 04A3C020
+
+LuaAnimation() 04A5A8C0
+
+LuaAnimation() 04A65A30
+
+LuaAnimation() 018A87A0
+
+LuaAnimation() 04A85040
+
+LuaAnimation() 04A956C0
+
+LuaAnimation() 04AA0430
+
+Loading texture start2.jpg
+~LuaAnimation() 04A3C020
+
+~LuaAnimation() 04AA0430
+
+App shutting down from getting the X clicked
+Entering background
+Saving our stuff
+Saving our stuff
+Setting native video mode to 640, 480 - Fullscreen: 0  Aspect Ratio: 0.00
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+GL Version = 2.1 Chromium 1.9
+
+GL Vendor = Humper
+
+GL Renderer = Chromium
+
+GL Extensions = GL_EXT_texture_compression_s3tc GL_EXT_draw_range_elements GL_EXT_framebuffer_object GL_EXT_compiled_vertex_array GL_ARB_depth_texture GL_ARB_fragment_program GL_ARB_multisample GL_ARB_multitexture GL_ARB_occlusion_query GL_ARB_point_parameters GL_ARB_point_sprite GL_ARB_shadow GL_ARB_shadow_ambient GL_ARB_texture_border_clamp GL_ARB_texture_compression GL_ARB_texture_cube_map GL_ARB_texture_env_add GL_ARB_texture_env_combine GL_EXT_texture_env_combine GL_ARB_texture_env_crossbar GL_ARB_texture_env_dot3 GL_EXT_texture_env_dot3 GL_ARB_texture_mirrored_repeat GL_IBM_texture_mirrored_repeat GL_ATI_texture_mirror_once GL_ARB_texture_non_power_of_two GL_ARB_transpose_matrix GL_ARB_vertex_buffer_object GL_ARB_pixel_buffer_object GL_ARB_vertex_program GL_ARB_window_pos GL_EXT_blend_color GL_EXT_blend_minmax GL_EXT_blend_func_separate GL_EXT_blend_subtract GL_EXT_texture_env_add GL_EXT_fog_coord GL_EXT_multi_draw_arrays GL_EXT_secondary_color GL_EXT_shadow_funcs GL_EXT_stencil_wrap GL_EXT_texture_cube_map GL_EXT_texture_edge_clamp GL_EXT_texture_filter_anisotropic GL_EXT_texture_lod_bias GL_EXT_texture_object GL_EXT_texture3D GL_NV_texgen_reflection GL_EXT_texture_rectangle GL_ARB_texture_rectangle GL_SGIS_generate_mipmap GL_SGIS_texture_edge_clamp GL_ARB_shading_language_100 GL_ARB_shader_objects GL_ARB_vertex_shader GL_ARB_fragment_shader GL_EXT_texture_sRGB GL_EXT_framebuffer_blit GL_EXT_blend_equation_separate GL_CR_state_parameter GL_CR_cursor_position GL_CR_bounding_box GL_CR_print_string GL_CR_tilesort_info GL_CR_synchronization GL_CR_head_spu_name GL_CR_performance_info GL_CR_window_size GL_CR_tile_info GL_CR_saveframe GL_CR_readback_barrier_size GL_CR_server_id_sharing GL_CR_server_matrix 
+
+GL depth buffer: 24 bit
+Save path is 
+Initializing extensions
+Loading texture interface/test.bmp
+Clicked ImageTest entity at An entity
+ERROR: MeasureTextAndAddByLinesIntoDeque: Can't word wrap with boundsX being 0!
+LuaAnimation() 04AA77F8
+
+Loading texture start2.jpg
+LuaAnimation() 018B4F98
+
+Loading texture place_ani.jpg
+LuaAnimation() 018BD828
+
+LuaAnimation() 018B08D0
+
+LuaAnimation() 0189DF30
+
+LuaAnimation() 018B7730
+
+LuaAnimation() 018BCE10
+
+LuaAnimation() 018A87A0
+
+LuaAnimation() 04ADC148
+
+LuaAnimation() 04ADC3A8
+
+~LuaAnimation() 0189DF30
+
+~LuaAnimation() 04AA77F8
+
+LuaAnimation() 0189DF30
+
+~LuaAnimation() 04ADC3A8
+
+Loading texture doll/normal.jpg
+ERROR: Proton FileManager says can't open D:\dimalit\Desktop\dq\svn\ClassContainer\bin\doll/normal.jpg
+Couldn't load surface doll/normal.jpg
+ResourceManager::GetSurfaceResource: Unable to load doll/normal.jpg
+LuaAnimation() 018DFDE8
+
+LuaAnimation() 018AF210
+
+LuaAnimation() 04AA77F8
+
+LuaAnimation() 04ABBA58
+
+LuaAnimation() 04ADC2C8
+
+LuaAnimation() 04B15CE8
+
+LuaAnimation() 04ADC848
+
+LuaAnimation() 04B1C368
+
+LuaAnimation() 04B3E020
+
+LuaAnimation() 04B3E1A8
+
+LuaAnimation() 04B3E330
+
+~LuaAnimation() 04ADC2C8
+
+~LuaAnimation() 0189DF30
+
+Entering background
+Saving our stuff
+Entering foreground
+Entering background
+Saving our stuff
+Entering foreground
+Entering background
+Saving our stuff
+Entering foreground
+App shutting down from getting the X clicked
+Entering background
+Saving our stuff
+Saving our stuff
+Setting native video mode to 640, 480 - Fullscreen: 0  Aspect Ratio: 0.00
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+GL Version = 2.1 Chromium 1.9
+
+GL Vendor = Humper
+
+GL Renderer = Chromium
+
+GL Extensions = GL_EXT_texture_compression_s3tc GL_EXT_draw_range_elements GL_EXT_framebuffer_object GL_EXT_compiled_vertex_array GL_ARB_depth_texture GL_ARB_fragment_program GL_ARB_multisample GL_ARB_multitexture GL_ARB_occlusion_query GL_ARB_point_parameters GL_ARB_point_sprite GL_ARB_shadow GL_ARB_shadow_ambient GL_ARB_texture_border_clamp GL_ARB_texture_compression GL_ARB_texture_cube_map GL_ARB_texture_env_add GL_ARB_texture_env_combine GL_EXT_texture_env_combine GL_ARB_texture_env_crossbar GL_ARB_texture_env_dot3 GL_EXT_texture_env_dot3 GL_ARB_texture_mirrored_repeat GL_IBM_texture_mirrored_repeat GL_ATI_texture_mirror_once GL_ARB_texture_non_power_of_two GL_ARB_transpose_matrix GL_ARB_vertex_buffer_object GL_ARB_pixel_buffer_object GL_ARB_vertex_program GL_ARB_window_pos GL_EXT_blend_color GL_EXT_blend_minmax GL_EXT_blend_func_separate GL_EXT_blend_subtract GL_EXT_texture_env_add GL_EXT_fog_coord GL_EXT_multi_draw_arrays GL_EXT_secondary_color GL_EXT_shadow_funcs GL_EXT_stencil_wrap GL_EXT_texture_cube_map GL_EXT_texture_edge_clamp GL_EXT_texture_filter_anisotropic GL_EXT_texture_lod_bias GL_EXT_texture_object GL_EXT_texture3D GL_NV_texgen_reflection GL_EXT_texture_rectangle GL_ARB_texture_rectangle GL_SGIS_generate_mipmap GL_SGIS_texture_edge_clamp GL_ARB_shading_language_100 GL_ARB_shader_objects GL_ARB_vertex_shader GL_ARB_fragment_shader GL_EXT_texture_sRGB GL_EXT_framebuffer_blit GL_EXT_blend_equation_separate GL_CR_state_parameter GL_CR_cursor_position GL_CR_bounding_box GL_CR_print_string GL_CR_tilesort_info GL_CR_synchronization GL_CR_head_spu_name GL_CR_performance_info GL_CR_window_size GL_CR_tile_info GL_CR_saveframe GL_CR_readback_barrier_size GL_CR_server_id_sharing GL_CR_server_matrix 
+
+GL depth buffer: 24 bit
+Save path is 
+Initializing extensions
+Loading texture interface/test.bmp
+Clicked ImageTest entity at An entity
+ERROR: MeasureTextAndAddByLinesIntoDeque: Can't word wrap with boundsX being 0!
+LuaAnimation() 04B1F860
+
+Loading texture start2.jpg
+Entering background
+Saving our stuff
+App minimized.
+App maximized
+LuaAnimation() 018EFBD0
+
+Loading texture place_ani.jpg
+LuaAnimation() 018C08D0
+
+LuaAnimation() 018C5108
+
+LuaAnimation() 018C3790
+
+LuaAnimation() 018C78A0
+
+LuaAnimation() 018D3F28
+
+LuaAnimation() 018C5950
+
+LuaAnimation() 04B74CB0
+
+LuaAnimation() 04B82A20
+
+~LuaAnimation() 018C3790
+
+~LuaAnimation() 04B1F860
+
+LuaAnimation() 018B8970
+
+~LuaAnimation() 04B82A20
+
+Loading texture doll/normal.jpg
+ERROR: Proton FileManager says can't open D:\dimalit\Desktop\dq\svn\ClassContainer\bin\doll/normal.jpg
+Couldn't load surface doll/normal.jpg
+ResourceManager::GetSurfaceResource: Unable to load doll/normal.jpg
+LuaAnimation() 018BF210
+
+LuaAnimation() 018C3790
+
+LuaAnimation() 04B1F9D0
+
+LuaAnimation() 04B96B30
+
+LuaAnimation() 04B83220
+
+LuaAnimation() 04BAEE50
+
+LuaAnimation() 04B83680
+
+LuaAnimation() 04BAACA0
+
+LuaAnimation() 04BD9300
+
+LuaAnimation() 04BD9488
+
+LuaAnimation() 04BD9610
+
+~LuaAnimation() 04B83220
+
+~LuaAnimation() 018B8970
+
+App shutting down from getting the X clicked
+Saving our stuff
+Saving our stuff
+Setting native video mode to 640, 480 - Fullscreen: 0  Aspect Ratio: 0.00
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+Setting screen info to 640, 480, mode 1.  Original is 640, 480
+GL Version = 2.1 Chromium 1.9
+
+GL Vendor = Humper
+
+GL Renderer = Chromium
+
+GL Extensions = GL_EXT_texture_compression_s3tc GL_EXT_draw_range_elements GL_EXT_framebuffer_object GL_EXT_compiled_vertex_array GL_ARB_depth_texture GL_ARB_fragment_program GL_ARB_multisample GL_ARB_multitexture GL_ARB_occlusion_query GL_ARB_point_parameters GL_ARB_point_sprite GL_ARB_shadow GL_ARB_shadow_ambient GL_ARB_texture_border_clamp GL_ARB_texture_compression GL_ARB_texture_cube_map GL_ARB_texture_env_add GL_ARB_texture_env_combine GL_EXT_texture_env_combine GL_ARB_texture_env_crossbar GL_ARB_texture_env_dot3 GL_EXT_texture_env_dot3 GL_ARB_texture_mirrored_repeat GL_IBM_texture_mirrored_repeat GL_ATI_texture_mirror_once GL_ARB_texture_non_power_of_two GL_ARB_transpose_matrix GL_ARB_vertex_buffer_object GL_ARB_pixel_buffer_object GL_ARB_vertex_program GL_ARB_window_pos GL_EXT_blend_color GL_EXT_blend_minmax GL_EXT_blend_func_separate GL_EXT_blend_subtract GL_EXT_texture_env_add GL_EXT_fog_coord GL_EXT_multi_draw_arrays GL_EXT_secondary_color GL_EXT_shadow_funcs GL_EXT_stencil_wrap GL_EXT_texture_cube_map GL_EXT_texture_edge_clamp GL_EXT_texture_filter_anisotropic GL_EXT_texture_lod_bias GL_EXT_texture_object GL_EXT_texture3D GL_NV_texgen_reflection GL_EXT_texture_rectangle GL_ARB_texture_rectangle GL_SGIS_generate_mipmap GL_SGIS_texture_edge_clamp GL_ARB_shading_language_100 GL_ARB_shader_objects GL_ARB_vertex_shader GL_ARB_fragment_shader GL_EXT_texture_sRGB GL_EXT_framebuffer_blit GL_EXT_blend_equation_separate GL_CR_state_parameter GL_CR_cursor_position GL_CR_bounding_box GL_CR_print_string GL_CR_tilesort_info GL_CR_synchronization GL_CR_head_spu_name GL_CR_performance_info GL_CR_window_size GL_CR_tile_info GL_CR_saveframe GL_CR_readback_barrier_size GL_CR_server_id_sharing GL_CR_server_matrix 
+
+GL depth buffer: 24 bit
+Save path is 
+Initializing extensions
+Loading texture interface/test.bmp
+Clicked ImageTest entity at An entity
+ERROR: MeasureTextAndAddByLinesIntoDeque: Can't word wrap with boundsX being 0!
+LuaAnimation() 04BB79A0
+
+Loading texture start2.jpg
+~LuaAnimation() 04BB79A0
+
+LuaAnimation() 04B964F8
+
+Loading texture place_ani.jpg
+LuaAnimation() 018CC670
+
+LuaAnimation() 018C0A40
+
+LuaAnimation() 018ADDC0
+
+LuaAnimation() 018C3900
+
+LuaAnimation() 018CCCA0
+
+LuaAnimation() 04BA3890
+
+LuaAnimation() 018B88E0
+
+LuaAnimation() 04BF50F0
+
+~LuaAnimation() 018ADDC0
+
+~LuaAnimation() 04B964F8
+
+~LuaAnimation() 018CC670
+
+~LuaAnimation() 018C0A40
+
+~LuaAnimation() 018C3900
+
+~LuaAnimation() 018CCCA0
+
+~LuaAnimation() 04BA3890
+
+~LuaAnimation() 018B88E0
+
+~LuaAnimation() 04BF50F0
+
+LuaAnimation() 018CC670
+
+~LuaAnimation() 018CC670
+
+Loading texture doll/normal.jpg
+ERROR: Proton FileManager says can't open D:\dimalit\Desktop\dq\svn\ClassContainer\bin\doll/normal.jpg
+Couldn't load surface doll/normal.jpg
+ResourceManager::GetSurfaceResource: Unable to load doll/normal.jpg
+LuaAnimation() 018CC670
+
+LuaAnimation() 018EFBD8
+
+LuaAnimation() 04BA3890
+
+LuaAnimation() 018BF2F0
+
+LuaAnimation() 04B964F8
+
+LuaAnimation() 04B93868
+
+LuaAnimation() 018B8940
+
+LuaAnimation() 018D41A8
+
+LuaAnimation() 018ADF00
+
+LuaAnimation() 04C27C10
+
+LuaAnimation() 04C283E0
+
+~LuaAnimation() 04B964F8
+
+~LuaAnimation() 018CC670
+
+~LuaAnimation() 018EFBD8
+
+~LuaAnimation() 04BA3890
+
+~LuaAnimation() 018BF2F0
+
+~LuaAnimation() 04B93868
+
+~LuaAnimation() 018B8940
+
+~LuaAnimation() 018D41A8
+
+~LuaAnimation() 018ADF00
+
+~LuaAnimation() 04C27C10
+
+~LuaAnimation() 04C283E0
+
+LuaAnimation() 04C27C10
+
+~LuaAnimation() 04C27C10
+
+App shutting down from getting the X clicked
+Entering background
+Saving our stuff
+Saving our stuff

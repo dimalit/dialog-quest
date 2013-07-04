@@ -79,6 +79,12 @@ Entity * ImageTestMenuCreate(Entity *pParentEnt)
 	//a->setLoop(1);
 	//a->play();
 
+	luaL_dostring(
+	L,
+	"local lt_si = ScreenItem(100,100)\n"
+	"lt_si.view = TextBox(\"Long long text\", 300, 300, 0)\n"
+	);
+
 	if(luaL_dofile(L, "test_mosaic.lua") != 0){
 		LogMsg( "%s\n", lua_tostring(L,-1) );
 		return false;
