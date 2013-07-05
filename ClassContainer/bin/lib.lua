@@ -141,6 +141,18 @@ TextItem = function(x, y, text, font)
   return self
 end
 
+TextBoxItem = function(x, y, w, h, text)
+  local item = ScreenItem(x, y)
+  local txt
+  txt = TextBox(text, w, h, 0)
+
+  local self = {}
+  setmetatable(self, inherit(item, txt))
+  self.item = item
+  self.view = txt
+  return self
+end
+
 -- make playing animation item
 AnimatedItem = function(x, y, name)
   local item = ScreenItem(x, y)

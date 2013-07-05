@@ -140,14 +140,14 @@ void App::OnExitApp(VariantList *pVarList)
 }
 
 int lua_error_handler(lua_State* L){
-	std::cerr << lua_tostring(L, -1) << std::endl;
+	std::cout << lua_tostring(L, -1) << std::endl;
 	lua_pop(L, 1);
 
 	luaL_dostring(L, "print(debug.traceback(\"\", 4))");
 
 	lua_Debug d;
 	lua_getinfo(L, "Sln", &d);
-	std::cerr << d.short_src << ":" << d.currentline;
+	std::cout << d.short_src << ":" << d.currentline;
 	return -1;
 }
 
@@ -279,12 +279,6 @@ void App::Kill()
 void App::Update()
 {
 	BaseApp::Update();
-
-	luaL_dostring(
-	L,
-	"si.x+=1\n"
-	"si.y+=1\n"
-	);
 
 	if (!m_bDidPostInit)
 	{

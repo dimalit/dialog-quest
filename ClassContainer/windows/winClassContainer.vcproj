@@ -6001,10 +6001,6 @@
 				</File>
 			</Filter>
 		</Filter>
-		<File
-			RelativePath="..\bin\lib.lua"
-			>
-		</File>
 	</Files>
 	<Globals>
 	</Globals>

@@ -54,9 +54,10 @@ Entity * ImageTestMenuCreate(Entity *pParentEnt)
 	//);
 
 	//ScreenItem* si;
-	//Text *p = new Text("Hello!");
-	//si = new ScreenItem(100,100);
+	//TextBox *p = new TextBox("Programmed!", 50, 50, ALIGNMENT_UPPER_LEFT);
+	//si = new ScreenItem(300,300);
 	//si->setView(p);
+	//Layers::root_visual()->entity->PrintTreeAsText();
 
 	//luaL_dostring(
 	//L,
@@ -79,11 +80,11 @@ Entity * ImageTestMenuCreate(Entity *pParentEnt)
 	//a->setLoop(1);
 	//a->play();
 
-	luaL_dostring(
-	L,
-	"local lt_si = ScreenItem(100,100)\n"
-	"lt_si.view = TextBox(\"Long long text\", 300, 300, 0)\n"
-	);
+	//luaL_dostring(
+	//L,
+	//"local lt_si = ScreenItem(100,100)\n"
+	//"lt_si.view = TextBox(\"Long long text\", 300, 300, 0)\n"
+	//);
 
 	if(luaL_dofile(L, "test_mosaic.lua") != 0){
 		LogMsg( "%s\n", lua_tostring(L,-1) );
