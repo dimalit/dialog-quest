@@ -196,8 +196,12 @@ function MakeMover(self)
     t:restart(0)      
     self:onFrame(dt)
   end)
-  self.start = function(self) self.timer:start() end
+  self.start = function(self)
+	self.flying = true
+	self.timer:start()
+  end
   self.stop  = function(self)
+	self.flying = false
 --    self.onFrame = nil
     if self.timer then self.timer:cancel() end
 --    self.timer = nil
@@ -319,14 +323,14 @@ function Mover(x, y, view)
   local drop = nil
 
   item.onFrame = function(dummy, dt)
-    --print(self.x, self.y, self.ox, self.oy, dt)
-    local norm = dist(ox, oy, item.x, item.y)
-    if norm > self.prev_norm then	-- if passed over!
-      item.x = ox; item.y = oy
+--    print(self.x, self.y, self.ox, self.oy, dt)
+    local norm = dist(self.ox, self.oy, self.x, self.y)
+    if norm > self.prev_norm or norm < 50 then	-- if passed over!
+      self.x = self.ox; self.y = self.oy
       item:stop()
     else
-      local dx = (ox - self.x) / norm * 2000 * dt
-      local dy = (oy - self.y) / norm * 2000 * dt
+      local dx = self.vx * dt
+      local dy = self.vy * dt
       item:move(dx, dy)
     end
 	self.prev_norm = norm
@@ -338,6 +342,7 @@ function Mover(x, y, view)
   self.onDrag = empty
 
   item.onDragStart = function(dummy)
+	if self.flying then return end
     ox=item.x oy=item.y
     if self.onDragStart then self:onDragStart() end
   end
@@ -351,6 +356,9 @@ function Mover(x, y, view)
 
   self.goHome = function(self)
     self.prev_norm = 1e+9
+	local norm = dist(self.ox, self.oy, self.x, self.y)
+	self.vx = (self.ox - self.x) / norm * 2000
+    self.vy = (self.oy - self.y) / norm * 2000
     item:start()
   end -- goHome
 

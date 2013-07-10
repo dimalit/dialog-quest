@@ -106,12 +106,12 @@ Entity * ImageTestMenuCreate(Entity *pParentEnt)
 	//"d = DropArea(200, 200, TwoStateAnimation(Animation(load_config(\"DropArea.anim\"))))"
 	//);
 
-	pBG = Layers::get_layer(0)->entity;
-	Entity *pButtonEntity;
-	pButtonEntity = CreateTextButtonEntity(pBG, "Back", 240, 290, "Back"); 
-	pButtonEntity->GetShared()->GetFunction("OnButtonSelected")->sig_function.connect(&ImageTestOnSelect);
-	pButtonEntity->GetVar("alignment")->Set(uint32(ALIGNMENT_CENTER));
-	AddHotKeyToButton(pButtonEntity, VIRTUAL_KEY_BACK); //for android's back button, or escape key in windows
+	//pBG = Layers::get_layer(0)->entity;
+	//Entity *pButtonEntity;
+	//pButtonEntity = CreateTextButtonEntity(pBG, "Back", 240, 290, "Back"); 
+	//pButtonEntity->GetShared()->GetFunction("OnButtonSelected")->sig_function.connect(&ImageTestOnSelect);
+	//pButtonEntity->GetVar("alignment")->Set(uint32(ALIGNMENT_CENTER));
+	//AddHotKeyToButton(pButtonEntity, VIRTUAL_KEY_BACK); //for android's back button, or escape key in windows
 	return pBG;
 }
 

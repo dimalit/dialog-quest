@@ -161,7 +161,7 @@ bool App::Init()
 	SetDefaultButtonStyle(Button2DComponent::BUTTON_STYLE_CLICK_ON_TOUCH_RELEASE);
 	//SetManualRotationMode(true); //commented out, so iOS will handle rotations, plays better with 3rd party libs and looks cool
 
-    bool bScaleScreenActive = true; //if true, we'll stretch every screen to the coords below
+    bool bScaleScreenActive = false; //!!! if true, we'll stretch every screen to the coords below
     int scaleToX = 480;
 	int scaleToY = 320;
     
@@ -288,8 +288,8 @@ void App::Update()
 		//build a dummy entity called "GUI" to put our GUI menu entities under
 		Entity *pGUIEnt = GetEntityRoot()->AddEntity(new Entity("GUI"));
 		// TODO: Where should I put initialization: here or App:Init?
-		MainMenuCreate(pGUIEnt);
-		//ImageTestMenuCreate(pGUIEnt);
+		//MainMenuCreate(pGUIEnt);
+		ImageTestMenuCreate(pGUIEnt);
 	}
     
 }
