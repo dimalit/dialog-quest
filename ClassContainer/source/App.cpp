@@ -253,6 +253,8 @@ else
 	LuaText::luabind(L);
 	LuaTextBox::luabind(L);
 	LuaScreenItem::luabind(L);
+	LuaSimpleItem::luabind(L);
+	LuaCompositeItem::luabind(L);
 	LuaTimer::luabind(L, "Timer");	// TODO: Why name?
 
 	if(luaL_dofile(L, "lib.lua") != 0){

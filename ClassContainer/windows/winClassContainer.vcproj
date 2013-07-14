@@ -5929,10 +5929,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\trunk\dq_project\Visual.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\trunk\dq_project\WantFrameUpdate.cpp"
 				>
 			</File>
@@ -5989,10 +5985,6 @@
 				</File>
 				<File
 					RelativePath="..\..\trunk\dq_project\UserInputDispatcher.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\trunk\dq_project\Visual.h"
 					>
 				</File>
 				<File

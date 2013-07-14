@@ -116,7 +116,7 @@ end
 ------------- ..Items ----------------
 
 ImageItem = function(x, y, path)
-  local item = ScreenItem(x, y)
+  local item = SimpleItem(x, y)
   local image = Image(path)
   local self = {}
   setmetatable(self, inherit(item, image))
@@ -126,7 +126,7 @@ ImageItem = function(x, y, path)
 end
 
 TextItem = function(x, y, text, font)
-  local item = ScreenItem(x, y)
+  local item = SimpleItem(x, y)
   local txt
 --  if font ~= nil then
 --    txt = Text(text, font)
@@ -142,7 +142,7 @@ TextItem = function(x, y, text, font)
 end
 
 TextBoxItem = function(x, y, w, h, text)
-  local item = ScreenItem(x, y)
+  local item = SimpleItem(x, y)
   local txt
   txt = TextBox(text, w, h, 0)
 
@@ -155,7 +155,7 @@ end
 
 -- make playing animation item
 AnimatedItem = function(x, y, name)
-  local item = ScreenItem(x, y)
+  local item = SimpleItem(x, y)
   local anim = Animation(load_config(name))
  
   local self = {}
@@ -229,7 +229,7 @@ function TwoStateAnimation(anim)
 end
 
 function DropArea(x, y, view)
-  local item = ScreenItem(x, y)
+  local item = SimpleItem(x, y)
   item.view = view
 
   local intersects = function(dummy, r)
@@ -310,7 +310,7 @@ function Mover(x, y, view)
   if x == nil then x = 0 end
   if y == nil then y = 0 end
 
-  local item = MakeMover(ScreenItem(x, y))    -- put it into closure!
+  local item = MakeMover(SimpleItem(x, y))    -- put it into closure!
   item.view = view
 
   local self = {
@@ -369,7 +369,7 @@ end -- Mover
 
 ------------- button ------------------
 Button = function(x, y, view)
-  local item = ScreenItem(x, y)
+  local item = SimpleItem(x, y)
   local self = {}
   setmetatable(self, inherit(item, view))
   self.view = view
