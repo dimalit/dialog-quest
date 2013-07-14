@@ -5897,10 +5897,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\trunk\dq_project\lua_layers.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\trunk\dq_project\lua_lib.cpp"
 				>
 			</File>
@@ -5945,10 +5941,6 @@
 				</File>
 				<File
 					RelativePath="..\..\trunk\dq_project\Image.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\trunk\dq_project\lua_layers.h"
 					>
 				</File>
 				<File

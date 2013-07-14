@@ -19,7 +19,7 @@
 #include "Text.h"
 #include "LuaScreenItem.h"
 #include "LuaTimer.h"
-#include "lua_layers.h"
+//#include "lua_layers.h"
 #include "lua_lib.h"
 
 #include <stdio.h>
@@ -247,7 +247,7 @@ else
 	this->m_sig_update.connect(1, &gc_on_update);
 
 	Lualib::luabind(L);
-	Layers::luabind(L);
+//	Layers::luabind(L);
 	LuaImage::luabind(L);
 	LuaAnimation::luabind(L);
 	LuaText::luabind(L);

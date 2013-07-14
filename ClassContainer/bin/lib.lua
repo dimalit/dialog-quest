@@ -420,5 +420,5 @@ function getupvalues(f)
 end
 
 ----------- initialization ------------
-add_layer("default")
+--add_layer("default")
 dofile("scene.lua")
