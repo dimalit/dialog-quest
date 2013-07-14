@@ -176,8 +176,6 @@ public:
 		// TODO: What should we do here with our children? They will have inexisting parent!
 	}
 private:
-	std::set<ScreenItem*> children;
-
 	void addChild(ScreenItem* w){
 		assert(w && children.count(w)==0);
 		entity->AddEntity(w->entity);
@@ -188,6 +186,8 @@ private:
 		entity->RemoveEntityByAddress(w->entity, false);	// don't delete entity
 		children.erase(w);
 	}
+
+	std::set<ScreenItem*> children;
 };
 
 // TODO: inheritance of CharInputObject should be in ScreenItem!
