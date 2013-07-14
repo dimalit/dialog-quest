@@ -27,6 +27,17 @@ luabind::object random_permutation(int n){
 	return o;
 }
 
+//CompositeItem* root_item(){
+//	static CompositeItem* root	= 0;
+//	if(!root){
+//		root = new CompositeItem();
+//		Entity* e = new Entity("root");
+//		AddFocusIfNeeded(e);
+//		root->acquireEntity(e);
+//	}
+//	return root;
+//}
+
 namespace Lualib{
 	void luabind(lua_State* L){
 
@@ -41,5 +52,6 @@ namespace Lualib{
 		// TODO what about screen rotation?
 		luabind::globals(L)["screen_width"] = GetScreenSizeX();
 		luabind::globals(L)["screen_height"] = GetScreenSizeY();
+//		luabind::globals(L)["root"] = root_item();
 	}
 }
