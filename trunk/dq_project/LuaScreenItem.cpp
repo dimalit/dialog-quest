@@ -1,17 +1,37 @@
 #include "PlatformPrecomp.h"
+
 #include "LuaScreenItem.h"
+#include "lua_lib.h"
 #include "Image.h"
 #include <luabind/operator.hpp>
 #include <luabind/object.hpp>
 #include <luabind/adopt_policy.hpp>
 #include <luabind/dependency_policy.hpp>
 
+LuaCompositeItem* root_item(){
+	static LuaCompositeItem* root = 0;
+	if(!root){
+		root = new LuaCompositeItem();
+		Entity* e = new Entity("root");
+		AddFocusIfNeeded(e);
+		root->acquireEntity(e);
+	}
+	return root;
+}
+
+LuaSimpleItem::LuaSimpleItem(float x, float y): SimpleItem(x, y), LuaScreenItem(NULL){
+	this->setParent(root_item());
+}
+LuaSimpleItem::LuaSimpleItem(): SimpleItem(){
+	this->setParent(root_item());
+}
+
 void LuaScreenItem::luabind(lua_State* L){
 	luabind::module(L) [
 	luabind::class_<LuaScreenItem>("ScreenItem")
 	.def(luabind::constructor<CompositeItem*>())
 	.def(luabind::constructor<>())
-	//.def(luabind::constructor<luabind::object>())
+	.property("parent", &LuaScreenItem::getParent, &LuaScreenItem::setParent)
 	];
 }
 
@@ -21,6 +41,8 @@ void LuaCompositeItem::luabind(lua_State* L){
 	.def(luabind::constructor<CompositeItem*>())
 	.def(luabind::constructor<>())
 	];
+
+	luabind::globals(L)["root"] = root_item();
 }
 
 void LuaSimpleItem::luabind(lua_State* L){

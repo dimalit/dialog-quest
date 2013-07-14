@@ -16,7 +16,7 @@ private:
 
 class LuaCompositeItem: public CompositeItem, public LuaScreenItem{
 public:
-	LuaCompositeItem(CompositeItem* parent = 0):CompositeItem(parent), LuaScreenItem(NULL){}
+	LuaCompositeItem(CompositeItem* parent = 0):CompositeItem(parent), LuaScreenItem(parent){}
 	static void luabind(lua_State* L);
 
 private:
@@ -31,8 +31,8 @@ class LuaSimpleItem: public SimpleItem, public LuaScreenItem
 public:
 	// need to be public for luabind
 	bool operator == (LuaSimpleItem&){return false;}
-	LuaSimpleItem(float x, float y): SimpleItem(x, y), LuaScreenItem(NULL){}
-	LuaSimpleItem(): SimpleItem(){}
+	LuaSimpleItem(float x, float y);
+	LuaSimpleItem();
 	~LuaSimpleItem(){
 	}
 	static void luabind(lua_State* L);
