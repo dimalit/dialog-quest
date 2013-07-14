@@ -52,7 +52,7 @@ private:
 		onChar_cb = luabind::object();
 		onFocusLose_cb = luabind::object();
 
-//		visible = false;
+		this->setView(NULL);			// remove render component
 	}
 
 	virtual void onDrag(float dx, float dy){

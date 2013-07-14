@@ -95,7 +95,7 @@ void UserInputDispatcher::onMouseDown(int btn, input_state state){
 		if(d){
 			d->onDragStart();
 			drag_objects.insert(d);
-			std::cout << "added " << d << " to drags\n";
+//			std::cout << "added " << d << " to drags\n";
 		}
 	}// for over_objects
 }
@@ -113,7 +113,7 @@ void UserInputDispatcher::onMouseUp(int btn, input_state state){
 		(*i)->onDragEnd();
 	}
 	drag_objects.clear();
-	std::cout << "removed all drags\n";
+//	std::cout << "removed all drags\n";
 }
 
 void UserInputDispatcher::onDbClick(input_state state){
