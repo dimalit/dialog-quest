@@ -168,7 +168,7 @@ protected:
 	}
 };
 
-class CompositeItem: public ScreenItem{
+class CompositeItem: virtual public ScreenItem{
 	friend class ScreenItem;
 public:
 	CompositeItem(CompositeItem* parent = 0):ScreenItem(parent){}
@@ -191,7 +191,7 @@ private:
 };
 
 // TODO: inheritance of CharInputObject should be in ScreenItem!
-class SimpleItem: public ScreenItem
+class SimpleItem: virtual public ScreenItem
 {
 public:
 	static CompositeItem* getGlobalParent(){return global_parent;}

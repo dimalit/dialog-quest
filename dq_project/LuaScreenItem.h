@@ -2,17 +2,38 @@
 #include "ScreenItem.h"
 #include "App.h"
 #include <luabind/luabind.hpp>
+#include <cassert>
+
+class LuaScreenItem: virtual public ScreenItem{
+public:
+	LuaScreenItem(CompositeItem* parent = 0):ScreenItem(parent){}
+	static void luabind(lua_State* L);
+
+private:
+	LuaScreenItem(const LuaScreenItem&){assert(false);}
+	LuaScreenItem& operator=(const LuaScreenItem&){assert(false);}
+};
+
+class LuaCompositeItem: public CompositeItem, public LuaScreenItem{
+public:
+	LuaCompositeItem(CompositeItem* parent = 0):CompositeItem(parent), LuaScreenItem(NULL){}
+	static void luabind(lua_State* L);
+
+private:
+	LuaCompositeItem(const LuaCompositeItem&){assert(false);}
+	LuaCompositeItem& operator=(const LuaCompositeItem&){assert(false);}
+};
 
 // needs to be public!
-// error C2243: 'type cast' : conversion from 'LuaScreenItem *' to 'ScreenItem *' exists, but is inaccessible
-class LuaScreenItem: public SimpleItem
+// error C2243: 'type cast' : conversion from 'LuaSimpleItem *' to 'ScreenItem *' exists, but is inaccessible
+class LuaSimpleItem: public SimpleItem, public LuaScreenItem
 {
 public:
 	// need to be public for luabind
-	bool operator == (LuaScreenItem&){return false;}
-	LuaScreenItem(float x, float y): SimpleItem(x, y){}
-	LuaScreenItem(): SimpleItem(){}
-	~LuaScreenItem(){
+	bool operator == (LuaSimpleItem&){return false;}
+	LuaSimpleItem(float x, float y): SimpleItem(x, y), LuaScreenItem(NULL){}
+	LuaSimpleItem(): SimpleItem(){}
+	~LuaSimpleItem(){
 	}
 	static void luabind(lua_State* L);
 
