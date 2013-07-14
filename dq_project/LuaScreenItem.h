@@ -5,13 +5,13 @@
 
 // needs to be public!
 // error C2243: 'type cast' : conversion from 'LuaScreenItem *' to 'ScreenItem *' exists, but is inaccessible
-class LuaScreenItem: public ScreenItem
+class LuaScreenItem: public SimpleItem
 {
 public:
 	// need to be public for luabind
 	bool operator == (LuaScreenItem&){return false;}
-	LuaScreenItem(float x, float y): ScreenItem(x, y){}
-	LuaScreenItem(): ScreenItem(){}
+	LuaScreenItem(float x, float y): SimpleItem(x, y){}
+	LuaScreenItem(): SimpleItem(){}
 	~LuaScreenItem(){
 	}
 	static void luabind(lua_State* L);
