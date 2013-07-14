@@ -10,4 +10,6 @@ namespace Layers{
 	extern int num_layers();
 	extern Visual* get_layer(int i);
 	extern void luabind(lua_State* L);
+
+	extern CompositeVisual* root_visual();
 }// namespace

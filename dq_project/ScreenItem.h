@@ -1,13 +1,52 @@
 #pragma once
-#include "Visual.h"
+
 #include "WantFrameUpdate.h"
 #include "Entity/Component.h"
 #include "UserInputDispatcher.h"
 
+#include "Entity/Entity.h"
+
+#include <cassert>
+#include <set>
 #include <limits>
 
-class ScreenItem: public Visual
-	 ,protected CharInputObject
+class CompositeItem;
+
+class ScreenItem: protected CharInputObject
+{
+public:
+	Entity* acquireEntity(Entity* e);
+
+	ScreenItem(CompositeItem* parent = 0);
+	virtual ~ScreenItem();
+	void setParent(CompositeItem* new_parent);
+	CompositeItem* getParent(){return parent_item;}
+protected:
+	CompositeItem* parent_item;
+};
+
+class CompositeItem: public ScreenItem{
+public:
+	CompositeItem(CompositeItem* parent = 0):ScreenItem(parent){}
+	virtual ~CompositeItem(){
+		// TODO: What should we do here with our children? They will have inexisting parent!
+	}
+private:
+	std::set<ScreenItem*> children;
+
+	void addChild(ScreenItem* w){
+		assert(w && children.count(w)==0);
+		entity->AddEntity(w->entity);
+		children.insert(w);
+	}
+	void removeChild(ScreenItem* w){
+		assert(w && children.count(w)!=0);
+		entity->RemoveEntityByAddress(w->entity, false);	// don't delete entity
+		children.erase(w);
+	}
+};
+
+class SimpleItem: public ScreenItem
 {
 public:
 	static CompositeVisual* getParentVisual(){return parent_visual;}

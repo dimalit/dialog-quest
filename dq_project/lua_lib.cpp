@@ -4,6 +4,7 @@
 #include "App.h"
 #include "lua_lib.h"
 
+#include <luabind/iterator_policy.hpp>
 #include <stdlib.h>
 #include <time.h>
 
@@ -13,6 +14,19 @@ float float_rand(){
 	return res;
 }
 
+luabind::object random_permutation(int n){
+	std::vector<int> res(n);
+	for(int i=0; i<n; i++)
+		res[i] = i+1;
+	for(int i=0; i<n-1; i++)
+		std::swap(res[i], res[i + rand()%(n-i)]);
+
+	luabind::object o = luabind::newtable(L);
+	for(int i=0; i<n; i++)
+		o[i+1]=res[i];
+	return o;
+}
+
 namespace Lualib{
 	void luabind(lua_State* L){
 
@@ -20,7 +34,8 @@ namespace Lualib{
 
 		luabind::module(L)
 		[
-			luabind::def("rand", &float_rand)
+			luabind::def("rand", &float_rand),
+			luabind::def("random_permutation", &random_permutation)
 		];
 
 		// TODO what about screen rotation?
