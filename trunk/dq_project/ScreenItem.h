@@ -15,50 +15,19 @@ class CompositeItem;
 class ScreenItem: protected CharInputObject
 {
 public:
+	// entity
 	Entity* acquireEntity(Entity* e);
 
+	// ctor/dtor
 	ScreenItem(CompositeItem* parent = 0);
 	virtual ~ScreenItem();
+
+	// parent/child relations
 	void setParent(CompositeItem* new_parent);
 	CompositeItem* getParent(){return parent_item;}
-protected:
-	CompositeItem* parent_item;
-};
 
-class CompositeItem: public ScreenItem{
-public:
-	CompositeItem(CompositeItem* parent = 0):ScreenItem(parent){}
-	virtual ~CompositeItem(){
-		// TODO: What should we do here with our children? They will have inexisting parent!
-	}
-private:
-	std::set<ScreenItem*> children;
-
-	void addChild(ScreenItem* w){
-		assert(w && children.count(w)==0);
-		entity->AddEntity(w->entity);
-		children.insert(w);
-	}
-	void removeChild(ScreenItem* w){
-		assert(w && children.count(w)!=0);
-		entity->RemoveEntityByAddress(w->entity, false);	// don't delete entity
-		children.erase(w);
-	}
-};
-
-class SimpleItem: public ScreenItem
-{
-public:
-	static CompositeVisual* getParentVisual(){return parent_visual;}
-	static void setParentVisual(CompositeVisual* v){parent_visual = v;}
-
-//!!!protected: for a while:
-public:
-	ScreenItem(float x=0.0f, float y=0.0f);
-	~ScreenItem();
-
+	// geometry
 	// polymorphic
-//	virtual void Render();
 	virtual bool isPointIn(float mx, float my);
 
 	// position
@@ -109,14 +78,10 @@ public:
 	}
 
 	float getWidth()	const {
-		if(view == NULL)
-			return 0;
 		// TODO: GetParent() is me - so..?
 		return entity->GetVar("size2d")->GetVector2().x;
 	}
 	float getHeight()	const {
-		if(view == NULL)
-			return 0;
 		// TODO: GetParent() is me - so..?
 		return entity->GetVar("size2d")->GetVector2().y;
 	}
@@ -167,6 +132,75 @@ public:
 		return res;
 	}
 
+protected:
+	CompositeItem* parent_item;
+	CL_Vec2f hp_pos;	// used when it changes
+public: //!!! temporary
+	Entity* entity;
+protected:
+	void compute_corner(int no, float &rx, float &ry) const {
+
+		// local params
+		float x = getX(), y = getY();
+		float hpx = getHotSpotX(), hpy = getHotSpotY();
+		float rot = getRotation();
+
+		switch(no){
+		case 1:
+			rx = - hpx*cos(rot) - hpy*sin(rot) + x;
+			ry =   hpx*sin(rot) - hpy*cos(rot) + y;
+			break;
+		case 2:
+			rx = - (hpx-getWidth())*cos(rot) - hpy*sin(rot) + x;
+			ry =   (hpx-getWidth())*sin(rot) - hpy*cos(rot) + y;
+			break;
+		case 3:
+			rx = - (hpx-getWidth())*cos(rot) - (hpy-getHeight())*sin(rot) + x;
+			ry =   (hpx-getWidth())*sin(rot) - (hpy-getHeight())*cos(rot) + y;
+			break;
+		case 4:
+			rx = - hpx*cos(rot) - (hpy-getHeight())*sin(rot) + x;
+			ry =   hpx*sin(rot) - (hpy-getHeight())*cos(rot) + y;
+			break;
+		default:
+			assert(false);
+		}// sw
+	}
+};
+
+class CompositeItem: public ScreenItem{
+	friend class ScreenItem;
+public:
+	CompositeItem(CompositeItem* parent = 0):ScreenItem(parent){}
+	virtual ~CompositeItem(){
+		// TODO: What should we do here with our children? They will have inexisting parent!
+	}
+private:
+	std::set<ScreenItem*> children;
+
+	void addChild(ScreenItem* w){
+		assert(w && children.count(w)==0);
+		entity->AddEntity(w->entity);
+		children.insert(w);
+	}
+	void removeChild(ScreenItem* w){
+		assert(w && children.count(w)!=0);
+		entity->RemoveEntityByAddress(w->entity, false);	// don't delete entity
+		children.erase(w);
+	}
+};
+
+// TODO: inheritance of CharInputObject should be in ScreenItem!
+class SimpleItem: public ScreenItem
+{
+public:
+	static CompositeItem* getGlobalParent(){return global_parent;}
+	static void setGlobalParent(CompositeItem* v){global_parent = v;}
+//!!!protected: for a while:
+public:
+	SimpleItem(float x=0.0f, float y=0.0f);
+	~SimpleItem();
+
 	// aggregates
 	void setView(EntityComponent* r){
 		// remove old
@@ -201,44 +235,16 @@ protected:
 		setHotSpotY( h / 2 );
 	}
 
-	void OnPosChange(Variant* /*NULL*/);
+	void OnPosChange(Variant* /*NULL*/){}
 
 	// utilitary
 	void takeCharFocus();
 	void giveCharFocus();
-	void compute_corner(int no, float &rx, float &ry) const {
 
-		// local params
-		float x = getX(), y = getY();
-		float hpx = getHotSpotX(), hpy = getHotSpotY();
-		float rot = getRotation();
-
-		switch(no){
-		case 1:
-			rx = - hpx*cos(rot) - hpy*sin(rot) + x;
-			ry =   hpx*sin(rot) - hpy*cos(rot) + y;
-			break;
-		case 2:
-			rx = - (hpx-getWidth())*cos(rot) - hpy*sin(rot) + x;
-			ry =   (hpx-getWidth())*sin(rot) - hpy*cos(rot) + y;
-			break;
-		case 3:
-			rx = - (hpx-getWidth())*cos(rot) - (hpy-getHeight())*sin(rot) + x;
-			ry =   (hpx-getWidth())*sin(rot) - (hpy-getHeight())*cos(rot) + y;
-			break;
-		case 4:
-			rx = - hpx*cos(rot) - (hpy-getHeight())*sin(rot) + x;
-			ry =   hpx*sin(rot) - (hpy-getHeight())*cos(rot) + y;
-			break;
-		default:
-			assert(false);
-		}// sw
-	}
-	static CompositeVisual* parent_visual;
+	static CompositeItem* global_parent;
 
 private:
 	// no value semantic!
-	ScreenItem& operator=(const ScreenItem&){assert(false);}
-	ScreenItem(const ScreenItem&){assert(false);}
-	CL_Vec2f hp_pos;	// used when it changes
+	SimpleItem& operator=(const SimpleItem&){assert(false);}
+	SimpleItem(const SimpleItem&){assert(false);}
 };

@@ -8,13 +8,13 @@ namespace Layers{
 
 struct layer{
 	std::string name;
-	CompositeVisual* visual;
+	CompositeItem* item;
 };
 
-CompositeVisual* root_visual(){
-	static CompositeVisual* root	= 0;
+CompositeItem* root_item(){
+	static CompositeItem* root	= 0;
 	if(!root){
-		root = new CompositeVisual();
+		root = new CompositeItem();
 		Entity* e = new Entity("root");
 		AddFocusIfNeeded(e);
 		root->acquireEntity(e);
@@ -32,25 +32,25 @@ int find(std::string name){
 }
 
 void add_layer(std::string name){
-	layer l = {name, new CompositeVisual()};
+	layer l = {name, new CompositeItem()};
 	layers.push_back(l);
-	l.visual->setParent(root_visual());
-	ScreenItem::setParentVisual(l.visual);
+	l.item->setParent(root_item());
+	SimpleItem::setGlobalParent(l.item);
 }
 
 void set_layer(std::string name){
 	int li = find(name);
 	assert(li >= 0);
-	ScreenItem::setParentVisual(layers[li].visual);
+	SimpleItem::setGlobalParent(layers[li].item);
 }
 
 int num_layers(){
 	return layers.size();
 }
 
-Visual* get_layer(int i){
+ScreenItem* get_layer(int i){
 	assert(i>=0 && i<layers.size());
-	return layers[i].visual;
+	return layers[i].item;
 }
 
 void luabind(lua_State* L){

@@ -1,9 +1,39 @@
 #include "PlatformPrecomp.h"
 #include "ScreenItem.h"
 
-CompositeVisual* ScreenItem::parent_visual = 0;
+CompositeItem* SimpleItem::global_parent = 0;
 
-ScreenItem::ScreenItem(float x, float y)
+ScreenItem::ScreenItem(CompositeItem* parent)
+	:parent_item(parent)
+{
+	entity = new Entity();
+	if(parent_item)
+		parent_item->addChild(this);
+}
+
+ScreenItem::~ScreenItem(void)
+{
+	if(parent_item)
+		parent_item->removeChild(this);
+	delete entity;
+}
+
+Entity* ScreenItem::acquireEntity(Entity* e){
+	assert(!parent_item && e);
+	delete entity;
+	entity = e;
+	return entity;
+}
+
+void ScreenItem::setParent(CompositeItem* new_parent){
+	if(parent_item)
+		parent_item->removeChild(this);
+	parent_item = new_parent;
+	if(parent_item)
+		parent_item->addChild(this);
+}
+
+SimpleItem::SimpleItem(float x, float y)
 {
 	view = 0;
 
@@ -11,21 +41,14 @@ ScreenItem::ScreenItem(float x, float y)
 //	this->visible = true;
 	
 	// add then init
-	this->setParent(parent_visual);
+	this->setParent(global_parent);
 
-	entity->GetVar("size2d")->GetSigOnChanged()->connect(1, boost::bind(&ScreenItem::OnSizeChange, this, _1));
-	entity->GetVar("pos2d")->GetSigOnChanged()->connect(1, boost::bind(&ScreenItem::OnPosChange, this, _1));
+	entity->GetVar("size2d")->GetSigOnChanged()->connect(1, boost::bind(&SimpleItem::OnSizeChange, this, _1));
+	entity->GetVar("pos2d")->GetSigOnChanged()->connect(1, boost::bind(&SimpleItem::OnPosChange, this, _1));
 }
 
-ScreenItem::~ScreenItem(void)
+SimpleItem::~SimpleItem(void)
 {
-}
-#include "Text.h"
-void ScreenItem::OnPosChange(Variant* /*NULL*/){
-	int x;
-	if(view && dynamic_cast<Text*>(view) && view->GetVar("text")->GetString().size()==3){
-		x = 2;
-	}
 }
 
 //void ScreenItem::Render(){
@@ -79,9 +102,9 @@ bool ScreenItem::isPointIn(float mx, float my){
 }
 
 // for internal use only
-void ScreenItem::takeCharFocus(){
+void SimpleItem::takeCharFocus(){
 //!!!	UserInputDispatcher::getInstance()->setCharFocus(this);
 }
-void ScreenItem::giveCharFocus(){
+void SimpleItem::giveCharFocus(){
 //!!!	UserInputDispatcher::getInstance()->setCharFocus(0);
 }
