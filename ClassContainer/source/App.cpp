@@ -19,6 +19,8 @@
 #include "Text.h"
 #include "LuaScreenItem.h"
 #include "LuaTimer.h"
+#include "LuaSoundEffect.h"
+#include "Texture.h"
 //#include "lua_layers.h"
 #include "lua_lib.h"
 
@@ -256,6 +258,8 @@ else
 	LuaSimpleItem::luabind(L);
 	LuaCompositeItem::luabind(L);
 	LuaTimer::luabind(L, "Timer");	// TODO: Why name?
+	LuaSoundEffect::luabind(L);
+	LuaTexture::luabind(L);
 
 	if(luaL_dofile(L, "lib.lua") != 0){
 		std::cerr << lua_tostring(L,-1) << "\n";

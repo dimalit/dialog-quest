@@ -6,7 +6,7 @@
 #include "Image.h"
 #include "Text.h"
 #include "Animation.h"
-#include "lua_layers.h"
+#include "Texture.h"
 
 void ImageTestOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity sent from
 {
@@ -80,11 +80,39 @@ Entity * ImageTestMenuCreate(Entity *pParentEnt)
 	//a->setLoop(1);
 	//a->play();
 
-	//luaL_dostring(
+	//if(luaL_dostring(
 	//L,
-	//"local lt_si = ScreenItem(100,100)\n"
+	//"lt_si = SimpleItem(root, 150,12)\n"
 	//"lt_si.view = TextBox(\"Long long text\", 300, 300, 0)\n"
-	//);
+	//"print(lt_si.height)\n"
+	//)!=0){
+	//	LogMsg( "%s\n", lua_tostring(L,-1) );
+	//	return 0;
+	//};
+
+	if(luaL_dostring(
+	L,
+	"s = SoundEffect(\"audio/click.wav\")\n"
+	"s:play()\n"
+	)!=0){
+		LogMsg( "%s\n", lua_tostring(L,-1) );
+		return 0;
+	};
+
+	//SimpleItem* si;
+	//Texture *t = new Texture("interface/flask.rttex", 300, 300);
+	//si = new SimpleItem(root_item(), 150,150);
+	//si->setView(t);
+
+	if(luaL_dostring(
+	L,
+	"local t = Texture(\"interface/flask.rttex\", 300, 300)\n"
+	"local si = SimpleItem(root, 150, 150)\n"
+	"si.view = t\n"
+	)!=0){
+		LogMsg( "%s\n", lua_tostring(L,-1) );
+		return 0;
+	};
 
 	if(luaL_dofile(L, "test_mosaic.lua") != 0){
 		LogMsg( "%s\n", lua_tostring(L,-1) );

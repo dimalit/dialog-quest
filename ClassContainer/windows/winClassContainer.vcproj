@@ -205,7 +205,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/d1reportSingleClassLayoutconstruct_aux"
 				Optimization="0"
-				AdditionalIncludeDirectories="c:\program files\boost;..\source;..\..\shared;..\..\shared\win\;&quot;..\..\shared\ClanLib-2.0\Sources&quot;;..\..\shared\win\include;..\..\shared\FliteTTS\include;..\..\shared\Irrlicht\include;..\..\..\luabind-0.9.1;..\..\..\lua-5.1.4\src;..\..\..\video\include; ..\..\trunk\dq_project"
+				AdditionalIncludeDirectories=".;&quot;c:\program files\boost&quot;;..\source;..\..\shared;..\..\shared\win\;&quot;..\..\shared\ClanLib-2.0\Sources&quot;;..\..\shared\win\include;..\..\shared\FliteTTS\include;..\..\shared\Irrlicht\include;&quot;..\..\..\luabind-0.9.1&quot;;&quot;..\..\..\lua-5.1.4\src&quot;;..\..\..\video\include;..\..\trunk\dq_project"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_USE_32BIT_TIME_T;C_GL_MODE;_SECURE_SCL=0;_NO_DEBUG_HEAP=1;RT_JPG_SUPPORT"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -5905,6 +5905,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\trunk\dq_project\LuaSoundEffect.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\trunk\dq_project\LuaTimer.cpp"
 				>
 			</File>
@@ -5913,7 +5917,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\trunk\dq_project\SoundEffect.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\trunk\dq_project\Text.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Texture.cpp"
 				>
 			</File>
 			<File
@@ -5952,6 +5964,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\trunk\dq_project\LuaSoundEffect.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\trunk\dq_project\LuaTimer.h"
 					>
 				</File>
@@ -5964,7 +5980,15 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\trunk\dq_project\SoundEffect.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\trunk\dq_project\Text.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Texture.h"
 					>
 				</File>
 				<File

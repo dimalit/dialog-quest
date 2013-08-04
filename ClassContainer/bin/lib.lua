@@ -115,8 +115,8 @@ end
 
 ------------- ..Items ----------------
 
-ImageItem = function(x, y, path)
-  local item = SimpleItem(x, y)
+ImageItem = function(parent, x, y, path)
+  local item = SimpleItem(parent, x, y)
   local image = Image(path)
   local self = {}
   setmetatable(self, inherit(item, image))
@@ -125,8 +125,8 @@ ImageItem = function(x, y, path)
   return self
 end
 
-TextItem = function(x, y, text, font)
-  local item = SimpleItem(x, y)
+TextItem = function(parent, x, y, text, font)
+  local item = SimpleItem(parent, x, y)
   local txt
 --  if font ~= nil then
 --    txt = Text(text, font)
@@ -141,10 +141,10 @@ TextItem = function(x, y, text, font)
   return self
 end
 
-TextBoxItem = function(x, y, w, h, text)
-  local item = SimpleItem(x, y)
+TextBoxItem = function(parent, x, y, w, text)
+  local item = SimpleItem(parent, x, y)
   local txt
-  txt = TextBox(text, w, h, 0)
+  txt = TextBox(text, w, 0)
 
   local self = {}
   setmetatable(self, inherit(item, txt))
@@ -154,8 +154,8 @@ TextBoxItem = function(x, y, w, h, text)
 end
 
 -- make playing animation item
-AnimatedItem = function(x, y, name)
-  local item = SimpleItem(x, y)
+AnimatedItem = function(parent, x, y, name)
+  local item = SimpleItem(parent, x, y)
   local anim = Animation(load_config(name))
  
   local self = {}
@@ -228,8 +228,8 @@ function TwoStateAnimation(anim)
   return anim
 end
 
-function DropArea(x, y, view)
-  local item = SimpleItem(x, y)
+function DropArea(parent, x, y, view)
+  local item = SimpleItem(parent, x, y)
   item.view = view
 
   local intersects = function(dummy, r)
@@ -306,11 +306,11 @@ onDrop = function(drops, obj)
   end
 end
 
-function Mover(x, y, view)
+function Mover(parent, x, y, view)
   if x == nil then x = 0 end
   if y == nil then y = 0 end
 
-  local item = MakeMover(SimpleItem(x, y))    -- put it into closure!
+  local item = MakeMover(SimpleItem(parent, x, y))    -- put it into closure!
   item.view = view
 
   local self = {
@@ -368,8 +368,8 @@ function Mover(x, y, view)
 end -- Mover
 
 ------------- button ------------------
-Button = function(x, y, view)
-  local item = SimpleItem(x, y)
+Button = function(parent, x, y, view)
+  local item = SimpleItem(parent, x, y)
   local self = {}
   setmetatable(self, inherit(item, view))
   self.view = view
