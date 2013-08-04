@@ -1,6 +1,7 @@
 #pragma once
 #include "Timer.h"
-#include "soundeffect.h"
+#include "SoundEffect.h"
+#include <luabind/luabind.hpp>
 
 class LuaSoundEffect: public SoundEffect
 {

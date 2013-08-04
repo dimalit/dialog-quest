@@ -16,13 +16,15 @@ private:
 
 class LuaCompositeItem: public CompositeItem, public LuaScreenItem{
 public:
-	LuaCompositeItem(CompositeItem* parent = 0):CompositeItem(parent), LuaScreenItem(parent){}
+	LuaCompositeItem(CompositeItem* parent = 0):CompositeItem(parent), LuaScreenItem(parent), ScreenItem(parent){}
 	static void luabind(lua_State* L);
 
 private:
-	LuaCompositeItem(const LuaCompositeItem&){assert(false);}
+	LuaCompositeItem(const LuaCompositeItem&):CompositeItem(NULL){assert(false);}
 	LuaCompositeItem& operator=(const LuaCompositeItem&){assert(false);}
 };
+
+class CompositeItem;
 
 // needs to be public!
 // error C2243: 'type cast' : conversion from 'LuaSimpleItem *' to 'ScreenItem *' exists, but is inaccessible
@@ -31,8 +33,8 @@ class LuaSimpleItem: public SimpleItem, public LuaScreenItem
 public:
 	// need to be public for luabind
 	bool operator == (LuaSimpleItem&){return false;}
-	LuaSimpleItem(float x, float y);
-	LuaSimpleItem();
+	LuaSimpleItem(CompositeItem* parent,float x, float y);
+	LuaSimpleItem(CompositeItem* parent);
 	~LuaSimpleItem(){
 	}
 	static void luabind(lua_State* L);

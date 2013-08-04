@@ -1,25 +1,30 @@
+#include "PlatformPrecomp.h"
+#include "BaseApp.h"
 #include "SoundEffect.h"
 
 SoundEffect::SoundEffect(std::string path)
 {
-	hef = 0;//!!!hge->Effect_Load(path.c_str());
-	channel = 0;
+	filename = path;
+	GetAudioManager()->Preload(filename);
 }
 
 SoundEffect::~SoundEffect(void)
 {
-	if(hef)
-		hge->Effect_Free(hef);
 }
 
+//TODO What about stop() in SoundEffect if we have loop?
 void SoundEffect::play(int volume, int pan, float pitch, bool loop){
-	if(hef)
-		channel = hge->Effect_PlayEx(hef, volume, pan, pitch, loop);
+	AudioHandle h = GetAudioManager()->Play(filename, loop);
+	GetAudioManager()->SetVol(h, volume/100.0f);
+	GetAudioManager()->SetPan(h, pan/100.0f);
+	//TODO We ignore pitch!
+	//TODO Also what about units of volume and pan?
+	assert(pitch==1.0f);
 }
 
 float SoundEffect::getLength(){
 	// !!!
 	return 1;
-	assert(channel);
-	return hge->Channel_GetLength(channel);
+	//assert(channel);
+	//return hge->Channel_GetLength(channel);
 }

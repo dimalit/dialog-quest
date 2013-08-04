@@ -171,7 +171,8 @@ protected:
 class CompositeItem: virtual public ScreenItem{
 	friend class ScreenItem;
 public:
-	CompositeItem(CompositeItem* parent = 0):ScreenItem(parent){}
+	//TODO Add x abd y parameters to CompositeItem
+	CompositeItem(CompositeItem* parent):ScreenItem(parent){}
 	virtual ~CompositeItem(){
 		// TODO: What should we do here with our children? They will have inexisting parent!
 	}
@@ -198,7 +199,7 @@ public:
 	static void setGlobalParent(CompositeItem* v){global_parent = v;}
 //!!!protected: for a while:
 public:
-	SimpleItem(float x=0.0f, float y=0.0f);
+	SimpleItem(CompositeItem* prent, float x=0.0f, float y=0.0f);
 	~SimpleItem();
 
 	// aggregates
@@ -248,3 +249,5 @@ private:
 	SimpleItem& operator=(const SimpleItem&){assert(false);}
 	SimpleItem(const SimpleItem&){assert(false);}
 };
+
+extern CompositeItem* root_item();

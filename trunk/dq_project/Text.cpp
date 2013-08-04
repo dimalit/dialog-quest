@@ -18,11 +18,12 @@ void Text::OnAdd(Entity* e){
 }
 
 // TODO: think about enums in Lua and here (don't want to use Proton's enums!)
-TextBox::TextBox(std::string txt, int width, int height, eAlignment align)
+TextBox::TextBox(std::string txt, int width, eAlignment align)
 {
 	GetVar("text")->Set(txt);
 	GetVar("textAlignment")->Set((uint32)align);
-	size = CL_Vec2f(width, height);
+	GetVar("firstLineDecrement")->Set((uint32)50);
+	this->width = width;
 }
 
 TextBox::~TextBox()
@@ -32,7 +33,7 @@ TextBox::~TextBox()
 void TextBox::OnAdd(Entity* e){
 	TextBoxRenderComponent::OnAdd(e);
 	// TODO MUST first set size then text. Very bad!
-	e->GetVar("size2d")->Set(size);
+	e->GetVar("size2d")->Set(width, 0);
 	std::string t = GetVar("text")->GetString();
 	GetVar("text")->Set(t);
 }
@@ -49,17 +50,17 @@ void LuaText::luabind(lua_State* L){
 	];	
 }
 
-LuaTextBox::LuaTextBox(std::string txt, int width, int height, eAlignment align)
-	:TextBox(txt, width, height, align){}
+LuaTextBox::LuaTextBox(std::string txt, int width, eAlignment align)
+	:TextBox(txt, width, align){}
 
 void LuaTextBox::luabind(lua_State* L){
 	luabind::module(L) [
 		luabind::class_<LuaTextBox, EntityComponent>("TextBox")
 			// TODO how to bind alignment constants to Lua?
 			// TODO need function to query real text height
-			.def(luabind::constructor<std::string, int, int, eAlignment>())
+			.def(luabind::constructor<std::string, int, eAlignment>())
 			.property("width", &LuaTextBox::getWidth, &LuaTextBox::setWidth)
-			.property("height", &LuaTextBox::getHeight, &LuaTextBox::setHeight)
+			.property("height", &LuaTextBox::getHeight)
 			.property("text", &LuaTextBox::getText, &LuaTextBox::setText)
 	];	
 }

@@ -73,11 +73,9 @@ LuaAnimation::LuaAnimation(luabind::object conf):
 		luabind::object_cast<float>(conf["fps"])
 	)
 {
-	LogMsg("LuaAnimation() %p\n", this);
 }
 
 LuaAnimation::~LuaAnimation(){
-	LogMsg("~LuaAnimation() %p\n", this);
 }
 
 void LuaAnimation::luabind(lua_State* L){
