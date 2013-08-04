@@ -28,7 +28,7 @@ public:
 class TextBox: public TextBoxRenderComponent
 {
 public:
-	TextBox(std::string txt, int width, int height, eAlignment align);
+	TextBox(std::string txt, int width, eAlignment align);
 	~TextBox();
 
 	void OnAdd(Entity* e);
@@ -37,23 +37,28 @@ public:
 	std::string getText(){return GetVar("text")->GetString();}
 
 	float getWidth(){
-		return size.x;
+		return width;
 	}
 	float getHeight(){
-		return size.y;
+		if(GetParent())
+			return GetParent()->GetVar("size2d")->GetVector2().y;
+		else{
+			assert(0);
+			return -1;
+		}//else
 	}
 	void setWidth(int w){
-		size.x = w;
+		width = w;
 		if(GetParent())
-			GetParent()->GetVar("size2d")->Set(size);
+			GetParent()->GetVar("size2d")->Set(w, 0);
 	}
-	void setHeight(int h){
-		size.y = h;
-		if(GetParent())
-			GetParent()->GetVar("size2d")->Set(size);
-	}
+	//void setHeight(int h){
+	//	size.y = h;
+	//	if(GetParent())
+	//		GetParent()->GetVar("size2d")->Set(size);
+	//}
 private:
-	CL_Vec2f size;// used when attached
+	int width;// used when attached
 };
 
 class LuaText: public Text{
@@ -68,10 +73,10 @@ private:
 
 class LuaTextBox: public TextBox{
 public:
-	LuaTextBox(std::string txt, int width, int height, eAlignment align);
+	LuaTextBox(std::string txt, int width, eAlignment align);
 	static void luabind(lua_State* L);
 
 private:
-	LuaTextBox(const LuaText&):TextBox("", 0, 0, ALIGNMENT_UPPER_LEFT){assert(false);}
+	LuaTextBox(const LuaText&):TextBox("", 0, ALIGNMENT_UPPER_LEFT){assert(false);}
 	LuaTextBox& operator=(const LuaText&){assert(false);}
 };

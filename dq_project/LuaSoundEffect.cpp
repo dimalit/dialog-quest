@@ -1,5 +1,7 @@
-#include <luabind/luabind.hpp>
+#include "PlatformPrecomp.h"
+
 #include "LuaSoundEffect.h"
+#include <luabind/luabind.hpp>
 
 void LuaSoundEffect::Callback::operator()(){
 	if(eff->onFinish_cb)

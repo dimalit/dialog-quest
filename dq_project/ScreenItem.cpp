@@ -1,8 +1,6 @@
 #include "PlatformPrecomp.h"
 #include "ScreenItem.h"
 
-CompositeItem* SimpleItem::global_parent = 0;
-
 ScreenItem::ScreenItem(CompositeItem* parent)
 	:parent_item(parent)
 {
@@ -33,16 +31,14 @@ void ScreenItem::setParent(CompositeItem* new_parent){
 		parent_item->addChild(this);
 }
 
-SimpleItem::SimpleItem(float x, float y)
+SimpleItem::SimpleItem(CompositeItem* parent, float x, float y)
+	:ScreenItem(parent)
 {
 	view = 0;
 
 	setX(x); setY(y);
 //	this->visible = true;
 	
-	// add then init
-	this->setParent(global_parent);
-
 	entity->GetVar("size2d")->GetSigOnChanged()->connect(1, boost::bind(&SimpleItem::OnSizeChange, this, _1));
 	entity->GetVar("pos2d")->GetSigOnChanged()->connect(1, boost::bind(&SimpleItem::OnPosChange, this, _1));
 }

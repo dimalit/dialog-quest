@@ -8,10 +8,10 @@
 #include <luabind/adopt_policy.hpp>
 #include <luabind/dependency_policy.hpp>
 
-LuaCompositeItem* root_item(){
+CompositeItem* root_item(){
 	static LuaCompositeItem* root = 0;
 	if(!root){
-		root = new LuaCompositeItem();
+	root = new LuaCompositeItem();
 		Entity* e = new Entity("root");
 		AddFocusIfNeeded(e);
 		root->acquireEntity(e);
@@ -19,11 +19,11 @@ LuaCompositeItem* root_item(){
 	return root;
 }
 
-LuaSimpleItem::LuaSimpleItem(float x, float y): SimpleItem(x, y), LuaScreenItem(NULL){
-	this->setParent(root_item());
+LuaSimpleItem::LuaSimpleItem(CompositeItem* parent, float x, float y): SimpleItem(parent, x, y), LuaScreenItem(parent), ScreenItem(parent){
+//	this->setParent(root_item());
 }
-LuaSimpleItem::LuaSimpleItem(): SimpleItem(){
-	this->setParent(root_item());
+LuaSimpleItem::LuaSimpleItem(CompositeItem* parent): SimpleItem(parent), LuaScreenItem(parent), ScreenItem(parent){
+//	this->setParent(root_item());
 }
 
 void LuaScreenItem::luabind(lua_State* L){
@@ -49,8 +49,8 @@ void LuaSimpleItem::luabind(lua_State* L){
 
 	luabind::module(L) [
 	luabind::class_<LuaSimpleItem, LuaScreenItem>("SimpleItem")
-		.def(luabind::constructor<float, float>())
-		.def(luabind::constructor<>())
+		.def(luabind::constructor<CompositeItem*, float, float>())
+		.def(luabind::constructor<CompositeItem*>())
 
 		.property("x", &LuaSimpleItem::getX, &LuaSimpleItem::setX)
 		.property("y", &LuaSimpleItem::getY, &LuaSimpleItem::setY)
