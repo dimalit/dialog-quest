@@ -609,10 +609,6 @@
 					RelativePath="..\source\Component\TouchTestComponent.cpp"
 					>
 				</File>
-				<File
-					RelativePath="..\source\Component\TouchTestComponent.h"
-					>
-				</File>
 			</Filter>
 			<Filter
 				Name="android"
@@ -723,6 +719,10 @@
 				</File>
 				<File
 					RelativePath="..\flash\test1.html"
+					>
+				</File>
+				<File
+					RelativePath="..\source\Component\TouchTestComponent.h"
 					>
 				</File>
 				<File

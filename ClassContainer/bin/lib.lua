@@ -42,8 +42,10 @@ local function inherit(...)
           else
             return arg[i][key]
           end -- if func
-        end
-      end
+        end -- id not nil
+      end -- for parents
+	  -- if not found
+	  return nil
     end,
 
     -- find existing and do assignment
@@ -54,8 +56,10 @@ local function inherit(...)
           return
         end
       end
-	    -- set to first if not found
-      arg[1][key] = val      
+	  -- set to ALL! if not found
+      for i=1, table.getn(arg) do
+        arg[i][key] = val
+      end
     end
   }
 end
@@ -125,6 +129,16 @@ ImageItem = function(parent, x, y, path)
   return self
 end
 
+TextureItem = function(parent, x, y, width, height, path)
+  local item = SimpleItem(parent, x, y)
+  local texture = Texture(path, width, height)
+  local self = {}
+  setmetatable(self, inherit(item, texture))
+  self.item = item
+  self.view = texture
+  return self
+end
+
 TextItem = function(parent, x, y, text, font)
   local item = SimpleItem(parent, x, y)
   local txt
@@ -149,7 +163,8 @@ TextBoxItem = function(parent, x, y, w, text)
   local self = {}
   setmetatable(self, inherit(item, txt))
   self.item = item
-  self.view = txt
+  item.view = txt	-- TODO Which of these and why second doesn't work?
+--  self.view = txt 
   return self
 end
 
@@ -178,6 +193,79 @@ AnimatedItem = function(parent, x, y, name)
   
   return self
 end
+
+function FlowLayoutItem(parent, x, y, w)
+  local self = CompositeItem(parent, x, y)
+  self.width = w
+  
+  local items     = {}		-- array
+  local obstacles = {}		-- set
+  local profile = { left = StairsProfile(), right = StairsProfile() }
+
+  local lay_out = function()
+	local cur_x, cur_y = profile.left:at(0,1), 0
+	print(#items.." items found\n")
+	for _,item in ipairs(items) do
+		-- TODO Check how to use == operator to compare references!
+		--assert(item.parent == self)
+	    item.hpx_relative, item.hpy_relative = 0, 0	
+	  -- if item
+	  if type(item.firstLineDecrement)=="nil" then
+		item.x, item.y = cur_x, cur_y
+		cur_x = cur_x + item.width
+		while cur_x > self.width-profile.right:at(cur_y, item.height) do
+			cur_y = cur_y + 19							-- TODO Must know font line height here!!
+			cur_x = profile.left:at(cur_y, item.height)
+			item.x, item.y = cur_x, cur_y
+			cur_x = cur_x + item.width
+			assert(cur_y < 10000)						-- in case of hanging
+		end -- while line over	  
+	  -- if text
+	  else
+		item.firstLineDecrement = cur_x					-- TODO Align baselines here!!
+		item.x, item.y = 0, cur_y
+		item.width = self.width
+		profile.left:shifted(-cur_y)
+		item.leftObstacles = profile.left:shifted(-cur_y)
+		item.rightObstacles = profile.right:shifted(-cur_y)		
+		cur_x, cur_y = item.lastLineEndX, item.lastLineEndY
+	  end -- select type
+	  print(cur_x.."-"..cur_y.."\n")
+	end -- for
+  end -- lay_out()
+  
+  self.addItem = function(self, item)
+	print(type(item))
+	item.parent = self
+	table.insert(items, item)
+	lay_out()
+  end
+  
+  self.clear = function(self)
+	for _,item in ipairs(items) do
+		item.parent = nil
+	end
+	items = {}
+  end
+  
+  self.addItems = function(self, added)
+	for i,item in ipairs(added) do
+		item.parent = self
+		table.insert(items, item)
+	end
+	lay_out()
+  end  
+  
+  self.addObstacle = function(self, obst, side)
+	if side==nil then side="left" end
+	assert(side=="left" or side=="right")
+	obstacles[obst] = true
+	obst.parent = self
+	profile[side]:setInterval(obst.top, obst.height, obst.right)
+	lay_out()
+  end  
+  return self
+end -- FlowLayoutItem
 ---------- MakeMover -----------
 
 function MakeMover(self)

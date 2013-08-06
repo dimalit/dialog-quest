@@ -119,6 +119,8 @@ Entity * ImageTestMenuCreate(Entity *pParentEnt)
 		return false;
 	}
 
+	root_item()->entity->PrintTreeAsText();
+
 //	luaL_dostring(
 //	L,
 //	"t = Timer(function(timer) print(\"Timer!\") end, 2)\n"
