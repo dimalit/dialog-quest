@@ -2,44 +2,22 @@
 #include "ScreenItem.h"
 #include "App.h"
 #include <luabind/luabind.hpp>
-#include <cassert>
+#include <cassert>	   ::
+
+class LuaCompositeItem;
 
 class LuaScreenItem: virtual public ScreenItem{
 public:
-	LuaScreenItem(CompositeItem* parent = 0):ScreenItem(parent){}
+	bool operator == (LuaScreenItem&){return false;}
+	LuaScreenItem(LuaCompositeItem* parent = 0, int x=0, int y=0);
 	static void luabind(lua_State* L);
+	LuaCompositeItem* getParent();
+	void setParent(LuaCompositeItem* p);
 
 private:
 	LuaScreenItem(const LuaScreenItem&){assert(false);}
 	LuaScreenItem& operator=(const LuaScreenItem&){assert(false);}
-};
 
-class LuaCompositeItem: public CompositeItem, public LuaScreenItem{
-public:
-	LuaCompositeItem(CompositeItem* parent = 0):CompositeItem(parent), LuaScreenItem(parent), ScreenItem(parent){}
-	static void luabind(lua_State* L);
-
-private:
-	LuaCompositeItem(const LuaCompositeItem&):CompositeItem(NULL){assert(false);}
-	LuaCompositeItem& operator=(const LuaCompositeItem&){assert(false);}
-};
-
-class CompositeItem;
-
-// needs to be public!
-// error C2243: 'type cast' : conversion from 'LuaSimpleItem *' to 'ScreenItem *' exists, but is inaccessible
-class LuaSimpleItem: public SimpleItem, public LuaScreenItem
-{
-public:
-	// need to be public for luabind
-	bool operator == (LuaSimpleItem&){return false;}
-	LuaSimpleItem(CompositeItem* parent,float x, float y);
-	LuaSimpleItem(CompositeItem* parent);
-	~LuaSimpleItem(){
-	}
-	static void luabind(lua_State* L);
-
-private:
 	luabind::object getQuad(){
 		float x[4], y[4];
 		for(int i = 0; i<4; i++)
@@ -59,7 +37,34 @@ private:
 			res[4]["y"] = y[3];
 		return res;
 	}
+};
 
+class LuaCompositeItem: public CompositeItem, public LuaScreenItem{
+public:
+	bool operator == (LuaCompositeItem&){return false;}
+	LuaCompositeItem(LuaCompositeItem* parent = 0, int x=0, int y=0):CompositeItem(parent,x,y), LuaScreenItem(parent,x,y), ScreenItem(parent,x,y){}
+	static void luabind(lua_State* L);
+
+private:
+	LuaCompositeItem(const LuaCompositeItem&):CompositeItem(NULL){assert(false);}
+	LuaCompositeItem& operator=(const LuaCompositeItem&){assert(false);}
+};
+
+class CompositeItem;
+
+// needs to be public!
+// error C2243: 'type cast' : conversion from 'LuaSimpleItem *' to 'ScreenItem *' exists, but is inaccessible
+class LuaSimpleItem: public SimpleItem, public LuaScreenItem
+{
+public:
+	// need to be public for luabind
+	bool operator == (LuaSimpleItem&){return false;}
+	LuaSimpleItem(LuaCompositeItem* parent=0,int x=0, int y=0):SimpleItem(parent, x, y), LuaScreenItem(parent,x,y), ScreenItem(parent,x,y){}
+	~LuaSimpleItem(){
+	}
+	static void luabind(lua_State* L);
+
+private:
 	luabind::object onDrag_cb;
 	luabind::object onDbClick_cb;
 	luabind::object onDragStart_cb;

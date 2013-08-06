@@ -19,7 +19,7 @@ public:
 	Entity* acquireEntity(Entity* e);
 
 	// ctor/dtor
-	ScreenItem(CompositeItem* parent = 0);
+	ScreenItem(CompositeItem* parent = 0, int x = 0, int y = 0);
 	virtual ~ScreenItem();
 
 	// parent/child relations
@@ -33,20 +33,17 @@ public:
 	// position
 	void move(float dx, float dy){
 		entity->GetVar("pos2d")->GetVector2() += CL_Vec2f(dx, dy);
-		hp_pos += CL_Vec2f(dx, dy);
 	}
 	// my hotSpot is also rotation center. Proton's - not.
 	void setX(float x){
 		CL_Vec2f v = entity->GetVar("pos2d")->GetVector2();
 		v.x = x - getHotSpotX();
 		entity->GetVar("pos2d")->Set(v);
-		hp_pos.x = x;
 	}
 	void setY(float y){
 		CL_Vec2f v = entity->GetVar("pos2d")->GetVector2();
 		v.y = y - getHotSpotY();
 		entity->GetVar("pos2d")->Set(v);
-		hp_pos.y = y;
 	}
 	float getX() const {return entity->GetVar("pos2d")->GetVector2().x + getHotSpotX();}
 	float getY() const {return entity->GetVar("pos2d")->GetVector2().y + getHotSpotY();}
@@ -57,39 +54,51 @@ public:
 	float getRotation() const {return entity->GetVar("rotation")->GetFloat() / 180.0f * (float)M_PI;}
 
 	// dimensions and hot-spot
-	void setHotSpotX(float x) {
+	void setHotSpotRelativeX(float x) {
 		// TODO: try to set by = and by Set() and see if it works!
 		// TODO: will it work with rotation?
-		float dx = x - getHotSpotX();
-		entity->GetVar("pos2d")->GetVector2() += CL_Vec2f(-dx, 0);
-
-		float xx = getWidth() > 0 ? x / getWidth() : 0;
-		float yy = getHeight() > 0 ? getHotSpotY() / getHeight() : 0;
-		entity->GetVar("rotationCenter")->Set(xx, yy);
+		CL_Vec2f v = entity->GetVar("rotationCenter")->GetVector2();
+		float dx = getWidth() * (x - v.x);
+		v.x = x;
+		entity->GetVar("rotationCenter")->Set(v);
+		move(-dx, 0);
 	}
-	void setHotSpotY(float y) {
-		float dy = y - getHotSpotY();
-		entity->GetVar("pos2d")->GetVector2() += CL_Vec2f(0, -dy);
-
-		float xx = getWidth() > 0 ? getHotSpotX() / getWidth() : 0;
-		float yy = getHeight() > 0 ? y / getHeight() : 0;
-
-		entity->GetVar("rotationCenter")->Set(xx, yy);
+	void setHotSpotRelativeY(float y) {
+		CL_Vec2f v = entity->GetVar("rotationCenter")->GetVector2();
+		float dy = getWidth() * (y - v.y);
+		v.y = y;
+		entity->GetVar("rotationCenter")->Set(v);
+		move(0, -dy);
 	}
-
+	float getHotSpotRelativeX() const{
+		return entity->GetVar("rotationCenter")->GetVector2().x;
+	}
+	float getHotSpotRelativeY() const{
+		return entity->GetVar("rotationCenter")->GetVector2().y;
+	}
 	float getWidth()	const {
-		// TODO: GetParent() is me - so..?
 		return entity->GetVar("size2d")->GetVector2().x;
 	}
 	float getHeight()	const {
-		// TODO: GetParent() is me - so..?
 		return entity->GetVar("size2d")->GetVector2().y;
 	}
+	void setWidth(float w){
+		CL_Vec2f v = entity->GetVar("size2d")->GetVector2();
+		v.x = w;
+		entity->GetVar("size2d")->Set(v);
+		// note: pos is automatically adjusted in OnResize
+	}
+	void setHeight(float h){
+		// then grow it
+		CL_Vec2f v = entity->GetVar("size2d")->GetVector2();
+		v.y = h;
+		entity->GetVar("size2d")->Set(v);
+	}
 	float getHotSpotX()	const {
-		return hp_pos.x - entity->GetVar("pos2d")->GetVector2().x;//entity->GetVar("rotationCenter")->GetVector2().x * getWidth();
+		return entity->GetVar("rotationCenter")->GetVector2().x * getWidth();
 	}
 	float getHotSpotY()	const {
-		return hp_pos.y - entity->GetVar("pos2d")->GetVector2().y;//entity->GetVar("rotationCenter")->GetVector2().y * getHeight();
+		return entity->GetVar("rotationCenter")->GetVector2().y * getHeight();
 }
 	float getTop()		const {
 		float res = std::numeric_limits<float>::infinity();
@@ -134,7 +143,6 @@ public:
 
 protected:
 	CompositeItem* parent_item;
-	CL_Vec2f hp_pos;	// used when it changes
 public: //!!! temporary
 	Entity* entity;
 protected:
@@ -166,16 +174,31 @@ protected:
 			assert(false);
 		}// sw
 	}
+	void OnSizeChange(Variant* /*NULL*/){
+		// move corner
+		CL_Vec2f new_size = entity->GetVar("size2d")->GetVector2();
+		float dx = getHotSpotRelativeX() * (new_size.x - orig_width);
+		float dy = getHotSpotRelativeY() * (new_size.y - orig_height);
+		move(-dx, -dy);
+		
+		orig_width = new_size.x;
+		orig_height = new_size.y;
+	}
+private:
+	float orig_width, orig_height;
 };
 
 class CompositeItem: virtual public ScreenItem{
 	friend class ScreenItem;
 public:
 	//TODO Add x abd y parameters to CompositeItem
-	CompositeItem(CompositeItem* parent):ScreenItem(parent){}
+	CompositeItem(CompositeItem* parent, int x=0, int y=0):ScreenItem(parent,x,y)
+	{
+	}
 	virtual ~CompositeItem(){
 		// TODO: What should we do here with our children? They will have inexisting parent!
 	}
+
 private:
 	void addChild(ScreenItem* w){
 		assert(w && children.count(w)==0);
@@ -194,9 +217,6 @@ private:
 // TODO: inheritance of CharInputObject should be in ScreenItem!
 class SimpleItem: virtual public ScreenItem
 {
-public:
-	static CompositeItem* getGlobalParent(){return global_parent;}
-	static void setGlobalParent(CompositeItem* v){global_parent = v;}
 //!!!protected: for a while:
 public:
 	SimpleItem(CompositeItem* prent, float x=0.0f, float y=0.0f);
@@ -210,6 +230,8 @@ public:
 		// set new
 		view = r;
 		// connect component
+		float w = getWidth();
+		float h = getHeight();
 		if(view){
 			entity->AddComponent(view);
 		}
@@ -228,21 +250,9 @@ public:
 
 protected:
 	EntityComponent* view;
-
-	void OnSizeChange(Variant* /*NULL*/){
-		float w = getWidth();
-		float h = getHeight();
-		setHotSpotX( w / 2  );
-		setHotSpotY( h / 2 );
-	}
-
-	void OnPosChange(Variant* /*NULL*/){}
-
 	// utilitary
 	void takeCharFocus();
 	void giveCharFocus();
-
-	static CompositeItem* global_parent;
 
 private:
 	// no value semantic!

@@ -36,7 +36,7 @@ public:
 	void setText(std::string txt){GetVar("text")->Set(txt);}
 	std::string getText(){return GetVar("text")->GetString();}
 
-	float getWidth(){
+	float getWidth() const{
 		return width;
 	}
 	float getHeight(){
@@ -48,15 +48,51 @@ public:
 		}//else
 	}
 	void setWidth(int w){
-		width = w;
+		width = w;								 
 		if(GetParent())
 			GetParent()->GetVar("size2d")->Set(w, 0);
 	}
-	//void setHeight(int h){
-	//	size.y = h;
-	//	if(GetParent())
-	//		GetParent()->GetVar("size2d")->Set(size);
+	void setFirstLineDecrement(int val){
+		// TODO It can be less than 0 btw!
+		GetVar("firstLineDecrement")->Set(uint32(val));
+	}
+	int getFirstLineDecrement(){
+		return GetVar("firstLineDecrement")->GetUINT32();
+	}
+	const StairsProfile& getLeftObstacles() const{
+		return left_obstacles;
+	}
+	const StairsProfile& getRightObstacles() const{
+		return right_obstacles;
+	}
+	void setLeftObstacles(const StairsProfile& p){
+		left_obstacles = p;
+		GetVar("text")->GetSigOnChanged()->operator()(NULL);
+	}
+	void setRightObstacles(const StairsProfile& p){
+		right_obstacles = p;
+		GetVar("text")->GetSigOnChanged()->operator()(NULL);
+	}
+	//int getLeftObstacle(int y, int w=0) const{
+	//	return left_obstacles(y, w);
 	//}
+	//int getRightObstacle(int y, int w=0) const{
+	//	return right_obstacles(y, w);
+	//}
+	//void setLeftObstacle(int y, int w, int val){
+	//	left_obstacles.setInterval(y, w, val);
+	//	GetVar("text")->GetSigOnChanged()->operator()(NULL);
+	//}
+	//void setRightObstacle(int y, int w, int val){
+	//	right_obstacles.setInterval(y, w, val);
+	//	GetVar("text")->GetSigOnChanged()->operator()(NULL);
+	//}
+	int getLastLineEndX(){
+		return GetVar("lastLineEndX")->GetUINT32();
+	}
+	int getLastLineEndY(){
+		return GetVar("lastLineEndY")->GetUINT32();
+	}
 private:
 	int width;// used when attached
 };
@@ -71,11 +107,17 @@ private:
 	LuaText& operator=(const LuaText&){assert(false);}
 };
 
+class LuaStairsProfile;
+
 class LuaTextBox: public TextBox{
 public:
 	LuaTextBox(std::string txt, int width, eAlignment align);
 	static void luabind(lua_State* L);
 
+	const LuaStairsProfile& getLeftObstacles() const;
+	const LuaStairsProfile& getRightObstacles() const;
+	void setLeftObstacles(const LuaStairsProfile& p);
+	void setRightObstacles(const LuaStairsProfile& p);
 private:
 	LuaTextBox(const LuaText&):TextBox("", 0, ALIGNMENT_UPPER_LEFT){assert(false);}
 	LuaTextBox& operator=(const LuaText&){assert(false);}

@@ -19,54 +19,67 @@ CompositeItem* root_item(){
 	return root;
 }
 
-LuaSimpleItem::LuaSimpleItem(CompositeItem* parent, float x, float y): SimpleItem(parent, x, y), LuaScreenItem(parent), ScreenItem(parent){
-//	this->setParent(root_item());
+LuaScreenItem::LuaScreenItem(LuaCompositeItem* parent, int x, int y):ScreenItem(parent,x,y){
 }
-LuaSimpleItem::LuaSimpleItem(CompositeItem* parent): SimpleItem(parent), LuaScreenItem(parent), ScreenItem(parent){
-//	this->setParent(root_item());
+
+LuaCompositeItem* LuaScreenItem::getParent(){
+	LuaCompositeItem* ret = dynamic_cast<LuaCompositeItem*>(ScreenItem::getParent());
+	assert(ret || !ScreenItem::getParent());		// should be convertible! (or null)
+	return ret;
+}
+
+void LuaScreenItem::setParent(LuaCompositeItem* p){
+	ScreenItem::setParent(p);
 }
 
 void LuaScreenItem::luabind(lua_State* L){
 	luabind::module(L) [
-	luabind::class_<LuaScreenItem>("ScreenItem")
-	.def(luabind::constructor<CompositeItem*>())
-	.def(luabind::constructor<>())
-	.property("parent", &LuaScreenItem::getParent, &LuaScreenItem::setParent)
+		luabind::class_<LuaScreenItem>("ScreenItem")
+		.def(luabind::constructor<LuaCompositeItem*, int, int>())
+		.def(luabind::constructor<LuaCompositeItem*>())
+		.def(luabind::constructor<>())
+		.property("parent", &LuaScreenItem::getParent, &LuaScreenItem::setParent)
+		.property("x", &LuaScreenItem::getX, &LuaScreenItem::setX)
+		.property("y", &LuaScreenItem::getY, &LuaScreenItem::setY)
+		.def("move", &LuaScreenItem::move)
+		.property("quad", &LuaScreenItem::getQuad)
+
+		.property("rotation", &LuaScreenItem::getRotation, &LuaScreenItem::setRotation)
+
+		.property("width", &LuaCompositeItem::getWidth, &LuaCompositeItem::setWidth)
+		.property("height", &LuaCompositeItem::getHeight, &LuaCompositeItem::setHeight)
+		.property("top", &LuaScreenItem::getTop)
+		.property("bottom", &LuaScreenItem::getBottom)
+		.property("left", &LuaScreenItem::getLeft)
+		.property("right", &LuaScreenItem::getRight)
+		.property("hpx", &LuaScreenItem::getHotSpotX)
+		.property("hpy", &LuaScreenItem::getHotSpotY)
+		.property("hpx_relative", &LuaScreenItem::getHotSpotRelativeX, &LuaScreenItem::setHotSpotRelativeX)
+		.property("hpy_relative", &LuaScreenItem::getHotSpotRelativeY, &LuaScreenItem::setHotSpotRelativeY)
+
+		.def(luabind::self == luabind::other<LuaScreenItem&>())				// remove operator ==
 	];
 }
 
 void LuaCompositeItem::luabind(lua_State* L){
 	luabind::module(L) [
-	luabind::class_<LuaCompositeItem, LuaScreenItem>("CompositeItem")
-	.def(luabind::constructor<CompositeItem*>())
-	.def(luabind::constructor<>())
+		luabind::class_< LuaCompositeItem, LuaScreenItem >("CompositeItem")
+		.def(luabind::constructor<LuaCompositeItem*,int,int>())
+		.def(luabind::constructor<LuaCompositeItem*>())
+		.def(luabind::constructor<>())
+
+		.def(luabind::self == luabind::other<LuaCompositeItem&>())				// remove operator ==
 	];
 
-	luabind::globals(L)["root"] = root_item();
+	luabind::globals(L)["root"] = dynamic_cast<LuaCompositeItem*>(root_item());
 }
 
 void LuaSimpleItem::luabind(lua_State* L){
 
 	luabind::module(L) [
 	luabind::class_<LuaSimpleItem, LuaScreenItem>("SimpleItem")
-		.def(luabind::constructor<CompositeItem*, float, float>())
-		.def(luabind::constructor<CompositeItem*>())
-
-		.property("x", &LuaSimpleItem::getX, &LuaSimpleItem::setX)
-		.property("y", &LuaSimpleItem::getY, &LuaSimpleItem::setY)
-		.def("move", &LuaSimpleItem::move)
-		.property("quad", &LuaSimpleItem::getQuad)
-
-		.property("rotation", &LuaSimpleItem::getRotation, &LuaSimpleItem::setRotation)
-
-		.property("width", &LuaSimpleItem::getWidth)
-		.property("height", &LuaSimpleItem::getHeight)
-		.property("top", &LuaSimpleItem::getTop)
-		.property("bottom", &LuaSimpleItem::getBottom)
-		.property("left", &LuaSimpleItem::getLeft)
-		.property("right", &LuaSimpleItem::getRight)
-		.property("hpx", &LuaSimpleItem::getHotSpotX, &LuaSimpleItem::setHotSpotX)
-		.property("hpy", &LuaSimpleItem::getHotSpotY, &LuaSimpleItem::setHotSpotY)
+		.def(luabind::constructor<LuaCompositeItem*, int, int>())
+		.def(luabind::constructor<LuaCompositeItem*>())
 
 		.def_readwrite("onDbClick", &LuaSimpleItem::onDbClick_cb)
 		.def_readwrite("onDrag", &LuaSimpleItem::onDrag_cb)

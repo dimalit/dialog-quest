@@ -1,12 +1,20 @@
 #include "PlatformPrecomp.h"
 #include "ScreenItem.h"
 
-ScreenItem::ScreenItem(CompositeItem* parent)
+ScreenItem::ScreenItem(CompositeItem* parent, int x, int y)
 	:parent_item(parent)
 {
-	entity = new Entity();
+	orig_width = orig_height = 0;
+
+	entity = new Entity("ScreenItem");
 	if(parent_item)
 		parent_item->addChild(this);
+
+	setHotSpotRelativeX(0.5f);
+	setHotSpotRelativeY(0.5f);
+	setX(x); setY(y);
+
+	entity->GetVar("size2d")->GetSigOnChanged()->connect(1, boost::bind(&SimpleItem::OnSizeChange, this, _1));
 }
 
 ScreenItem::~ScreenItem(void)
@@ -38,9 +46,6 @@ SimpleItem::SimpleItem(CompositeItem* parent, float x, float y)
 
 	setX(x); setY(y);
 //	this->visible = true;
-	
-	entity->GetVar("size2d")->GetSigOnChanged()->connect(1, boost::bind(&SimpleItem::OnSizeChange, this, _1));
-	entity->GetVar("pos2d")->GetSigOnChanged()->connect(1, boost::bind(&SimpleItem::OnPosChange, this, _1));
 }
 
 SimpleItem::~SimpleItem(void)
