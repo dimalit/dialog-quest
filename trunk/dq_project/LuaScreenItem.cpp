@@ -11,7 +11,9 @@
 CompositeItem* root_item(){
 	static LuaCompositeItem* root = 0;
 	if(!root){
-	root = new LuaCompositeItem();
+	root = new LuaCompositeItem(0,0);
+	root->setHotSpotRelativeX(0.0f);
+	root->setHotSpotRelativeY(0.0f);
 		Entity* e = new Entity("root");
 		AddFocusIfNeeded(e);
 		root->acquireEntity(e);
@@ -19,7 +21,7 @@ CompositeItem* root_item(){
 	return root;
 }
 
-LuaScreenItem::LuaScreenItem(LuaCompositeItem* parent, int x, int y):ScreenItem(parent,x,y){
+LuaScreenItem::LuaScreenItem(int x, int y):ScreenItem(x,y){
 }
 
 LuaCompositeItem* LuaScreenItem::getParent(){
@@ -28,19 +30,16 @@ LuaCompositeItem* LuaScreenItem::getParent(){
 	return ret;
 }
 
-void LuaScreenItem::setParent(LuaCompositeItem* p){
-	ScreenItem::setParent(p);
-}
-
 void LuaScreenItem::luabind(lua_State* L){
 	luabind::module(L) [
 		luabind::class_<LuaScreenItem>("ScreenItem")
-		.def(luabind::constructor<LuaCompositeItem*, int, int>())
-		.def(luabind::constructor<LuaCompositeItem*>())
+		.def(luabind::constructor<int, int>())
 		.def(luabind::constructor<>())
-		.property("parent", &LuaScreenItem::getParent, &LuaScreenItem::setParent)
+		.property("parent", &LuaScreenItem::getParent)
 		.property("x", &LuaScreenItem::getX, &LuaScreenItem::setX)
 		.property("y", &LuaScreenItem::getY, &LuaScreenItem::setY)
+		.property("gx", &LuaScreenItem::getAbsoluteX)
+		.property("gy", &LuaScreenItem::getAbsoluteY)
 		.def("move", &LuaScreenItem::move)
 		.property("quad", &LuaScreenItem::getQuad)
 
@@ -64,9 +63,10 @@ void LuaScreenItem::luabind(lua_State* L){
 void LuaCompositeItem::luabind(lua_State* L){
 	luabind::module(L) [
 		luabind::class_< LuaCompositeItem, LuaScreenItem >("CompositeItem")
-		.def(luabind::constructor<LuaCompositeItem*,int,int>())
-		.def(luabind::constructor<LuaCompositeItem*>())
+		.def(luabind::constructor<int,int>())
 		.def(luabind::constructor<>())
+		.def("add", &LuaCompositeItem::add)
+		.def("remove", &LuaCompositeItem::remove)
 
 		.def(luabind::self == luabind::other<LuaCompositeItem&>())				// remove operator ==
 	];
@@ -78,8 +78,8 @@ void LuaSimpleItem::luabind(lua_State* L){
 
 	luabind::module(L) [
 	luabind::class_<LuaSimpleItem, LuaScreenItem>("SimpleItem")
-		.def(luabind::constructor<LuaCompositeItem*, int, int>())
-		.def(luabind::constructor<LuaCompositeItem*>())
+		.def(luabind::constructor<int, int>())
+		.def(luabind::constructor<>())
 
 		.def_readwrite("onDbClick", &LuaSimpleItem::onDbClick_cb)
 		.def_readwrite("onDrag", &LuaSimpleItem::onDrag_cb)
