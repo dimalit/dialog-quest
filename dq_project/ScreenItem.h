@@ -10,21 +10,19 @@
 #include <set>
 #include <limits>
 
-class CompositeItem;
-
 class ScreenItem: protected CharInputObject
 {
+friend class CompositeItem;
 public:
 	// entity
 	Entity* acquireEntity(Entity* e);
 
 	// ctor/dtor
-	ScreenItem(CompositeItem* parent = 0, int x = 0, int y = 0);
+	ScreenItem(int x = 0, int y = 0);
 	virtual ~ScreenItem();
 
 	// parent/child relations
-	void setParent(CompositeItem* new_parent);
-	CompositeItem* getParent(){return parent_item;}
+	CompositeItem* getParent() const {return parent_item;}
 
 	// geometry
 	// polymorphic
@@ -34,19 +32,13 @@ public:
 	void move(float dx, float dy){
 		entity->GetVar("pos2d")->GetVector2() += CL_Vec2f(dx, dy);
 	}
-	// my hotSpot is also rotation center. Proton's - not.
-	void setX(float x){
-		CL_Vec2f v = entity->GetVar("pos2d")->GetVector2();
-		v.x = x - getHotSpotX();
-		entity->GetVar("pos2d")->Set(v);
-	}
-	void setY(float y){
-		CL_Vec2f v = entity->GetVar("pos2d")->GetVector2();
-		v.y = y - getHotSpotY();
-		entity->GetVar("pos2d")->Set(v);
-	}
-	float getX() const {return entity->GetVar("pos2d")->GetVector2().x + getHotSpotX();}
-	float getY() const {return entity->GetVar("pos2d")->GetVector2().y + getHotSpotY();}
+
+	void setX(float x);
+	void setY(float y);
+	float getX() const;
+	float getY() const;
+	float getAbsoluteX() const;
+	float getAbsoluteY() const;
 
 	// rotation
 	void rotate(float r){entity->GetVar("rotation")->GetFloat() += r * 180.0f / (float)M_PI;}
@@ -65,7 +57,7 @@ public:
 	}
 	void setHotSpotRelativeY(float y) {
 		CL_Vec2f v = entity->GetVar("rotationCenter")->GetVector2();
-		float dy = getWidth() * (y - v.y);
+		float dy = getHeight() * (y - v.y);
 		v.y = y;
 		entity->GetVar("rotationCenter")->Set(v);
 		move(0, -dy);
@@ -140,9 +132,8 @@ public:
 		}
 		return res;
 	}
-
 protected:
-	CompositeItem* parent_item;
+	void setParent(CompositeItem* p);
 public: //!!! temporary
 	Entity* entity;
 protected:
@@ -186,40 +177,42 @@ protected:
 	}
 private:
 	float orig_width, orig_height;
+	CompositeItem* parent_item;
 };
 
 class CompositeItem: virtual public ScreenItem{
 	friend class ScreenItem;
 public:
-	//TODO Add x abd y parameters to CompositeItem
-	CompositeItem(CompositeItem* parent, int x=0, int y=0):ScreenItem(parent,x,y)
+	CompositeItem(int x=0, int y=0):ScreenItem(x,y)
 	{
 	}
 	virtual ~CompositeItem(){
 		// TODO: What should we do here with our children? They will have inexisting parent!
 	}
-
-private:
-	void addChild(ScreenItem* w){
+	CompositeItem* add(ScreenItem* w){
 		assert(w && children.count(w)==0);
+		assert(w->parent_item == NULL);
+		w->setParent(this);
 		entity->AddEntity(w->entity);
 		children.insert(w);
+		return this;
 	}
-	void removeChild(ScreenItem* w){
+	CompositeItem* remove(ScreenItem* w){
 		assert(w && children.count(w)!=0);
 		entity->RemoveEntityByAddress(w->entity, false);	// don't delete entity
 		children.erase(w);
+		w->setParent(NULL);
+		return this;
 	}
-
+private:
 	std::set<ScreenItem*> children;
 };
 
-// TODO: inheritance of CharInputObject should be in ScreenItem!
 class SimpleItem: virtual public ScreenItem
 {
 //!!!protected: for a while:
 public:
-	SimpleItem(CompositeItem* prent, float x=0.0f, float y=0.0f);
+	SimpleItem(float x=0.0f, float y=0.0f);
 	~SimpleItem();
 
 	// aggregates

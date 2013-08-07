@@ -9,10 +9,9 @@ class LuaCompositeItem;
 class LuaScreenItem: virtual public ScreenItem{
 public:
 	bool operator == (LuaScreenItem&){return false;}
-	LuaScreenItem(LuaCompositeItem* parent = 0, int x=0, int y=0);
+	LuaScreenItem(int x=0, int y=0);
 	static void luabind(lua_State* L);
 	LuaCompositeItem* getParent();
-	void setParent(LuaCompositeItem* p);
 
 private:
 	LuaScreenItem(const LuaScreenItem&){assert(false);}
@@ -42,8 +41,27 @@ private:
 class LuaCompositeItem: public CompositeItem, public LuaScreenItem{
 public:
 	bool operator == (LuaCompositeItem&){return false;}
-	LuaCompositeItem(LuaCompositeItem* parent = 0, int x=0, int y=0):CompositeItem(parent,x,y), LuaScreenItem(parent,x,y), ScreenItem(parent,x,y){}
+	LuaCompositeItem(int x=0, int y=0):CompositeItem(x,y), LuaScreenItem(x,y), ScreenItem(x,y){
+	}
 	static void luabind(lua_State* L);
+
+	LuaCompositeItem* add(luabind::object child){
+		LuaScreenItem* it;
+		if(luabind::type(child) == LUA_TUSERDATA)
+			it = luabind::object_cast<LuaScreenItem*>(child);
+		else
+			it = luabind::object_cast<LuaScreenItem*>(child["item"]);
+		if(it==NULL)
+			luaL_error(child.interpreter(), "Can't convert value to ScreenItem!");
+		else
+			CompositeItem::add(it);
+		return this;
+	}
+
+	LuaCompositeItem* remove(LuaScreenItem* child){
+		CompositeItem::remove(child);
+		return this;
+	}
 
 private:
 	LuaCompositeItem(const LuaCompositeItem&):CompositeItem(NULL){assert(false);}
@@ -59,7 +77,7 @@ class LuaSimpleItem: public SimpleItem, public LuaScreenItem
 public:
 	// need to be public for luabind
 	bool operator == (LuaSimpleItem&){return false;}
-	LuaSimpleItem(LuaCompositeItem* parent=0,int x=0, int y=0):SimpleItem(parent, x, y), LuaScreenItem(parent,x,y), ScreenItem(parent,x,y){}
+	LuaSimpleItem(int x=0, int y=0):SimpleItem(x, y), LuaScreenItem(x,y), ScreenItem(x,y){}
 	~LuaSimpleItem(){
 	}
 	static void luabind(lua_State* L);

@@ -1,14 +1,14 @@
 #include "PlatformPrecomp.h"
 #include "ScreenItem.h"
 
-ScreenItem::ScreenItem(CompositeItem* parent, int x, int y)
-	:parent_item(parent)
+ScreenItem::ScreenItem(int x, int y)
+	:parent_item(NULL)
 {
 	orig_width = orig_height = 0;
 
 	entity = new Entity("ScreenItem");
 	if(parent_item)
-		parent_item->addChild(this);
+		parent_item->add(this);
 
 	setHotSpotRelativeX(0.5f);
 	setHotSpotRelativeY(0.5f);
@@ -20,7 +20,7 @@ ScreenItem::ScreenItem(CompositeItem* parent, int x, int y)
 ScreenItem::~ScreenItem(void)
 {
 	if(parent_item)
-		parent_item->removeChild(this);
+		parent_item->remove(this);
 	delete entity;
 }
 
@@ -31,20 +31,60 @@ Entity* ScreenItem::acquireEntity(Entity* e){
 	return entity;
 }
 
-void ScreenItem::setParent(CompositeItem* new_parent){
+// my hotSpot is also rotation center. Proton's - not.
+void ScreenItem::setX(float x){
+	CL_Vec2f v = entity->GetVar("pos2d")->GetVector2();
+	v.x = x - getHotSpotX();
 	if(parent_item)
-		parent_item->removeChild(this);
-	parent_item = new_parent;
+		v.x + parent_item->getHotSpotX();
+	entity->GetVar("pos2d")->Set(v);
+}
+void ScreenItem::setY(float y){
+	CL_Vec2f v = entity->GetVar("pos2d")->GetVector2();
+	v.y = y - getHotSpotY();
 	if(parent_item)
-		parent_item->addChild(this);
+		v.y + parent_item->getHotSpotY();
+	entity->GetVar("pos2d")->Set(v);
+}
+float ScreenItem::getX() const {
+	float x = entity->GetVar("pos2d")->GetVector2().x + getHotSpotX();
+	if(parent_item)
+		x -= parent_item->getHotSpotX();
+	return  x;
+}
+float ScreenItem::getY() const {
+	float y = entity->GetVar("pos2d")->GetVector2().y + getHotSpotY();
+	if(parent_item)
+		y -= parent_item->getHotSpotY();
+	return  y;
+}
+float ScreenItem::getAbsoluteX() const {
+	if(parent_item == 0)
+		return getX();
+	else
+		return parent_item->getAbsoluteX() + getX();
+}
+float ScreenItem::getAbsoluteY() const {
+	if(parent_item == 0)
+		return getY();
+	else
+		return parent_item->getAbsoluteY() + getY();
 }
 
-SimpleItem::SimpleItem(CompositeItem* parent, float x, float y)
-	:ScreenItem(parent)
+void ScreenItem::setParent(CompositeItem* p){
+	// need move myself
+	float x1 = parent_item ? parent_item->getHotSpotX() : 0;
+	float x2 = p		   ? p->getHotSpotX()			: 0;
+	float y1 = parent_item ? parent_item->getHotSpotY() : 0;
+	float y2 = p		   ? p->getHotSpotY()			: 0;
+	move(x2-x1, y2-y1);
+	parent_item = p;
+}
+
+SimpleItem::SimpleItem(float x, float y)
+	:ScreenItem(x, y)
 {
 	view = 0;
-
-	setX(x); setY(y);
 //	this->visible = true;
 }
 
@@ -90,7 +130,7 @@ SimpleItem::~SimpleItem(void)
 
 bool ScreenItem::isPointIn(float mx, float my){
 	// local params
-	float x = getX(), y = getY();
+	float x = getAbsoluteX(), y = getAbsoluteY();
 	float hpx = getHotSpotX(), hpy = getHotSpotY();
 	float rot = getRotation();
 
