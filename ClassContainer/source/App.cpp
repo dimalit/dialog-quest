@@ -142,7 +142,9 @@ void App::OnExitApp(VariantList *pVarList)
 }
 
 int lua_error_handler(lua_State* L){
-	std::cout << lua_tostring(L, -1) << std::endl;
+	const char* msg = lua_tostring(L, -1);
+	assert(msg);
+	std::cout << msg << std::endl;
 	lua_pop(L, 1);
 
 	luaL_dostring(L, "print(debug.traceback(\"\", 4))");
@@ -150,7 +152,8 @@ int lua_error_handler(lua_State* L){
 	lua_Debug d;
 	lua_getinfo(L, "Sln", &d);
 	std::cout << d.short_src << ":" << d.currentline;
-	return -1;
+	lua_pushstring(L, "error");
+	return 1;
 }
 
 void gc_on_update(VariantList*){
@@ -262,7 +265,7 @@ else
 	LuaTexture::luabind(L);
 
 	if(luaL_dofile(L, "lib.lua") != 0){
-		std::cerr << lua_tostring(L,-1) << "\n";
+		std::cout << lua_tostring(L,-1) << "\n";
 		return false;
 	}
 

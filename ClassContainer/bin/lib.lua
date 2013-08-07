@@ -119,8 +119,8 @@ end
 
 ------------- ..Items ----------------
 
-ImageItem = function(parent, x, y, path)
-  local item = SimpleItem(parent, x, y)
+ImageItem = function(x, y, path)
+  local item = SimpleItem(x, y)
   local image = Image(path)
   local self = {}
   setmetatable(self, inherit(item, image))
@@ -129,8 +129,8 @@ ImageItem = function(parent, x, y, path)
   return self
 end
 
-TextureItem = function(parent, x, y, width, height, path)
-  local item = SimpleItem(parent, x, y)
+TextureItem = function(x, y, width, height, path)
+  local item = SimpleItem(x, y)
   local texture = Texture(path, width, height)
   local self = {}
   setmetatable(self, inherit(item, texture))
@@ -139,8 +139,8 @@ TextureItem = function(parent, x, y, width, height, path)
   return self
 end
 
-TextItem = function(parent, x, y, text, font)
-  local item = SimpleItem(parent, x, y)
+TextItem = function(x, y, text, font)
+  local item = SimpleItem(x, y)
   local txt
 --  if font ~= nil then
 --    txt = Text(text, font)
@@ -155,8 +155,8 @@ TextItem = function(parent, x, y, text, font)
   return self
 end
 
-TextBoxItem = function(parent, x, y, w, text)
-  local item = SimpleItem(parent, x, y)
+TextBoxItem = function(x, y, w, text)
+  local item = SimpleItem(x, y)
   local txt
   txt = TextBox(text, w, 0)
 
@@ -169,8 +169,8 @@ TextBoxItem = function(parent, x, y, w, text)
 end
 
 -- make playing animation item
-AnimatedItem = function(parent, x, y, name)
-  local item = SimpleItem(parent, x, y)
+AnimatedItem = function(x, y, name)
+  local item = SimpleItem(x, y)
   local anim = Animation(load_config(name))
  
   local self = {}
@@ -194,8 +194,8 @@ AnimatedItem = function(parent, x, y, name)
   return self
 end
 
-function FlowLayoutItem(parent, x, y, w)
-  local self = CompositeItem(parent, x, y)
+function FlowLayoutItem(x, y, w)
+  local self = CompositeItem(x, y)
   self.width = w
   
   local items     = {}		-- array
@@ -204,7 +204,6 @@ function FlowLayoutItem(parent, x, y, w)
 
   local lay_out = function()
 	local cur_x, cur_y = profile.left:at(0,1), 0
-	print(#items.." items found\n")
 	for _,item in ipairs(items) do
 		-- TODO Check how to use == operator to compare references!
 		--assert(item.parent == self)
@@ -230,27 +229,26 @@ function FlowLayoutItem(parent, x, y, w)
 		item.rightObstacles = profile.right:shifted(-cur_y)		
 		cur_x, cur_y = item.lastLineEndX, item.lastLineEndY
 	  end -- select type
-	  print(cur_x.."-"..cur_y.."\n")
 	end -- for
   end -- lay_out()
   
   self.addItem = function(self, item)
 	print(type(item))
-	item.parent = self
+	self:add(item)
 	table.insert(items, item)
 	lay_out()
   end
   
   self.clear = function(self)
 	for _,item in ipairs(items) do
-		item.parent = nil
+		self:remove(item)
 	end
 	items = {}
   end
   
   self.addItems = function(self, added)
 	for i,item in ipairs(added) do
-		item.parent = self
+		self:add(item)
 		table.insert(items, item)
 	end
 	lay_out()
@@ -260,8 +258,8 @@ function FlowLayoutItem(parent, x, y, w)
 	if side==nil then side="left" end
 	assert(side=="left" or side=="right")
 	obstacles[obst] = true
-	obst.parent = self
-	profile[side]:setInterval(obst.top, obst.height, obst.right)
+	self:add(obst)
+	profile[side]:setInterval(obst.top+self.hpy, obst.height, obst.right+self.hpx)
 	lay_out()
   end  
   return self
@@ -316,8 +314,8 @@ function TwoStateAnimation(anim)
   return anim
 end
 
-function DropArea(parent, x, y, view)
-  local item = SimpleItem(parent, x, y)
+function DropArea(x, y, view)
+  local item = SimpleItem(x, y)
   item.view = view
 
   local intersects = function(dummy, r)
@@ -394,11 +392,11 @@ onDrop = function(drops, obj)
   end
 end
 
-function Mover(parent, x, y, view)
+function Mover(x, y, view)
   if x == nil then x = 0 end
   if y == nil then y = 0 end
 
-  local item = MakeMover(SimpleItem(parent, x, y))    -- put it into closure!
+  local item = MakeMover(SimpleItem(x, y))    -- put it into closure!
   item.view = view
 
   local self = {
@@ -456,11 +454,12 @@ function Mover(parent, x, y, view)
 end -- Mover
 
 ------------- button ------------------
-Button = function(parent, x, y, view)
-  local item = SimpleItem(parent, x, y)
+Button = function(x, y, view)
+  local item = SimpleItem(x, y)
   local self = {}
   setmetatable(self, inherit(item, view))
   self.view = view
+  self.item = item
   
   item.onDragStart = function(item)
     view:over(true)

@@ -48,6 +48,7 @@ private:
 
 extern App g_App;
 extern lua_State* L;
+extern int lua_error_handler(lua_State* L);
 
 App * GetApp();
 const char * GetAppName();

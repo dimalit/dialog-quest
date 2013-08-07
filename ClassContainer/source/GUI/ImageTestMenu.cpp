@@ -104,22 +104,20 @@ Entity * ImageTestMenuCreate(Entity *pParentEnt)
 	//si = new SimpleItem(root_item(), 150,150);
 	//si->setView(t);
 
-	if(luaL_dostring(
-	L,
-	"local t = Texture(\"interface/flask.rttex\", 300, 300)\n"
-	"local si = SimpleItem(root, 150, 150)\n"
-	"si.view = t\n"
-	)!=0){
-		LogMsg( "%s\n", lua_tostring(L,-1) );
-		return 0;
-	};
+	//if(luaL_dostring(
+	//L,
+	//"local t = Texture(\"interface/flask.rttex\", 300, 300)\n"
+	//"local si = SimpleItem(150, 150)\n"
+	//"si.view = t\n"
+	//"root:add(si)\n"
+	//)!=0){
+	//	LogMsg( "%s\n", lua_tostring(L,-1) );
+	//	return 0;
+	//};
 
-	if(luaL_dofile(L, "test_mosaic.lua") != 0){
-		LogMsg( "%s\n", lua_tostring(L,-1) );
-		return false;
-	}
-
-	root_item()->entity->PrintTreeAsText();
+	lua_pushcfunction(L, lua_error_handler);
+    luaL_loadfile(L, "test_flow.lua");
+	lua_pcall(L, 0, LUA_MULTRET, -2);
 
 //	luaL_dostring(
 //	L,
