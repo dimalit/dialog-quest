@@ -36,14 +36,14 @@ void ScreenItem::setX(float x){
 	CL_Vec2f v = entity->GetVar("pos2d")->GetVector2();
 	v.x = x - getHotSpotX();
 	if(parent_item)
-		v.x + parent_item->getHotSpotX();
+		v.x += parent_item->getHotSpotX();
 	entity->GetVar("pos2d")->Set(v);
 }
 void ScreenItem::setY(float y){
 	CL_Vec2f v = entity->GetVar("pos2d")->GetVector2();
 	v.y = y - getHotSpotY();
 	if(parent_item)
-		v.y + parent_item->getHotSpotY();
+		v.y += parent_item->getHotSpotY();
 	entity->GetVar("pos2d")->Set(v);
 }
 float ScreenItem::getX() const {

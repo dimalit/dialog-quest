@@ -187,7 +187,11 @@ public:
 	{
 	}
 	virtual ~CompositeItem(){
-		// TODO: What should we do here with our children? They will have inexisting parent!
+		std::set<ScreenItem*>::iterator it;
+		for(it=children.begin(); it != children.end(); ++it){
+			(*it)->setParent(NULL);
+			delete *it;
+		}// for
 	}
 	CompositeItem* add(ScreenItem* w){
 		assert(w && children.count(w)==0);
