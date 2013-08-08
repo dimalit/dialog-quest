@@ -205,7 +205,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/d1reportSingleClassLayoutconstruct_aux"
 				Optimization="0"
-				AdditionalIncludeDirectories=".;&quot;c:\program files\boost&quot;;..\source;..\..\shared;..\..\shared\win\;&quot;..\..\shared\ClanLib-2.0\Sources&quot;;..\..\shared\win\include;..\..\shared\FliteTTS\include;..\..\shared\Irrlicht\include;&quot;..\..\..\luabind-0.9.1&quot;;&quot;..\..\..\lua-5.1.4\src&quot;;..\..\..\video\include;..\..\trunk\dq_project"
+				AdditionalIncludeDirectories=".;&quot;c:\program files\boost&quot;;..\source;..\..\shared;..\..\shared\win\;&quot;..\..\shared\ClanLib-2.0\Sources&quot;;..\..\shared\win\include;..\..\shared\FliteTTS\include;..\..\shared\Irrlicht\include;&quot;..\..\..\luabind-0.9.1&quot;;&quot;..\..\..\lua-5.1.4\src&quot;;..\..\..\video\include;..\..\trunk\dq_project;..\..\..\shiny"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_USE_32BIT_TIME_T;C_GL_MODE;_SECURE_SCL=0;_NO_DEBUG_HEAP=1;RT_JPG_SUPPORT"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -232,10 +232,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libcmtd.lib opengl32.lib  audiere.lib zdll.lib wsock32.lib lua51_static_d.lib luabind_static_d.lib"
+				AdditionalDependencies="libcmtd.lib opengl32.lib  audiere.lib zdll.lib wsock32.lib lua51_static_d.lib luabind_static_d.lib shinyDebug.lib"
 				OutputFile="../bin/winRTSimpleApp.exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="c:\program files\boost\lib;..\..\..\video\lib;..\..\shared\win\lib;..\..\shared\win\fmod\api\lib;..\..\shared\win\audiere\lib"
+				AdditionalLibraryDirectories="c:\program files\boost\lib;..\..\..\video\lib;..\..\shared\win\lib;..\..\shared\win\fmod\api\lib;..\..\shared\win\audiere\lib;..\..\..\shiny"
 				GenerateManifest="false"
 				IgnoreDefaultLibraryNames="msvcrtd.lib;libcmtd.lib"
 				GenerateDebugInformation="true"
@@ -293,7 +293,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\source;..\..\shared;..\..\shared\win\;..\..\shared\util\boost;&quot;..\..\shared\ClanLib-2.0\Sources&quot;;..\..\shared\win\include;..\..\shared\FliteTTS\include"
+				AdditionalIncludeDirectories=".;&quot;c:\program files\boost&quot;;..\source;..\..\shared;..\..\shared\win\;&quot;..\..\shared\ClanLib-2.0\Sources&quot;;..\..\shared\win\include;..\..\shared\FliteTTS\include;..\..\shared\Irrlicht\include;&quot;..\..\..\luabind-0.9.1&quot;;&quot;..\..\..\lua-5.1.4\src&quot;;..\..\..\video\include;..\..\trunk\dq_project;..\..\..\shiny"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;BOOST_ALL_NO_LIB;_USE_32BIT_TIME_T;C_GL_MODE;RT_JPG_SUPPORT"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="2"
@@ -314,12 +314,13 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="opengl32.lib audiere.lib zdll.lib wsock32.lib"
+				AdditionalDependencies="opengl32.lib audiere.lib zdll.lib wsock32.lib lua51_static.lib luabind_static.lib shiny.lib"
 				OutputFile="../bin/winRTSimpleApp.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\shared\win\lib;..\..\shared\win\fmod\api\lib;..\..\shared\win\audiere\lib"
+				AdditionalLibraryDirectories="c:\program files\boost\lib;..\..\..\video\lib;..\..\shared\win\lib;..\..\shared\win\fmod\api\lib;..\..\shared\win\audiere\lib;..\..\..\shiny"
+				IgnoreDefaultLibraryNames=""
 				GenerateDebugInformation="true"
-				SubSystem="2"
+				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				RandomizedBaseAddress="1"

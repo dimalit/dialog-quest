@@ -27,7 +27,8 @@ void Texture::OnAdd(Entity *e){
 void Texture::OnRender(VariantList *args){
 	if(!tex)
 		return;
-	tex->BlitRepeated(rtRectf(pos->x, pos->y, pos->x+size->x, pos->y+size->y));
+	CL_Vec2f abs_pos = args->m_variant[0].GetVector2() + *(this->pos);
+	tex->BlitRepeated(rtRectf(abs_pos.x, abs_pos.y, abs_pos.x+size->x, abs_pos.y+size->y));
 }
 
 LuaTexture::LuaTexture(std::string path, int w, int h):Texture(path, w, h){

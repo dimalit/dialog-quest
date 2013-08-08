@@ -24,6 +24,7 @@ public:
 	virtual void Draw();
 	virtual void OnScreenSizeChange();
 	virtual void Update();
+	virtual void PostInitIfNeeded();
 	virtual void OnEnterBackground();
 
 	string GetVersionString();

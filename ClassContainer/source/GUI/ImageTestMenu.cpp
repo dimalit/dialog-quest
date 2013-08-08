@@ -116,7 +116,7 @@ Entity * ImageTestMenuCreate(Entity *pParentEnt)
 	//};
 
 	lua_pushcfunction(L, lua_error_handler);
-    luaL_loadfile(L, "test_flow.lua");
+    luaL_loadfile(L, "init.lua");
 	lua_pcall(L, 0, LUA_MULTRET, -2);
 
 //	luaL_dostring(

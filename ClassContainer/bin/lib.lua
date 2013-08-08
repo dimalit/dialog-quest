@@ -119,7 +119,10 @@ end
 
 ------------- ..Items ----------------
 
-ImageItem = function(x, y, path)
+ImageItem = function(path, x, y)
+  if x == nil then x = 0 end
+  if y == nil then y = 0 end
+  
   local item = SimpleItem(x, y)
   local image = Image(path)
   local self = {}
@@ -129,7 +132,10 @@ ImageItem = function(x, y, path)
   return self
 end
 
-TextureItem = function(x, y, width, height, path)
+TextureItem = function(path, width, height, x, y)
+  if x == nil then x = 0 end
+  if y == nil then y = 0 end
+
   local item = SimpleItem(x, y)
   local texture = Texture(path, width, height)
   local self = {}
@@ -139,7 +145,16 @@ TextureItem = function(x, y, width, height, path)
   return self
 end
 
-TextItem = function(x, y, text, font)
+TextItem = function(text, font_or_x, x_or_y, y_or_nil)
+  local font, x, y
+  if type(font_or_x)=="number" then
+	x = font_or_x
+	y = x_or_y
+  else
+	font = font_or_x
+	x = x_or_y
+	y = y_or_nil
+  end
   local item = SimpleItem(x, y)
   local txt
 --  if font ~= nil then
@@ -155,7 +170,11 @@ TextItem = function(x, y, text, font)
   return self
 end
 
-TextBoxItem = function(x, y, w, text)
+TextBoxItem = function(text, w, x, y)
+  if w == nil then w = 0 end
+  if x == nil then x = 0 end
+  if y == nil then y = 0 end
+  
   local item = SimpleItem(x, y)
   local txt
   txt = TextBox(text, w, 0)
@@ -169,7 +188,10 @@ TextBoxItem = function(x, y, w, text)
 end
 
 -- make playing animation item
-AnimatedItem = function(x, y, name)
+AnimatedItem = function(name, x, y)
+  if x == nil then x = 0 end
+  if y == nil then y = 0 end
+
   local item = SimpleItem(x, y)
   local anim = Animation(load_config(name))
  
@@ -194,16 +216,19 @@ AnimatedItem = function(x, y, name)
   return self
 end
 
-function FlowLayoutItem(x, y, w)
+function FlowLayout(w, x, y)
+  if x == nil then x = 0 end
+  if y == nil then y = 0 end
+
   local self = CompositeItem(x, y)
   self.width = w
   
   local items     = {}		-- array
   local obstacles = {}		-- set
   local profile = { left = StairsProfile(), right = StairsProfile() }
-
+  
   local lay_out = function()
-	local cur_x, cur_y = profile.left:at(0,1), 0
+	local cur_x, cur_y = -self.hpx+profile.left:at(0,1), -self.hpy		-- from hotspot!
 	for _,item in ipairs(items) do
 		-- TODO Check how to use == operator to compare references!
 		--assert(item.parent == self)
@@ -213,7 +238,7 @@ function FlowLayoutItem(x, y, w)
 		item.x, item.y = cur_x, cur_y
 		cur_x = cur_x + item.width
 		while cur_x > self.width-profile.right:at(cur_y, item.height) do
-			cur_y = cur_y + 19							-- TODO Must know font line height here!!
+			cur_y = cur_y + 24							-- TODO Must know font line height here!!
 			cur_x = profile.left:at(cur_y, item.height)
 			item.x, item.y = cur_x, cur_y
 			cur_x = cur_x + item.width
@@ -221,19 +246,24 @@ function FlowLayoutItem(x, y, w)
 		end -- while line over	  
 	  -- if text
 	  else
-		item.firstLineDecrement = cur_x					-- TODO Align baselines here!!
-		item.x, item.y = 0, cur_y
+		item.firstLineDecrement = cur_x+self.hpx					-- TODO Align baselines here!!
+		item.x, item.y = -self.hpx, cur_y
 		item.width = self.width
 		profile.left:shifted(-cur_y)
 		item.leftObstacles = profile.left:shifted(-cur_y)
 		item.rightObstacles = profile.right:shifted(-cur_y)		
-		cur_x, cur_y = item.lastLineEndX, item.lastLineEndY
+		cur_x, cur_y = -self.hpx + item.lastLineEndX, cur_y + item.lastLineEndY
 	  end -- select type
 	end -- for
+	self.height = cur_y + 24			-- same magic number!
+	
+	-- check also obstacles
+	for obst,_ in pairs(obstacles) do
+		if obst.bottom+self.hpy > self.height then self.height = obst.bottom+self.hpy end
+	end
   end -- lay_out()
   
   self.addItem = function(self, item)
-	print(type(item))
 	self:add(item)
 	table.insert(items, item)
 	lay_out()
@@ -259,9 +289,23 @@ function FlowLayoutItem(x, y, w)
 	assert(side=="left" or side=="right")
 	obstacles[obst] = true
 	self:add(obst)
-	profile[side]:setInterval(obst.top+self.hpy, obst.height, obst.right+self.hpx)
+	if side=="left" then
+		profile["left"]:setInterval(obst.top, obst.height, obst.right+self.hpx)
+	else
+		profile["right"]:setInterval(obst.top, obst.height, self.width - (obst.left+self.hpx))
+	end
 	lay_out()
-  end  
+  end
+  
+  self.clearObstacles = function(self)
+	for k,obst in pairs(obstacles) do
+		table.remove(obstacles, obst)
+	end
+	profile.left = StairsProfile()
+	profile.right = StairsProfile()
+	lay_out()
+  end
+  
   return self
 end -- FlowLayoutItem
 ---------- MakeMover -----------
@@ -314,7 +358,10 @@ function TwoStateAnimation(anim)
   return anim
 end
 
-function DropArea(x, y, view)
+function DropArea(view, x, y)
+  if x == nil then x = 0 end
+  if y == nil then y = 0 end
+
   local item = SimpleItem(x, y)
   item.view = view
 
@@ -348,7 +395,8 @@ function DropArea(x, y, view)
     intersects = intersects,
     dist = dist,
     take = take,
-    over = over
+    over = over,
+	item = item
   }
   setmetatable(self, inherit(item))
   return self
@@ -392,7 +440,7 @@ onDrop = function(drops, obj)
   end
 end
 
-function Mover(x, y, view)
+function Mover(view, x, y)
   if x == nil then x = 0 end
   if y == nil then y = 0 end
 
@@ -454,7 +502,10 @@ function Mover(x, y, view)
 end -- Mover
 
 ------------- button ------------------
-Button = function(x, y, view)
+Button = function(view, x, y)
+  if x == nil then x = 0 end
+  if y == nil then y = 0 end
+  
   local item = SimpleItem(x, y)
   local self = {}
   setmetatable(self, inherit(item, view))

@@ -156,7 +156,7 @@ int lua_error_handler(lua_State* L){
 	return 1;
 }
 
-void gc_on_update(VariantList*){
+void gc_on_update(){
 	lua_gc(L, LUA_GCCOLLECT, 0);
 }
 
@@ -249,7 +249,6 @@ else
 	luaL_openlibs(L);
 	luabind::open(L);
 	luabind::set_pcall_callback(&lua_error_handler);
-	this->m_sig_update.connect(1, &gc_on_update);
 
 	Lualib::luabind(L);
 //	Layers::luabind(L);
@@ -285,10 +284,7 @@ void App::Kill()
 	g_pApp = NULL;
 }
 
-void App::Update()
-{
-	BaseApp::Update();
-
+void App::PostInitIfNeeded(){
 	if (!m_bDidPostInit)
 	{
 		m_bDidPostInit = true;
@@ -300,11 +296,19 @@ void App::Update()
 		//MainMenuCreate(pGUIEnt);
 		ImageTestMenuCreate(pGUIEnt);
 	}
-    
+}
+
+void App::Update()
+{
+	PROFILE_BEGIN(App_Update);
+	BaseApp::Update();
+	gc_on_update();
+//	PROFILE_END();
 }
 
 void App::Draw()
 {
+	PROFILE_FUNC();
 	PrepareForGL();
 //	glClearColor(0.6,0.6,0.6,1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
