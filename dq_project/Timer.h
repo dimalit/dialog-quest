@@ -55,6 +55,7 @@ Timer<Callee>::Timer(Callee c, float dt)
 
 template<class Callee>
 void Timer<Callee>::OnUpdate(VariantList *params){
+//	PROFILE_FUNC();
 	// TODO if not running?!
 	elapsed = GetBaseApp()->GetTickTimingSystem(TIMER_GAME)/1000.0f - start_time;
 	if(running && elapsed >= interval){

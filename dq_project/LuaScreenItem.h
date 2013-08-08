@@ -2,7 +2,7 @@
 #include "ScreenItem.h"
 #include "App.h"
 #include <luabind/luabind.hpp>
-#include <cassert>	   ::
+#include <cassert>
 
 class LuaCompositeItem;
 
