@@ -101,6 +101,7 @@ void TextRenderComponent::RenderAsWave(CL_Vec2f vPos, uint32 color)
 
 void TextRenderComponent::OnRender(VariantList *pVList)
 {
+	PROFILE_FUNC();
 	if (*m_pAlpha <= 0 || *m_pVisible == 0) return;
 
 	CL_Vec2f vFinalPos = pVList->m_variant[0].GetVector2()+*m_pPos2d;

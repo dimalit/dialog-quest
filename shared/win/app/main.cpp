@@ -108,7 +108,8 @@ void InitVideoSize()
 	AddVideoMode("Flash", 640, 480, PLATFORM_ID_FLASH);
 
 	//WORK: Change device emulation here
-	string desiredVideoMode = "iPhone4 Landscape"; //name needs to match one of the ones defined above
+	//string desiredVideoMode = "iPhone4 Landscape"; //name needs to match one of the ones defined above
+	string desiredVideoMode = "Flash";		// !!!
  	SetVideoModeByName(desiredVideoMode);
 	GetBaseApp()->OnPreInitVideo(); //gives the app level code a chance to override any of these parms if it wants to
 }
@@ -1179,7 +1180,7 @@ void CheckIfMouseLeftWindowArea()
 }
 
 
-
+/*
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, TCHAR *lpCmdLine, int nCmdShow)
 {
 	
@@ -1205,7 +1206,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, TCHAR *lpCmdLin
 			GetBaseApp()->AddCommandLineParm(parms[i]);
 		}
 	}
-	
+*/
+int main(){
+	HINSTANCE hInstance = GetModuleHandle(0);
+	_chdir(GetExePath().c_str());
+
 	InitVideoSize();
 
 	WSADATA wsaData;
@@ -1267,7 +1272,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, TCHAR *lpCmdLin
 
 	while(1)
 	{
-		
 		if (GetAsyncKeyState('Q') && GetAsyncKeyState(VK_MENU))
 		{
 			SendMessage(g_hWnd, WM_CLOSE, 0, 0);
@@ -1289,15 +1293,22 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, TCHAR *lpCmdLin
 		if (g_bHasFocus)
 		{
 
+			PROFILE_BEGIN(main_loop);
 			CheckIfMouseLeftWindowArea();
 			GetBaseApp()->Update();
 			if (!g_bIsMinimized)
 				GetBaseApp()->Draw();
+//			PROFILE_END();
+			// TODO: This should be between update and draw!
+			GetBaseApp()->PostInitIfNeeded();
 		} else
 		{
 			//LogMsg("Sleeping");
 			Sleep(50);
 		}
+
+//		PROFILER_UPDATE();
+//		PROFILER_OUTPUT();
 
 		if (g_fpsLimit != 0)
 		{
@@ -1367,7 +1378,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, TCHAR *lpCmdLin
 				//continue;
 			}
 		}
-	
+
 		if (g_bHasFocus && !g_bIsMinimized)
 		{
 	#ifdef C_GL_MODE

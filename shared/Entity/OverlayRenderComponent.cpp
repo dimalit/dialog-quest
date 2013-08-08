@@ -150,6 +150,8 @@ void OverlayRenderComponent::OnRemove()
 
 void OverlayRenderComponent::OnRender(VariantList *pVList)
 {
+	PROFILE_FUNC();
+
 	if (*m_pVisible == 0) return;
 
 	if (m_pTex && m_pTex->IsLoaded() && *m_pAlpha > 0.01)

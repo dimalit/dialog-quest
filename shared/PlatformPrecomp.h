@@ -9,7 +9,7 @@
 	#else
 	bool IsTabletSize();
 	#endif
-
+	#include<shiny.h>
 #endif
 
 #endif

@@ -169,12 +169,12 @@ bool RTFont::IsFontCode(const char *pText, FontStateStack *pState)
 	return false;
 }
 
-void RTFont::MeasureText( rtRectf *pRectOut, const string &text, float scale /*= 1.0f*/ )
+void RTFont::MeasureText( rtRectf *pRectOut, const string &text, float scale /*= 1.0f*/, int firstLineDecrement )
 {
 	MeasureText(pRectOut, &text[0], text.length(), scale);
 }
 
-CL_Vec2f RTFont::MeasureText( const string &text, float scale /*= 1.0f*/ )
+CL_Vec2f RTFont::MeasureText( const string &text, float scale /*= 1.0f*/, int firstLineDecrement )
 {
 	//TODO: Switch to using CL_Rectf
 	rtRectf r;
@@ -182,7 +182,7 @@ CL_Vec2f RTFont::MeasureText( const string &text, float scale /*= 1.0f*/ )
 	return CL_Vec2f(r.GetWidth(), r.GetHeight());
 }
 
-void RTFont::MeasureText( rtRectf *pRectOut, const char *pText, int len, float scale /*= 1.0f*/ )
+void RTFont::MeasureText( rtRectf *pRectOut, const char *pText, int len, float scale /*= 1.0f*/, int firstLineDecrement )
 {
 
 	rtRectf dst(0,0,0,0);
@@ -197,7 +197,7 @@ void RTFont::MeasureText( rtRectf *pRectOut, const char *pText, int len, float s
 	}
 
 	int lines = 0;
-	float curX = 0;
+	float curX = firstLineDecrement;
 
 	pLastCharData = NULL;
 	pCharData = NULL;
@@ -599,7 +599,7 @@ void RTFont::SetSmoothing( bool bSmoothing )
 	m_surf.SetSmoothing(bSmoothing);
 }
 
-string RTFont::GetNextLine(const CL_Vec2f &textBounds, char **pCur, float scale, CL_Vec2f &vEnclosingSizeOut)
+string RTFont::GetNextLine(int w, char **pCur, float scale, CL_Vec2f &vEnclosingSizeOut)
 {
 	//special case to cage a cr at the start
 	if ( (*pCur)[0] == '\n')
@@ -647,7 +647,7 @@ string RTFont::GetNextLine(const CL_Vec2f &textBounds, char **pCur, float scale,
 				
 		MeasureText(&r, (*pCur), text.length(), scale);
 		
-		if (r.GetWidth() > textBounds.x)
+		if (r.GetWidth() > w)
 		{
 			if (lastWrapPoint == 0)		
 			{
@@ -681,7 +681,7 @@ string RTFont::GetNextLine(const CL_Vec2f &textBounds, char **pCur, float scale,
 	
 }
 
-void RTFont::MeasureTextAndAddByLinesIntoDeque(const CL_Vec2f &textBounds, const string &text, deque<string> * pLines, float scale, CL_Vec2f &vEnclosingSizeOut)
+void RTFont::MeasureTextAndAddByLinesIntoDeque(const CL_Vec2f &textBounds, const string &text, deque<string> * pLines, float scale, CL_Vec2f &vEnclosingSizeOut, int firstLineDecrement, const StairsProfile& left, const StairsProfile& right)
 {
 	vEnclosingSizeOut = CL_Vec2f(0,0);
 	
@@ -692,15 +692,26 @@ void RTFont::MeasureTextAndAddByLinesIntoDeque(const CL_Vec2f &textBounds, const
 	}
 	char *pCur = (char*)&text[0];
 	int lineCount = 0;
+	int H = GetLineHeight(scale);
+	float max_width = 0;
 	while (pCur[0])
 	{
-		if (pLines)
-		{
-			pLines->push_back(GetNextLine(textBounds, &pCur, scale, vEnclosingSizeOut));
-		} else
-		{
-			GetNextLine(textBounds, &pCur, scale, vEnclosingSizeOut);
+		std::string line;
+		CL_Vec2f enclosing(0, 0);
+		// handle specifically first line's decrement
+		if(lineCount==0){
+			line = GetNextLine(textBounds.x - firstLineDecrement - right(H*lineCount, H), &pCur, scale, enclosing);
+			enclosing.x += firstLineDecrement;
 		}
+		else{
+			line = GetNextLine(textBounds.x - left(H*lineCount, H) - right(H*lineCount, H), &pCur, scale, vEnclosingSizeOut);
+			enclosing.x += left(H*lineCount, H);
+		}
+
+		if(enclosing.x > max_width)
+			max_width = enclosing.x;
+		if (pLines)
+			pLines->push_back(line);
 		lineCount++;
 	}
 
@@ -710,8 +721,8 @@ if (pLines)
 	assert(lineCount == pLines->size());
 }
 #endif
+	vEnclosingSizeOut.x = max_width;
 	vEnclosingSizeOut.y = float(lineCount)*GetLineHeight(scale);
-
 }
 
 float RTFont::GetLineHeight( float scale )
@@ -720,12 +731,12 @@ float RTFont::GetLineHeight( float scale )
 }
 
 
-CL_Vec2f RTFont::DrawWrapped(rtRect &r, const string &txt, bool centerX, bool centerY, unsigned int color, float scale, bool bMeasureOnly, uint32 bgColor)
+CL_Vec2f RTFont::DrawWrapped(rtRect &r, const string &txt, bool centerX, bool centerY, unsigned int color, float scale, bool bMeasureOnly, uint32 bgColor, int firstLineDecrement, int lastLineIncrement)
 {
 	deque<string> deq;
 	CL_Vec2f enclosingRect;
 
- 	MeasureTextAndAddByLinesIntoDeque(CL_Vec2f((float)r.GetWidth(), (float)r.GetHeight()), txt, &deq, scale, enclosingRect);
+ 	MeasureTextAndAddByLinesIntoDeque(CL_Vec2f((float)r.GetWidth(), (float)r.GetHeight()), txt, &deq, scale, enclosingRect, firstLineDecrement);
 
 	if (bMeasureOnly)
 	{
@@ -760,8 +771,9 @@ CL_Vec2f RTFont::DrawWrapped(rtRect &r, const string &txt, bool centerX, bool ce
 
 	for (;deq.size();)
 	{
-		float offsetX = 0;
+		float offsetX = firstLineDecrement;
 
+		// TODO Fully ignored centering with firstLineDecrment! Add this feature!
 		if (centerX) 
 		{
 			rtRectf lineRect;
@@ -914,4 +926,77 @@ int RTFont::CountCharsThatFitX( float sizeX, const string &text, float scale /*=
 		return lastGood;
 	}
 	return text.size(); //they all fit
+}
+
+StairsProfile StairsProfile::shifted(int dx) const {
+	StairsProfile ret = *this;
+	for(int i=0; i<ret.vx.size(); i++)
+		ret.vx[i] += dx;
+	return ret;
+}
+
+// ret -1 if left of all
+int StairsProfile::interval_with_x(int x) const {
+	int i;
+	for(i=vx.size()-1; i>=0; i--){
+		if(vx[i]<=x)
+			break;
+	}// for
+	return i;
+}
+
+int StairsProfile::operator()(int x, int w) const {
+	int i1 = interval_with_x(x);
+	int i2 = interval_with_x(x+w-1);
+	int max = 0;					  
+	for(int i=i1; i<=i2; i++){
+		if(i>=0 && vy[i]>max)
+			max = vy[i];
+	}// for
+	return max;
+}
+
+int StairsProfile::operator()(int x) const {
+	// find interval with our x
+	int i = interval_with_x(x);
+
+	// if left of all
+	if(i==-1)
+		return 0;
+	else
+		return vy[i];
+}
+
+// TODO Test StairsProfile
+// TODO How to write it more convenient and obvious?
+void StairsProfile::setInterval(int x1, int w, int val){
+	assert(w > 0 && val >= 0);
+	// left - insert next after found
+	int i1 = interval_with_x(x1);
+	vx.insert(vx.begin()+(i1+1), x1);		// TODO: Fucking nice feature!
+	vy.insert(vy.begin()+(i1+1), val);
+
+	// right - back
+	int i2 = interval_with_x(x1+w);		// here will be old value
+	int oldval;
+	if(i2==i1+1 && i1>=0)				// use prev if same as left
+		oldval = vy[i1];
+	else if(i1 < 0)
+		oldval = 0;
+	else
+		vy[i2];							// else use right value
+
+	if(i1+2==vx.size()){
+		vx.push_back(0);
+		vy.push_back(0);
+	}
+	// move right
+	vx[i1+2] = x1 + w;
+	vy[i1+2] = oldval;
+	
+	// erase between them
+	while(i1+3 < vx.size() && vx[i1+3]<=x1+w){
+		vx.erase(vx.begin()+i1+3);
+		vy.erase(vy.begin()+i1+3);
+	}
 }

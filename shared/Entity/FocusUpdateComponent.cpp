@@ -29,6 +29,6 @@ void FocusUpdateComponent::OnRemove()
 
 void FocusUpdateComponent::OnUpdate(VariantList *pVList)
 {
-	
+	PROFILE_FUNC();	
 	GetParent()->CallFunctionRecursively("OnUpdate", pVList);
 }

@@ -84,6 +84,7 @@ public:
 	void SetTextureType(eTextureType type);
 
 	virtual void Blit(  float x, float y, unsigned int rgba = MAKE_RGBA(255,255,255,255), float rotationDegrees = 0, CL_Vec2f vRotatePt = CL_Vec2f(0,0));
+	virtual void BlitRepeated( rtRectf dst, unsigned int rgba = MAKE_RGBA(255,255,255,255) );
 	virtual void BlitEx(rtRectf dst, rtRectf src, unsigned int rgba = MAKE_RGBA(255,255,255,255), float rotationDegrees = 0, CL_Vec2f vRotatePt = CL_Vec2f(0,0)); //more advanced version, can do scaling and sub-texture blits
 
 	//these actually just call the above ones

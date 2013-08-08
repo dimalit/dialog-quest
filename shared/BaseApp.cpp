@@ -134,8 +134,8 @@ void BaseApp::Draw()
 //LogMsg("**********FRAME START");
 #endif
     VariantList vList(Variant(0,0));
-    
-	m_sig_render(&vList);
+
+	PROFILE_CODE(m_sig_render(&vList));
 
 	if (GetFPSVisible())
 	{
@@ -188,15 +188,15 @@ void BaseApp::Draw()
 	}
 
 	SetupOrtho();
-	g_globalBatcher.Flush();
+	PROFILE_CODE(g_globalBatcher.Flush());
 }
 
 void BaseApp::Update()
 {
 	m_gameTimer.Update();
-	if (GetMessageManager()) GetMessageManager()->Update();
-	if (GetAudioManager()) GetAudioManager()->Update();
-	m_sig_update(NULL);
+	PROFILE_CODE(if (GetMessageManager()) GetMessageManager()->Update());
+	PROFILE_CODE(if (GetAudioManager()) GetAudioManager()->Update());
+	PROFILE_CODE(m_sig_update(NULL));
 }
 
 void BaseApp::OnScreenSizeChange()

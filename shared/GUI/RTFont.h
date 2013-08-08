@@ -13,6 +13,17 @@
 #include "RTFontFileFormat.h"
 #include "../Renderer/Surface.h"
 
+class StairsProfile{
+public:
+	int operator()(int x) const;
+	int operator()(int x1, int width) const;
+	void setInterval(int x1, int width, int val);
+	StairsProfile shifted(int dx) const;
+private:
+	std::vector<int> vx, vy;
+	int interval_with_x(int x) const;
+};
+
 class RenderBatcher;
 
 class RTFont
@@ -25,14 +36,14 @@ public:
 	void Draw(float x, float y, string text, unsigned int color=MAKE_RGBA(255,255,255,255));
 	bool Load(string fileName);
 
-	void MeasureText( rtRectf *pRectOut, const string &text, float scale = 1.0f);
-	void MeasureText( rtRectf *pRectOut, const char *pText, int len, float scale /*= 1.0f*/ );
-	CL_Vec2f MeasureText( const string &text, float scale = 1.0f);
-	void MeasureTextAndAddByLinesIntoDeque(const CL_Vec2f &textBounds, const string &text, deque<string> *pLines, float scale, CL_Vec2f &vEnclosingSizeOut);
+	void MeasureText( rtRectf *pRectOut, const string &text, float scale = 1.0f, int firstLineDecrement = 0 );
+	void MeasureText( rtRectf *pRectOut, const char *pText, int len, float scale /*= 1.0f*/, int firstLineDecrement = 0 );
+	CL_Vec2f MeasureText( const string &text, float scale = 1.0f, int firstLineDecrement = 0 );
+	void MeasureTextAndAddByLinesIntoDeque(const CL_Vec2f &textBounds, const string &text, deque<string> *pLines, float scale, CL_Vec2f &vEnclosingSizeOut, int firstLineDecrement = 0, const StairsProfile& left=StairsProfile(), const StairsProfile& right=StairsProfile());
 	int CountCharsThatFitX(float sizeX, const string &text, float scale = 1.0f);
 	void DrawScaled( float x, float y, const string &text, float scale = 1.0f, unsigned int color=MAKE_RGBA(255,255,255,255),  FontStateStack *pState = NULL, RenderBatcher *pBatcher = NULL);
 	void DrawScaledSolidColor( float x, float y, const string &text, float scale=1.0f, unsigned int color=MAKE_RGBA(255,255,255,255), FontStateStack *pState = NULL, RenderBatcher *pBatcher = NULL);
-	CL_Vec2f DrawWrapped(rtRect &r, const string &txt, bool centerX=false, bool centerY=false, unsigned int color=MAKE_RGBA(255,255,255,255), float scale=1.0f, bool bMeasureOnly = false, uint32 bgColor = MAKE_RGBA(0,0,0,0));
+	CL_Vec2f DrawWrapped(rtRect &r, const string &txt, bool centerX=false, bool centerY=false, unsigned int color=MAKE_RGBA(255,255,255,255), float scale=1.0f, bool bMeasureOnly = false, uint32 bgColor = MAKE_RGBA(0,0,0,0), int firstLineDecrement=0, int lastLineIncrement=0);
 	void DrawAligned(float x, float y, const string &text, eAlignment alignment = ALIGNMENT_UPPER_LEFT, float scale = 1.0f, unsigned int color=MAKE_RGBA(255,255,255,255), FontStateStack *pState = NULL, RenderBatcher *pBatcher = NULL);
 	void DrawAlignedSolidColor(float x, float y, const string &text, eAlignment alignment = ALIGNMENT_UPPER_LEFT, float scale = 1.0f, unsigned int color=MAKE_RGBA(255,255,255,255), FontStateStack *pState = NULL, RenderBatcher *pBatcher = NULL);
 	void SetSmoothing(bool bSmoothing); //false would disable linear texture filting
@@ -50,7 +61,7 @@ private:
 	bool IsFontCode(const char *pText, FontStateStack *pState);
 	void SetKerningData(int first, int second, signed char data);
 	float GetKerningData(int first, int second);
-	string GetNextLine(const CL_Vec2f &textBounds, char **pCur, float scale, CL_Vec2f &vEnclosingSizeOut);
+	string GetNextLine(int w, char **pCur, float scale, CL_Vec2f &vEnclosingSizeOut);
 	void ReloadFontTextureOnly();
 	
 	void OnUnloadSurfaces();

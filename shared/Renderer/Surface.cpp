@@ -796,6 +796,54 @@ void Surface::Blit( float x, float y, unsigned int rgba, float rotationDegrees, 
 		EndRender(rotationDegrees, rgba);
 }
 
+void Surface::BlitRepeated( rtRectf dst, unsigned int rgba)
+{
+	if (!IsLoaded()) return;
+
+	if (GetBaseApp()->GetDisableSubPixelBlits())
+	{
+		//TODO Need this HACK?
+		dst.left = ceil(dst.left)+C_TEXEL_HACK_AMOUNT;
+		dst.top = ceil(dst.top)+C_TEXEL_HACK_AMOUNT;
+		dst.bottom = ceil(dst.bottom)-C_TEXEL_HACK_AMOUNT;
+		dst.right = ceil(dst.right)-C_TEXEL_HACK_AMOUNT;;
+	}
+
+	SetupForRender(0, CL_Vec2f(), rgba);
+
+	//LogMsg("Rendering tex %d at %.2f ,%.2f at time %d", m_glTextureID, x,y, GetTick(TIMER_GAME));
+
+	GLfloat	vertices[] = {
+		dst.left,		dst.top,		0.0,
+		dst.right,		dst.top,		0.0,
+		dst.right,		dst.bottom,		0.0,
+		dst.left ,		dst.bottom,		0.0 };
+
+		GLfloat vTexCoords[] = 
+		{
+			//0,								dst.GetHeight()/m_originalHeight,
+			//dst.GetWidth()/m_originalWidth, dst.GetHeight()/m_originalHeight,
+			//dst.GetWidth()/m_originalWidth, 0,
+			//0,								0
+
+			0,								0,
+			dst.GetWidth()/m_originalWidth, 0,
+			dst.GetWidth()/m_originalWidth, -dst.GetHeight()/m_originalHeight,
+			0,								-dst.GetHeight()/m_originalHeight
+		};
+	
+		glVertexPointer(3, GL_FLOAT, 0, vertices);
+		glTexCoordPointer(2, GL_FLOAT,  0, vTexCoords);
+		CHECK_GL_ERROR();
+
+		assert((rgba&0xFF)*256 != 0 && "Why send something with zero alpha?");
+	
+		glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+		CHECK_GL_ERROR();
+
+		EndRender(0, rgba);
+}
+
 void Surface::SetTextureType( eTextureType type )
 {
 	assert(!IsLoaded() && "You should change this to able to work on an existing texture");

@@ -37,6 +37,12 @@ void TextBoxRenderComponent::OnAdd(Entity *pEnt)
 	m_pTextAlignment = &GetVarWithDefault("textAlignment", (uint32)ALIGNMENT_UPPER_LEFT)->GetUINT32();
 	GetVar("textAlignment")->GetSigOnChanged()->connect(1, boost::bind(&TextBoxRenderComponent::OnTextAlignmentChanged, this, _1));
 
+	m_pFirstLineDecrement = &GetVarWithDefault("firstLineDecrement", Variant(uint32(0)))->GetUINT32();
+	GetVar("firstLineDecrement")->GetSigOnChanged()->connect(1, boost::bind(&TextBoxRenderComponent::OnTextChanged, this, _1));
+
+	m_pLastLineEndX = &GetVarWithDefault("lastLineEndX", Variant(uint32(0)))->GetUINT32();
+	m_pLastLineEndY = &GetVarWithDefault("lastLineEndY", Variant(uint32(0)))->GetUINT32();
+
 	m_pText = &GetVar("text")->GetString(); //local to us
 	GetVar("text")->GetSigOnChanged()->connect(1, boost::bind(&TextBoxRenderComponent::OnTextChanged, this, _1));
 
@@ -50,6 +56,7 @@ void TextBoxRenderComponent::OnAdd(Entity *pEnt)
 
 	m_pShadowColor = &GetVarWithDefault("shadowColor", Variant(MAKE_RGBA(0,0,0,0)))->GetUINT32();
 
+	OnTextChanged(NULL);
 }
 
 void TextBoxRenderComponent::OnRemove()
@@ -62,13 +69,21 @@ void TextBoxRenderComponent::OnTextChanged(Variant *pDataObject)
 {
 	//we need to breakdown the text and convert it into word wrapped lines in our deque
 	m_lines.clear();
-	GetBaseApp()->GetFont(eFont(*m_pFontID))->MeasureTextAndAddByLinesIntoDeque(*m_pSize2d, *m_pText, &m_lines, *m_pFontScale, *m_pEnclosedSize2d);
+	GetBaseApp()->GetFont(eFont(*m_pFontID))->MeasureTextAndAddByLinesIntoDeque(*m_pSize2d, *m_pText, &m_lines, *m_pFontScale, *m_pEnclosedSize2d, *m_pFirstLineDecrement, left_obstacles, right_obstacles);
 	m_typeTimer = GetTick(eTimingSystem(*m_pTimingSystem));
 	m_lastLineRendered = 0;
 	m_lastCharRendered = 0;
-	GetVar("totalHeightInPixels")->Set(m_lines.size()*GetBaseApp()->GetFont(eFont(*m_pFontID))->GetLineHeight(*m_pFontScale));
+	int H = GetBaseApp()->GetFont(eFont(*m_pFontID))->GetLineHeight(*m_pFontScale);
+	GetVar("totalHeightInPixels")->Set(float(m_lines.size()*H));
 	GetVar("totalLines")->Set(uint32(m_lines.size()));
 	m_pSize2d->y = GetVar("totalHeightInPixels")->GetFloat();
+
+	int last_line_width = m_pEnclosedSize2d->x;
+	int last_line_y = m_pEnclosedSize2d->y - H;
+	if(m_lines.size() > 1)								  
+		last_line_width = GetBaseApp()->GetFont(eFont(*m_pFontID))->MeasureText(*(m_lines.end()-1), *m_pFontScale).x;
+	GetVar("lastLineEndX")->Set(uint32(last_line_width + left_obstacles(last_line_y, H)));
+	GetVar("lastLineEndY")->Set(uint32(last_line_y));
 
 	if (GetParent())
 	{
@@ -102,14 +117,17 @@ void TextBoxRenderComponent::OnFontChanged(Variant *pDataObject)
 
 void TextBoxRenderComponent::DrawTextNormal(CL_Vec2f vPos)
 {
+	CL_Vec2f vPos_orig = vPos;		// remember initial corner
+
 	//go through all text and draw it
 	if (vPos.x > GetScreenSizeX()) return; //no use drawing stuff that is off the screen to the right
 
-	
 	float lineHeight = GetBaseApp()->GetFont(eFont(*m_pFontID))->GetLineHeight(*m_pFontScale);
 	uint32 color = ColorCombine(*m_pColor, *m_pColorMod, *m_pAlpha);
 
 	FontStateStack state;
+	float shiftX = *m_pFirstLineDecrement;			// for 1st line
+	assert(shiftX >= left_obstacles(0,lineHeight));
 
 	for (unsigned int i=0; i < m_lines.size(); i++)
 	{
@@ -137,7 +155,7 @@ void TextBoxRenderComponent::DrawTextNormal(CL_Vec2f vPos)
 
 			//center the text on its line.  No reason why we couldn't cache this size data, but I suspect it's not a big hit compared to the
 			//actual rendering.
-			lineSizeX = GetBaseApp()->GetFont(eFont(*m_pFontID))->MeasureText(m_lines[i], *m_pFontScale).x;
+			lineSizeX = GetBaseApp()->GetFont(eFont(*m_pFontID))->MeasureText(m_lines[i], *m_pFontScale, *m_pFirstLineDecrement).x;
 		
 			
 			if (*m_pShadowColor != 0)
@@ -153,18 +171,18 @@ void TextBoxRenderComponent::DrawTextNormal(CL_Vec2f vPos)
 
 			if (*m_pShadowColor != 0)
 			{
-				GetBaseApp()->GetFont(eFont(*m_pFontID))->DrawScaledSolidColor(vPos.x+2, vPos.y+2, m_lines[i], *m_pFontScale, ColorCombine(*m_pShadowColor, MAKE_RGBA(255,255,255,255), (float)GET_ALPHA(color)/255), NULL, &g_globalBatcher);
+				GetBaseApp()->GetFont(eFont(*m_pFontID))->DrawScaledSolidColor(shiftX + vPos.x+2, vPos.y+2, m_lines[i], *m_pFontScale, ColorCombine(*m_pShadowColor, MAKE_RGBA(255,255,255,255), (float)GET_ALPHA(color)/255), NULL, &g_globalBatcher);
 		
 			}
-			GetBaseApp()->GetFont(eFont(*m_pFontID))->DrawScaled(vPos.x, vPos.y, m_lines[i], *m_pFontScale, color, &state, &g_globalBatcher);
+			GetBaseApp()->GetFont(eFont(*m_pFontID))->DrawScaled(shiftX + vPos.x, vPos.y, m_lines[i], *m_pFontScale, color, &state, &g_globalBatcher);
 
 			break;
 		}
 	
 		//advance to the next line
 		vPos.y += lineHeight;
-	}
-	
+		shiftX = left_obstacles(vPos.y-vPos_orig.y, lineHeight);
+	}	
 }
 
 void TextBoxRenderComponent::DrawTextType(CL_Vec2f vPos)
@@ -218,7 +236,7 @@ void TextBoxRenderComponent::DrawTextType(CL_Vec2f vPos)
 					//center the text on its line.  No reason why we couldn't cache this size data, but I suspect it's not a big hit compared to the
 					//actual rendering.
 					string textToShow = m_lines[i].substr(0, charsToRender);
-					lineSizeX = GetBaseApp()->GetFont(eFont(*m_pFontID))->MeasureText(textToShow, *m_pFontScale).x;
+					lineSizeX = GetBaseApp()->GetFont(eFont(*m_pFontID))->MeasureText(textToShow, *m_pFontScale, *m_pFirstLineDecrement).x;
 					GetBaseApp()->GetFont(eFont(*m_pFontID))->DrawScaled(vPos.x + ( (m_pSize2d->x-lineSizeX)/2), vPos.y, textToShow, *m_pFontScale, color,  &state,  &g_globalBatcher);
 				}
 				break;
@@ -257,7 +275,7 @@ void TextBoxRenderComponent::DrawTextType(CL_Vec2f vPos)
 
 void TextBoxRenderComponent::OnRender(VariantList *pVList)
 {
-
+	PROFILE_FUNC();
 	if (*m_pAlpha <= 0) return;
 
 	CL_Vec2f vFinalPos = pVList->m_variant[0].GetVector2()+*m_pPos2d;
@@ -276,6 +294,6 @@ void TextBoxRenderComponent::OnRender(VariantList *pVList)
 #ifdef _DEBUG
 	
 	//useful for debugging where the text area rect really is
-	//DrawRect(vFinalPos, *m_pSize2d, MAKE_RGBA(200,200,0,200**m_pAlpha));
+	DrawRect(vFinalPos, *m_pSize2d, MAKE_RGBA(200,200,0,200**m_pAlpha));
 #endif
 }

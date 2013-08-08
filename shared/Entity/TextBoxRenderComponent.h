@@ -76,7 +76,12 @@ private:
 	uint32 m_lastCharRendered;
 	uint32 *m_pTextAlignment;
 	uint32 *m_pShadowColor; //if not 0,0,0,0, will render a shadow behind the text
+	
+	uint32 *m_pFirstLineDecrement;			// start not from x=0
+	const uint32 *m_pLastLineEndX, *m_pLastLineEndY;
 
+protected:									// for TextBox class
+	StairsProfile left_obstacles, right_obstacles;
 };
 
 #endif // TextBoxRenderComponent_h__

@@ -27,6 +27,7 @@ void FocusRenderComponent::OnRemove()
 
 void FocusRenderComponent::OnRender(VariantList *pVList)
 {
+	PROFILE_FUNC();
 	//the 0 is because the pt we need modified is index 0 of the VariantList
 	GetParent()->CallFunctionRecursivelyWithUpdatedVar("OnRender", pVList, string("pos2d"), 0, Entity::RECURSIVE_VAR_OP_ADDITION_PLUS_ALIGNMENT_OFFSET); 
 }

@@ -208,8 +208,7 @@ void Entity::CallFunctionRecursivelyWithUpdatedVarBackwards( const string funcNa
 
 void Entity::CallFunctionRecursivelyWithUpdatedVar( const string funcName, VariantList *pVList, const string &varName, int varIndex, eRecursiveVarOp op, vector<EntityCall> *pEntList )
 {
-
-	//OPTIMIZE  Add a AddFilter/RemoveFilter() thing so we don't have to do this check on most entities?
+ 	//OPTIMIZE  Add a AddFilter/RemoveFilter() thing so we don't have to do this check on most entities?
 	FunctionObject *pFilterFunc =  NULL;
 
 	if (m_recursiveFilterReferences > 0)
