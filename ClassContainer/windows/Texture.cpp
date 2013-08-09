@@ -20,12 +20,13 @@ void Texture::OnAdd(Entity *e){
 	GetParent()->GetVar("size2d")->Set(*size);
 	delete size;
 	size = &GetParent()->GetVar("size2d")->GetVector2();
+	m_pVisible = &GetParent()->GetVarWithDefault("visible", uint32(1))->GetUINT32();
 
 	GetParent()->GetFunction("OnRender")->sig_function.connect(1, boost::bind(&Texture::OnRender, this, _1));	
 }
 
 void Texture::OnRender(VariantList *args){
-	if(!tex)
+	if(!tex || !*m_pVisible)
 		return;
 	CL_Vec2f abs_pos = args->m_variant[0].GetVector2() + *(this->pos);
 	tex->BlitRepeated(rtRectf(abs_pos.x, abs_pos.y, abs_pos.x+size->x, abs_pos.y+size->y));

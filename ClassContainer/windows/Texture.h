@@ -22,6 +22,7 @@ public:
 private:
 	Surface* tex;
 	CL_Vec2f *pos, *size;
+	uint32 *m_pVisible;
 
 	void OnRender(VariantList *args);
 };

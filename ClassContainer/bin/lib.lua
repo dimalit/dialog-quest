@@ -308,6 +308,43 @@ function FlowLayout(w, x, y)
   
   return self
 end -- FlowLayoutItem
+
+function FrameItem(name, w, h, x, y)
+  if x == nil then x = 0 end
+  if y == nil then y = 0 end
+  
+  local self = CompositeItem(x, y)
+  self.width, self.height = w, h
+  
+  local left, right, top, bottom = self.left-self.x, self.right-self.x, self.top-self.y, self.bottom-self.y
+  
+  local tex = {
+	c1 = ImageItem(name.."_c1.rttex", left, top),
+	c2 = ImageItem(name.."_c2.rttex", right, top),
+	c3 = ImageItem(name.."_c3.rttex", right, bottom),
+	c4 = ImageItem(name.."_c4.rttex", left, bottom),
+	bl = TextureItem(name.."_bl.rttex", 4, self.height-8, left, 0),
+	br = TextureItem(name.."_br.rttex", 4, self.height-8, right, 0),
+	bt = TextureItem(name.."_bt.rttex", self.width-8, 4,  0, top),
+	bb = TextureItem(name.."_bb.rttex", self.width-8, 4,  0, bottom)
+  }
+  tex.c1.hpx_relative, tex.c1.hpy_relative = 0, 0
+  tex.c2.hpx_relative, tex.c2.hpy_relative = 1, 0
+  tex.c3.hpx_relative, tex.c3.hpy_relative = 1, 1
+  tex.c4.hpx_relative, tex.c4.hpy_relative = 0, 1
+  tex.bl.hpx_relative = 0
+  tex.br.hpx_relative = 1
+  tex.bt.hpy_relative = 0
+  tex.bb.hpy_relative = 1
+  
+  -- TODO: Implement add(array)
+  self:add(tex.c1):add(tex.c2):add(tex.c3):add(tex.c4):add(tex.bl):add(tex.br):add(tex.bt):add(tex.bb)
+  
+  self.tex = tex
+  
+  return self
+end
+
 ---------- MakeMover -----------
 
 function MakeMover(self)
@@ -341,7 +378,15 @@ end
 
 ----------- DropArea & Mover ----------
 
-function TwoStateAnimation(anim)
+function TwoStateAnimation(a, b, c, d)
+	if b==nil then
+		return TwoStateAnimation1(a)
+	else
+		return TwoStateAnimation4(a, b, c, d)
+	end
+end
+
+function TwoStateAnimation1(anim)
   assert(anim.num_frames >= 2)
   -- THINK can't call stop before attaching to Entity:
   --anim:stop()
@@ -358,12 +403,41 @@ function TwoStateAnimation(anim)
   return anim
 end
 
-function DropArea(view, x, y)
+function TwoStateAnimation4(i1, i2, x, y)
   if x == nil then x = 0 end
   if y == nil then y = 0 end
 
-  local item = SimpleItem(x, y)
-  item.view = view
+  local self = CompositeItem(x, y)
+  self:add(i1):add(i2)
+  
+  i1.visible, i2.visible = true, false
+  -- TODO Mouse pointer checking will work wrong if we have x, y != 0
+  self.width, self.height = i1.width, i1.height
+  
+  self.over = function(self, arg)
+    if arg then
+		i1.visible, i2.visible = false, true
+		self.width, self.height = i2.width, i2.height
+    elseif arg==false
+    then
+		i1.visible, i2.visible = true, false
+		self.width, self.height = i1.width, i1.height
+    else
+      return i2.visible
+    end
+  end
+  return self
+end
+
+function DropArea(item)
+--  if x == nil then x = 0 end
+--  if y == nil then y = 0 end
+
+  -- TODO Maybe change view everywhere to Item?
+  -- TODO Adjust CompositeItem's size in according to contents. Margins?
+--  local item = CompositeItem(x, y)
+--  item:add(view)
+--  item.width, item.height = view.width, view.height
 
   local intersects = function(dummy, r)
     local overlays = function(ax1, ax2, bx1, bx2)
@@ -388,7 +462,7 @@ function DropArea(view, x, y)
   end
 
   local over = function(dummy, arg)
-    return view:over(arg)
+    return item:over(arg)
   end
 
   local self = {
