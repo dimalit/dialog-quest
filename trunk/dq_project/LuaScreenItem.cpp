@@ -40,13 +40,14 @@ void LuaScreenItem::luabind(lua_State* L){
 		.property("y", &LuaScreenItem::getY, &LuaScreenItem::setY)
 		.property("gx", &LuaScreenItem::getAbsoluteX)
 		.property("gy", &LuaScreenItem::getAbsoluteY)
+		.property("visible", &LuaScreenItem::getVisible, &LuaScreenItem::setVisible)
 		.def("move", &LuaScreenItem::move)
 		.property("quad", &LuaScreenItem::getQuad)
 
 		.property("rotation", &LuaScreenItem::getRotation, &LuaScreenItem::setRotation)
 
-		.property("width", &LuaCompositeItem::getWidth, &LuaCompositeItem::setWidth)
-		.property("height", &LuaCompositeItem::getHeight, &LuaCompositeItem::setHeight)
+		.property("width", &LuaScreenItem::getWidth, &LuaScreenItem::setWidth)
+		.property("height", &LuaScreenItem::getHeight, &LuaScreenItem::setHeight)
 		.property("top", &LuaScreenItem::getTop)
 		.property("bottom", &LuaScreenItem::getBottom)
 		.property("left", &LuaScreenItem::getLeft)
@@ -55,6 +56,17 @@ void LuaScreenItem::luabind(lua_State* L){
 		.property("hpy", &LuaScreenItem::getHotSpotY)
 		.property("hpx_relative", &LuaScreenItem::getHotSpotRelativeX, &LuaScreenItem::setHotSpotRelativeX)
 		.property("hpy_relative", &LuaScreenItem::getHotSpotRelativeY, &LuaScreenItem::setHotSpotRelativeY)
+
+		.def_readwrite("onDbClick", &LuaScreenItem::onDbClick_cb)
+		.def_readwrite("onDrag", &LuaScreenItem::onDrag_cb)
+		.def_readwrite("onDragStart", &LuaScreenItem::onDragStart_cb)
+		.def_readwrite("onDragEnd", &LuaScreenItem::onDragEnd_cb)
+		.def_readwrite("onChar", &LuaScreenItem::onChar_cb)
+		.def("takeCharFocus", &LuaScreenItem::takeCharFocus)
+		.def("giveCharFocus", &LuaScreenItem::giveCharFocus)
+		.def_readwrite("onFocusLose", &LuaScreenItem::onFocusLose_cb)
+
+		.def("destroy", &LuaScreenItem::destroy)
 
 		.def(luabind::self == luabind::other<LuaScreenItem&>())				// remove operator ==
 	];
@@ -81,20 +93,8 @@ void LuaSimpleItem::luabind(lua_State* L){
 		.def(luabind::constructor<int, int>())
 		.def(luabind::constructor<>())
 
-		.def_readwrite("onDbClick", &LuaSimpleItem::onDbClick_cb)
-		.def_readwrite("onDrag", &LuaSimpleItem::onDrag_cb)
-		.def_readwrite("onDragStart", &LuaSimpleItem::onDragStart_cb)
-		.def_readwrite("onDragEnd", &LuaSimpleItem::onDragEnd_cb)
-		.def_readwrite("onChar", &LuaSimpleItem::onChar_cb)
-		.def("takeCharFocus", &LuaSimpleItem::takeCharFocus)
-		.def("giveCharFocus", &LuaSimpleItem::giveCharFocus)
-		.def_readwrite("onFocusLose", &LuaSimpleItem::onFocusLose_cb)
-
 		// TODO How to adopt back to lua when assigning NULL?
 		.property("view", &LuaSimpleItem::getView, &LuaSimpleItem::setView, luabind::detail::null_type(), luabind::adopt(_2))
-//		.def_readwrite("visible", &LuaSimpleItem::visible)
-		.def("destroy", &LuaSimpleItem::destroy)
- 
 		.def(luabind::self == luabind::other<LuaSimpleItem&>())				// remove operator ==
 
 	];
