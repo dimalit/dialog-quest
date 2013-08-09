@@ -36,6 +36,50 @@ private:
 			res[4]["y"] = y[3];
 		return res;
 	}
+
+	luabind::object onDrag_cb;
+	luabind::object onDbClick_cb;
+	luabind::object onDragStart_cb;
+	luabind::object onDragEnd_cb;
+	luabind::object onChar_cb;
+	luabind::object onFocusLose_cb;
+
+	virtual void onDrag(float dx, float dy){
+		if(onDrag_cb)
+			luabind::call_function<void>(onDrag_cb, this, dx, dy);
+	}
+	virtual void onDbClick(){
+		if(onDbClick_cb)
+			luabind::call_function<void>(onDbClick_cb, this);
+	}
+	virtual void onDragStart(){
+		if(onDragStart_cb)
+			luabind::call_function<void>(onDragStart_cb, this);
+	}
+	virtual void onDragEnd(){
+		if(onDragEnd_cb)
+			luabind::call_function<void>(onDragEnd_cb, this);
+	}
+	virtual void onChar(int chr){
+		if(onChar_cb)
+			luabind::call_function<void>(onChar_cb, this, chr);
+	}
+	virtual void onFocusLose(){
+		if(onFocusLose_cb)
+			luabind::call_function<void>(onFocusLose_cb, this);
+	}
+protected:
+		virtual void destroy(){
+			onDrag_cb = luabind::object();
+			onDbClick_cb = luabind::object();
+			onDragStart_cb = luabind::object();
+			onDragEnd_cb = luabind::object();
+			onChar_cb = luabind::object();
+			onFocusLose_cb = luabind::object();
+
+			// TODO: Implement it correctly! (visible=0, delete children...)
+			setVisible(false);
+		}
 };
 
 class LuaCompositeItem: public CompositeItem, public LuaScreenItem{
@@ -82,47 +126,9 @@ public:
 	}
 	static void luabind(lua_State* L);
 
-private:
-	luabind::object onDrag_cb;
-	luabind::object onDbClick_cb;
-	luabind::object onDragStart_cb;
-	luabind::object onDragEnd_cb;
-	luabind::object onChar_cb;
-	luabind::object onFocusLose_cb;
-
-	void destroy(){
-		onDrag_cb = luabind::object();
-		onDbClick_cb = luabind::object();
-		onDragStart_cb = luabind::object();
-		onDragEnd_cb = luabind::object();
-		onChar_cb = luabind::object();
-		onFocusLose_cb = luabind::object();
-
+protected:
+	virtual void destroy(){
+		LuaScreenItem::destroy();
 		this->setView(NULL);			// remove render component
-	}
-
-	virtual void onDrag(float dx, float dy){
-		if(onDrag_cb)
-			luabind::call_function<void>(onDrag_cb, this, dx, dy);
-	}
-	virtual void onDbClick(){
-		if(onDbClick_cb)
-			luabind::call_function<void>(onDbClick_cb, this);
-	}
-	virtual void onDragStart(){
-		if(onDragStart_cb)
-			luabind::call_function<void>(onDragStart_cb, this);
-	}
-	virtual void onDragEnd(){
-		if(onDragEnd_cb)
-			luabind::call_function<void>(onDragEnd_cb, this);
-	}
-	virtual void onChar(int chr){
-		if(onChar_cb)
-			luabind::call_function<void>(onChar_cb, this, chr);
-	}
-	virtual void onFocusLose(){
-		if(onFocusLose_cb)
-			luabind::call_function<void>(onFocusLose_cb, this);
 	}
 };

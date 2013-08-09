@@ -24,6 +24,13 @@ public:
 	// parent/child relations
 	CompositeItem* getParent() const {return parent_item;}
 
+	bool getVisible() const{
+		return entity->GetVar("visible")->GetUINT32();
+	}
+	void setVisible(bool v){
+		entity->GetVar("visible")->Set(uint32(v));
+	}
+
 	// geometry
 	// polymorphic
 	virtual bool isPointIn(float mx, float my);
@@ -91,7 +98,7 @@ public:
 	}
 	float getHotSpotY()	const {
 		return entity->GetVar("rotationCenter")->GetVector2().y * getHeight();
-}
+	}
 	float getTop()		const {
 		float res = std::numeric_limits<float>::infinity();
 		for(int i=1; i<=4; i++){
@@ -134,6 +141,9 @@ public:
 	}
 protected:
 	void setParent(CompositeItem* p);
+	// utilitary
+	void takeCharFocus();
+	void giveCharFocus();
 public: //!!! temporary
 	Entity* entity;
 protected:
@@ -165,7 +175,8 @@ protected:
 			assert(false);
 		}// sw
 	}
-	void OnSizeChange(Variant* /*NULL*/){
+	// CompositeItem also moves children
+	virtual void OnSizeChange(Variant* /*NULL*/){
 		// move corner
 		CL_Vec2f new_size = entity->GetVar("size2d")->GetVector2();
 		float dx = getHotSpotRelativeX() * (new_size.x - orig_width);
@@ -183,14 +194,11 @@ private:
 class CompositeItem: virtual public ScreenItem{
 	friend class ScreenItem;
 public:
-	CompositeItem(int x=0, int y=0):ScreenItem(x,y)
-	{
-	}
+	CompositeItem(int x=0, int y=0);
 	virtual ~CompositeItem(){
 		std::set<ScreenItem*>::iterator it;
-		for(it=children.begin(); it != children.end(); ++it){
-			(*it)->setParent(NULL);
-			delete *it;
+		for(it=children.begin(); it != children.end(); it++){
+			delete *it;		// it will disconnect from me itself
 		}// for
 	}
 	CompositeItem* add(ScreenItem* w){
@@ -210,6 +218,21 @@ public:
 	}
 private:
 	std::set<ScreenItem*> children;
+	virtual void OnSizeChange(Variant* /*NULL*/){
+		CL_Vec2f pos1 = entity->GetVar("pos2d")->GetVector2();
+		ScreenItem::OnSizeChange(NULL);
+		CL_Vec2f diff = entity->GetVar("pos2d")->GetVector2() - pos1;
+
+		// move children by this difference
+		std::set<ScreenItem*>::iterator it;
+		for(it=children.begin(); it != children.end(); ++it){
+			(*it)->move(-diff.x, -diff.y);
+		}// for
+	}
+	void FilterOnRender(VariantList* pVList){
+		if(!entity->GetVarWithDefault("visible", uint32(1))->GetUINT32())
+			pVList->m_variant[Entity::FILTER_INDEX].Set(uint32(Entity::FILTER_REFUSE_ALL));
+	}
 };
 
 class SimpleItem: virtual public ScreenItem
@@ -247,9 +270,6 @@ public:
 
 protected:
 	EntityComponent* view;
-	// utilitary
-	void takeCharFocus();
-	void giveCharFocus();
 
 private:
 	// no value semantic!

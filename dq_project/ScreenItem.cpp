@@ -7,8 +7,6 @@ ScreenItem::ScreenItem(int x, int y)
 	orig_width = orig_height = 0;
 
 	entity = new Entity("ScreenItem");
-	if(parent_item)
-		parent_item->add(this);
 
 	setHotSpotRelativeX(0.5f);
 	setHotSpotRelativeY(0.5f);
@@ -71,6 +69,7 @@ float ScreenItem::getAbsoluteY() const {
 		return parent_item->getAbsoluteY() + getY();
 }
 
+// very unsafe and is called only from parent
 void ScreenItem::setParent(CompositeItem* p){
 	// need move myself
 	float x1 = parent_item ? parent_item->getHotSpotX() : 0;
@@ -78,7 +77,14 @@ void ScreenItem::setParent(CompositeItem* p){
 	float y1 = parent_item ? parent_item->getHotSpotY() : 0;
 	float y2 = p		   ? p->getHotSpotY()			: 0;
 	move(x2-x1, y2-y1);
+
 	parent_item = p;
+}
+
+CompositeItem::CompositeItem(int x, int y):ScreenItem(x,y){
+	// we need to render visibility for children
+	entity->OnFilterAdd();
+	entity->GetFunction("FilterOnRender")->sig_function.connect(boost::bind(&CompositeItem::FilterOnRender, this, _1));
 }
 
 SimpleItem::SimpleItem(float x, float y)
@@ -143,9 +149,9 @@ bool ScreenItem::isPointIn(float mx, float my){
 }
 
 // for internal use only
-void SimpleItem::takeCharFocus(){
+void ScreenItem::takeCharFocus(){
 //!!!	UserInputDispatcher::getInstance()->setCharFocus(this);
 }
-void SimpleItem::giveCharFocus(){
+void ScreenItem::giveCharFocus(){
 //!!!	UserInputDispatcher::getInstance()->setCharFocus(0);
 }
