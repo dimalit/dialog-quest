@@ -1,0 +1,7 @@
+file = "interface/explosion.rttex"
+frames_x=7
+frames_y=1
+tex_x = 0
+tex_y = 0
+nframes = 7
+fps = 16
