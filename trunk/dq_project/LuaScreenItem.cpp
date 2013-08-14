@@ -36,24 +36,25 @@ void LuaScreenItem::luabind(lua_State* L){
 		.def(luabind::constructor<int, int>())
 		.def(luabind::constructor<>())
 		.property("parent", &LuaScreenItem::getParent)
-		.property("x", &LuaScreenItem::getX, &LuaScreenItem::setX)
-		.property("y", &LuaScreenItem::getY, &LuaScreenItem::setY)
 		.property("gx", &LuaScreenItem::getAbsoluteX)
 		.property("gy", &LuaScreenItem::getAbsoluteY)
 		.property("visible", &LuaScreenItem::getVisible, &LuaScreenItem::setVisible)
 		.def("move", &LuaScreenItem::move)
 		.property("quad", &LuaScreenItem::getQuad)
 
-		.property("rotation", &LuaScreenItem::getRotation, &LuaScreenItem::setRotation)
-
-		.property("width", &LuaScreenItem::getWidth, &LuaScreenItem::setWidth)
-		.property("height", &LuaScreenItem::getHeight, &LuaScreenItem::setHeight)
 		.property("top", &LuaScreenItem::getTop)
 		.property("bottom", &LuaScreenItem::getBottom)
 		.property("left", &LuaScreenItem::getLeft)
 		.property("right", &LuaScreenItem::getRight)
 		.property("hpx", &LuaScreenItem::getHotSpotX)
 		.property("hpy", &LuaScreenItem::getHotSpotY)
+
+		// set/get properties
+		.property("x", &LuaScreenItem::getX, &LuaScreenItem::setX)
+		.property("y", &LuaScreenItem::getY, &LuaScreenItem::setY)
+		.property("rotation", &LuaScreenItem::getRotation, &LuaScreenItem::setRotation)
+		.property("width", &LuaScreenItem::getWidth, &LuaScreenItem::setWidth)
+		.property("height", &LuaScreenItem::getHeight, &LuaScreenItem::setHeight)
 		.property("hpx_relative", &LuaScreenItem::getHotSpotRelativeX, &LuaScreenItem::setHotSpotRelativeX)
 		.property("hpy_relative", &LuaScreenItem::getHotSpotRelativeY, &LuaScreenItem::setHotSpotRelativeY)
 
