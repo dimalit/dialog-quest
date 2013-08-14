@@ -12,10 +12,10 @@
  * !LuaScreenItem.h/!LuaScreenItem.cpp содержит соответствующие всем трем видам !ScreenItem'ов Lua-классы и их методы luabind (см.!)
  * Image.h/Image.cpp, Animation.h/Animation.cpp, Texture.h/Texture.cpp содержат соответствующие "View-" классы и их Lua-варианты. Все они наследуются от Proton'овского класса !EntityComponent (зачастую косвенно). Эти классы могут быть переданы в метод setView() класса !SimpleItem (чтобы назначить тому внешний вид).
  * Timer.h/Timer.cpp, LuaTimer.h/LuaTimer.cpp - то же для класса Timer. Класс !LuaTimer интересен тем, что для хранения ссылки на callback-функцию (которая будет вызываться при срабатывании таймера) использует класс luabind::object, а также экспортирует это поле в Lua и умеет вызывать его как функцию.
- * Text.h/Text.cpp - реализует все классы, связанные с отображением текста: Text и TextBox (а также LuaText и LuaTextBox).
+ * Text.h/Text.cpp - реализует все классы, связанные с отображением текста: Text и !TextBox (а также !LuaText и !LuaTextBox).
 
 = !LuaScreenItem =
-Так как все, что мы видим на экране - это разновидности ScreenItem'ов, рассмотрим иерархию классов-наследников ScreenItem'а более подробно. См. рисунок.
+Так как все, что мы видим на экране - это разновидности !ScreenItem'ов, рассмотрим иерархию классов-наследников !ScreenItem'а более подробно. См. рисунок.
 
 https://dialog-quest.googlecode.com/svn/wiki/classes_lua.png
 
@@ -23,6 +23,11 @@ https://dialog-quest.googlecode.com/svn/wiki/classes_lua.png
  * !ScreenItem и две его разновидности - SimpleItem и CompositeItem - образуют иерархию "штаны".
  * К этм "штанам" подключается еще одна точно такая же иерархия из !LuaScreenItem и его потомков.
  * В результате возникает ситуация множественного наследования (!ScreenItem наследуется в !LuaSimpleItem и LuaCompositeItem двумя путями). Поэтому на уровне непосредственных наслеников !ScreenItem'а применено [http://habrahabr.ru/post/185826/ виртуальное наследование].
+
+*Также важно* отметить, что необхдоимость вынесения класса !LuaScreenItem и его наследников в отдельный файл вызвана их нетривиальным внутренним устройством. Этот класс реализует возможность "навешивания" на события поьзователького ввода Lua-функции-обработчики. См. поля этого класса:
+ * onDragStart_cb, onDragEnd_cb, onDrag_cb, onDbClick_cb
+ * onChar_cb, onFocusLose_cb.
+А также *соответствующие им методы!*
 
 = Другое =
  * В методе luabind класса !LuaCompositeItem в Lua-машину добавляется глобальная переменная под именем root - корень дерева всех экранных элементов. См. функцию root_item() в LuaScreenItem.cpp.
