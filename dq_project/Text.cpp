@@ -65,10 +65,10 @@ public:
 	}
 };
 
-const LuaStairsProfile& LuaTextBox::getLeftObstacles() const{
+const LuaStairsProfile LuaTextBox::getLeftObstacles() const{
 	return LuaStairsProfile(left_obstacles);
 }
-const LuaStairsProfile& LuaTextBox::getRightObstacles() const{
+const LuaStairsProfile LuaTextBox::getRightObstacles() const{
 	return LuaStairsProfile(right_obstacles);
 }
 void LuaTextBox::setLeftObstacles(const LuaStairsProfile& p){

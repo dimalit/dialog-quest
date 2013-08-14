@@ -114,8 +114,8 @@ public:
 	LuaTextBox(std::string txt, int width, eAlignment align);
 	static void luabind(lua_State* L);
 
-	const LuaStairsProfile& getLeftObstacles() const;
-	const LuaStairsProfile& getRightObstacles() const;
+	const LuaStairsProfile getLeftObstacles() const;
+	const LuaStairsProfile getRightObstacles() const;
 	void setLeftObstacles(const LuaStairsProfile& p);
 	void setRightObstacles(const LuaStairsProfile& p);
 private:
