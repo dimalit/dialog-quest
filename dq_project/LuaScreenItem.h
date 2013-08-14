@@ -102,8 +102,16 @@ public:
 		return this;
 	}
 
-	LuaCompositeItem* remove(LuaScreenItem* child){
-		CompositeItem::remove(child);
+	LuaCompositeItem* remove(luabind::object child){
+		LuaScreenItem* it;
+		if(luabind::type(child) == LUA_TUSERDATA)
+			it = luabind::object_cast<LuaScreenItem*>(child);
+		else
+			it = luabind::object_cast<LuaScreenItem*>(child["item"]);
+		if(it==NULL)
+			luaL_error(child.interpreter(), "Can't convert value to ScreenItem!");
+		else
+			CompositeItem::remove(it);
 		return this;
 	}
 

@@ -9,8 +9,10 @@
 #include <time.h>
 
 float float_rand(){
-	unsigned int r = rand();
-	float res = (float)rand() / (float)RAND_MAX;
+	float res = 0.0f;
+	do{
+		res = (float)rand() / (float)RAND_MAX;
+	}while(res == 1.0f);
 	return res;
 }
 
