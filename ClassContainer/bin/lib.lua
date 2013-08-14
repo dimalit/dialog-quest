@@ -64,20 +64,6 @@ local function inherit(...)
   }
 end
 
-local item_properties = {
-  x = true,
-  y = true,
-  width = true,
-  height = true,
-  rot = true,
-  top = true,
-  bottom = true,
-  left = true,
-  right = true,
-  visible = true,
-  destroy = true
-}
-
 -------------- geometry ---------------
 
 function dist(x1,y1,x2,y2)
@@ -272,6 +258,7 @@ function FlowLayout(w, x, y)
   self.clear = function(self)
 	for _,item in ipairs(items) do
 		self:remove(item)
+		item:destroy()
 	end
 	items = {}
   end
@@ -298,9 +285,10 @@ function FlowLayout(w, x, y)
   end
   
   self.clearObstacles = function(self)
-	for k,obst in pairs(obstacles) do
-		table.remove(obstacles, obst)
+    for obst,val in pairs(obstacles) do
+		if val then obst:destroy() end
 	end
+	obstacles = {}
 	profile.left = StairsProfile()
 	profile.right = StairsProfile()
 	lay_out()
@@ -455,7 +443,6 @@ function DropArea(item)
     end
     -- move to new x,y
     obj.x = item.x; obj.y = item.y
-    obj.ox = item.x obj.oy = item.y
     -- attach new objects to each other
     self.object = obj
     obj.drop = self
@@ -532,9 +519,9 @@ function Mover(view, x, y)
 
   item.onFrame = function(dummy, dt)
 --    print(self.x, self.y, self.ox, self.oy, dt)
-    local norm = dist(self.ox, self.oy, self.x, self.y)
+    local norm = dist(ox, oy, self.x, self.y)
     if norm > self.prev_norm or norm < 50 then	-- if passed over!
-      self.x = self.ox; self.y = self.oy
+      self.x = ox; self.y = oy
       item:stop()
     else
       local dx = self.vx * dt
@@ -564,9 +551,9 @@ function Mover(view, x, y)
 
   self.goHome = function(self)
     self.prev_norm = 1e+9
-	local norm = dist(self.ox, self.oy, self.x, self.y)
-	self.vx = (self.ox - self.x) / norm * 2000
-    self.vy = (self.oy - self.y) / norm * 2000
+	local norm = dist(ox, oy, self.x, self.y)
+	self.vx = (ox - self.x) / norm * 2000
+    self.vy = (oy - self.y) / norm * 2000
     item:start()
   end -- goHome
 

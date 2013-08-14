@@ -234,6 +234,7 @@ else
 	}
 	//GetFont(FONT_SMALL)->SetSmoothing(false); //if we wanted to disable bilinear filtering on the font
 
+	GetBaseApp()->SetFPSLimit(25);
 	GetBaseApp()->SetFPSVisible(true);
 	
 	bool bFileExisted;
@@ -249,6 +250,8 @@ else
 	luaL_openlibs(L);
 	luabind::open(L);
 	luabind::set_pcall_callback(&lua_error_handler);
+
+	lua_gc(L, LUA_GCSTOP, 0);			// !!!
 
 	Lualib::luabind(L);
 //	Layers::luabind(L);
@@ -302,7 +305,8 @@ void App::Update()
 {
 	PROFILE_BEGIN(App_Update);
 	BaseApp::Update();
-	gc_on_update();
+	PostInitIfNeeded();
+//temporariky disable	gc_on_update();
 //	PROFILE_END();
 }
 
