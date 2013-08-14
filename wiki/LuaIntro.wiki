@@ -74,20 +74,20 @@ print(x)  	              --> 10  (глобальная переменная)
 Переменная типа "nil" может содержать только одно значение — nil. *Используется для указания на то, что переменная не содержит никакого значения*:
 {{{
 local tea, coffee, dance = true, false, true
-print(tea, coffee, dance)						--> true    	false    true
+print(tea, coffee, dance)		   --> true    false   true
 dance = nil
-print(tea, coffee, dance)    					--> true 	   false  	 nil
-print(type(tea), type(coffee), type(dance))		--> boolean    boolean   nil
+print(tea, coffee, dance)    		   --> true    false   nil
+print(type(tea), type(coffee), type(dance))--> boolean boolean nil
 }}}
 (системная функция *type()* возвращает строку, содержащую наименование типа заданной переменной)
 
 Особенностью Lua является тип *table*, выполняющий роль *массивов и ассоциативных контейнеров* ("словарей"). Table (таблица) — это множество пар вида: "ключ, значение". Например:
-|| Ключ || Значение ||
+|| *Ключ* || *Значение* ||
 ||1		|| "Купить молока"||
 ||2		|| "Позвонить Васе"||
 ||3		|| "Спасти мир"||
 
-|| Ключ || Значение ||
+|| *Ключ* || *Значение* ||
 || "Иванов"|| "555-12-41" || 
 || "Петров"|| "777-34-52" || 
 || "Сидоров"||"334-02-78" || 
@@ -122,7 +122,7 @@ print(#t)		--> 4
 local m = {"Mars"}	-- массив длиной 1
 local mm = {"Mars"}	-- массив длиной 1
 print( m == mm )	--> false (ссылки не равны, это разные объекты!)
-local v = m			-- дублировать ссылку!
+local v = m		-- дублировать ссылку!
 print( m[1] )		--> Mars
 print( v[1] )		--> Mars
 print( v == m )		--> true (ссылки равны)
@@ -173,8 +173,8 @@ local  le = (x <= y)		-- (true)  x меньше y или равен y?
 Для конструирования сложных условий в операторах if, while и других используются "логические операции" and, or и not. Они применяются к булевским значениям (например, к результатам работы операций сравнения) и возвращают также булевское значение:
 {{{
 local a, b, c = 1, 2, 3
-local a_is_max = (a >= b and a >= c)				-- пример and
-local have_2_equal = (a==b or b==c or a==c)			-- пример or
+local a_is_max = (a >= b and a >= c)		-- пример and
+local have_2_equal = (a==b or b==c or a==c)	-- пример or
 local not_have_2_equal = not (a==b or b==c or a==c)	-- пример not
 }}}
 
@@ -266,13 +266,13 @@ Break работает с любыми видами циклов (while, repeat-
 -- вверх:
 for v = 5,10,1			-- начальное значение, конечное значение, шаг
 do
-	print(v)			-- выведет в столбик: 5 6 7 8 9 10
+	print(v)		-- выведет в столбик: 5 6 7 8 9 10
 end
 
 -- и вниз:
 for i = 8,2,-2			-- начальное значение, конечное значение, шаг
 do
-	print(i)			-- выведет в столбик: 8 6 4 2
+	print(i)		-- выведет в столбик: 8 6 4 2
 end
 }}}
 
@@ -290,17 +290,16 @@ end
 ====Расширенный for====
 Для перебора всех строк таблицы (что часто встречается) используется следующая запись цикла for:
 {{{
-local t = {						-- таблица компаний и их основателей
+local t = {			-- таблица компаний и их основателей
 	["microsoft"] = "gates",
 	["apple"] = "jobs",
 	["google"] = "brin"
 }
-for k,v in pairs(t)				-- k – key, v - value
+for k,v in pairs(t)		-- k – key, v - value
 do
-	print(k.." found by "..v)	--> apple found by jobs
-end								--> microsoft found by gates
-								--> google found by brin
-
+	print(k.." found by "..v)--> apple found by jobs
+end				 --> microsoft found by gates
+				 --> google found by brin
 }}}
 
 Порядок, в котором будет происходить перебор строк таблицы, спецификацией языка ''не определен''. Это значит, что на разных машинах, в разных версиях интерпретатора он может быть разным.
