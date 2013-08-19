@@ -218,17 +218,6 @@ public:
 	}
 private:
 	std::set<ScreenItem*> children;
-	virtual void OnSizeChange(Variant* /*NULL*/){
-		CL_Vec2f pos1 = entity->GetVar("pos2d")->GetVector2();
-		ScreenItem::OnSizeChange(NULL);
-		CL_Vec2f diff = entity->GetVar("pos2d")->GetVector2() - pos1;
-
-		// move children by this difference
-		std::set<ScreenItem*>::iterator it;
-		for(it=children.begin(); it != children.end(); ++it){
-			(*it)->move(-diff.x, -diff.y);
-		}// for
-	}
 	void FilterOnRender(VariantList* pVList){
 		if(!entity->GetVarWithDefault("visible", uint32(1))->GetUINT32())
 			pVList->m_variant[Entity::FILTER_INDEX].Set(uint32(Entity::FILTER_REFUSE_ALL));

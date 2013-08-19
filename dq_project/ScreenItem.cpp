@@ -33,51 +33,36 @@ Entity* ScreenItem::acquireEntity(Entity* e){
 void ScreenItem::setX(float x){
 	CL_Vec2f v = entity->GetVar("pos2d")->GetVector2();
 	v.x = x - getHotSpotX();
-	if(parent_item)
-		v.x += parent_item->getHotSpotX();
 	entity->GetVar("pos2d")->Set(v);
 }
 void ScreenItem::setY(float y){
 	CL_Vec2f v = entity->GetVar("pos2d")->GetVector2();
 	v.y = y - getHotSpotY();
-	if(parent_item)
-		v.y += parent_item->getHotSpotY();
 	entity->GetVar("pos2d")->Set(v);
 }
 float ScreenItem::getX() const {
 	float x = entity->GetVar("pos2d")->GetVector2().x + getHotSpotX();
-	if(parent_item)
-		x -= parent_item->getHotSpotX();
 	return  x;
 }
 float ScreenItem::getY() const {
 	float y = entity->GetVar("pos2d")->GetVector2().y + getHotSpotY();
-	if(parent_item)
-		y -= parent_item->getHotSpotY();
 	return  y;
 }
 float ScreenItem::getAbsoluteX() const {
 	if(parent_item == 0)
 		return getX();
 	else
-		return parent_item->getAbsoluteX() + getX();
+		return parent_item->getAbsoluteX() - parent_item->getHotSpotX() + getX();
 }
 float ScreenItem::getAbsoluteY() const {
 	if(parent_item == 0)
 		return getY();
 	else
-		return parent_item->getAbsoluteY() + getY();
+		return parent_item->getAbsoluteY() - parent_item->getHotSpotY()  + getY();
 }
 
 // very unsafe and is called only from parent
 void ScreenItem::setParent(CompositeItem* p){
-	// need move myself
-	float x1 = parent_item ? parent_item->getHotSpotX() : 0;
-	float x2 = p		   ? p->getHotSpotX()			: 0;
-	float y1 = parent_item ? parent_item->getHotSpotY() : 0;
-	float y2 = p		   ? p->getHotSpotY()			: 0;
-	move(x2-x1, y2-y1);
-
 	parent_item = p;
 }
 
