@@ -16,14 +16,19 @@ local take = function(drops, w)
   return w
 end
 
-Mosaic = function(conf)
+Mosaic = {}
+Mosaic.new = function(conf)
   -------- general vars --------
   if conf == nil then conf = {} end
-  local self = {}
+  local self = CompositeItem(screen_width/2, 0)
+  self.width, self.height = screen_width, screen_height
+  self.hpy_relative = 0
+	root:add(self)
   
   -- set supplied values or defaults
   conf.margin = conf.margin or 20
   conf.line_interval = conf.line_interval or 1.5
+  conf.tasks_count = conf.tasks_count or 0
 --  conf.description_interval =  conf.description_interval or conf.margin
   
   -- copy everything to self
@@ -31,20 +36,135 @@ Mosaic = function(conf)
   conf = nil
   
   -- show general description
-  local title = TextItem("self.title", screen_width/2, 0)
-	root:add(title)
-  title.y = self.margin + title.height
-  local description = FlowLayout(screen_width-self.margin*2, screen_width/2, 0);
-	root:add(description)
-  description.hpy_relative = 0
-  description.y = title.y + title.height/2	
+  self.title = TextItem("self.title", screen_width/2, 0)
+	self:add(self.title)
+  self.title.y = self.margin + self.title.height
+  self.description = FlowLayout(self.width-self.margin*2, self.width/2, 0);
+	self:add(self.description)
+  self.description.hpy_relative = 0
+  self.description.y = self.title.y + self.title.height/2	
+
+  local onTaskFinish = function(right_cnt, wrong_cnt, hint_cnt)
+		self.right_cnt = self.right_cnt + right_cnt
+		self.wrong_cnt = self.wrong_cnt + wrong_cnt
+		self.hint_cnt = self.hint_cnt + hint_cnt
+		self:next_task()
+  end    
+  
+  -- HACK Really we need lay_out() and onSmthChange()
+  self.description.height = 100
+  
+  self.tasks = {}
+  for i=1,self.tasks_count do
+	local t = Mosaic.Task.new()
+	t.visible = false
+	t.hpy_relative = 0
+	t.x = screen_width / 2
+	t.y = self.description.y + self.description.height + self.margin
+	t.onFinish = onTaskFinish
+	t.margin = self.margin			-- temporary solution!!!
+	t.line_interval = self.line_interval
+	self.tasks[i] = t
+	self:add(t)
+  end
+  
   self.current_task = 1
   
+  self.right_cnt = 0
+  self.wrong_cnt = 0
+  self.hint_cnt  = 0  
+
+  -------- public functions --------
+  self.show_results = function(dummy)
+	self:clear()
+	self.title.text = "Results"
+	
+	-- !!! putting to self exclusively not to be garbage-collected
+	local dy = self.title.height*self.line_interval
+	local y = self.title.y + self.title.height + self.margin
+	local x = screen_width/2 - 150
+	self.completed = TextItem("Completed tasks        "..(self.right_cnt+self.wrong_cnt), x, y)
+		self:add(self.completed)
+		self.completed.hpx_relative = 0
+		y = y + dy
+	self.c_right = TextItem("Completed right       "..(self.right_cnt), x, y)
+		self:add(self.c_right)
+		self.c_right.hpx_relative = 0
+		y = y + dy
+	self.wrong = TextItem("Completed wrong     "..(self.wrong_cnt), x, y)
+		self:add(self.wrong)
+		self.wrong.hpx_relative = 0
+		y = y + dy		
+	self.hints = TextItem("Hints used                   "..(self.hint_cnt), x, y)
+		self:add(self.hints)
+		self.hints.hpx_relative = 0
+		y = y + dy		
+  end
+  
+  self.next_task = function(dummy)
+	self.tasks[self.current_task].visible = false
+	
+	self.current_task = self.current_task + 1
+	if self.current_task > #self.tasks then
+		self:show_results()
+		return
+	end
+	
+	self.tasks[self.current_task].visible = true
+  end
+  
+  self.clear = function(self)
+	for i=1,#self.tasks do
+		self.tasks[i].visible = false
+	end
+	self.title.text=""
+	self.description:clear()
+	self.description.clearObstacles()
+  end
+  
+  self.start = function(self)
+--	if self.description.obstacles then
+--		for _,obst in pairs(self.description.obstacles) do
+--			local align = "left"
+--			if type(obst)=="table" and #obst==2 then
+--				align = obst[2]
+--				obst = obst[1]
+--			end -- if align supplied
+--			-- recompute relative coords
+--			if(align=="left") then
+--				obst.x = -description.hpx + obst.x
+--				obst.y = -description.hpy + obst.y
+--			else
+--				obst.x = description.width - obst.x - description.hpx
+--				obst.y = -description.hpy + obst.y
+--			end			
+--			description:addObstacle(obst, align)
+--		end -- for obstacles
+--	end -- if obstacles
+--	assignment.y = description.y + description.height + self.margin
+	
+--	ask(self.tasks[self.current_task])
+	-- TODO Zero everything and make tasks invisible
+	self.tasks[1].visible = true
+  end
+  
+  self.destroy = function(self)
+    self:clear()
+  end
+  
+  return self
+end -- Mosaic.new
+
+Mosaic.Task = {}
+Mosaic.Task.new = function()
+  local self = CompositeItem()
+  self.width = screen_width			-- HACK Need some logic behind CompositeItem resize!
+  
   -------- specific vars --------
-  local assignment = TextItem("assignment", screen_width/2, 0)
-	root:add(assignment)
-  --description.y + description.height
-  assignment.hpy_relative = 0
+  self.assignment = TextItem("assignment", screen_width/2, 0)
+	self:add(self.assignment)
+  self.assignment.hpy_relative = 0
+  self.hint_cnt = 0  
   
   local labels = {}  
   local drops = {}
@@ -53,32 +173,9 @@ Mosaic = function(conf)
   
 --  local src_drops = {}
   local dst_drops = {}
-  local sounds = {} 
-  
-  self.right_cnt = 0
-  self.wrong_cnt = 0
-  self.hint_cnt  = 0
-  -------- private functions --------
-  local check_task_finish = function()
-	local right_cnt = 0
-	local wrong_cnt = 0
-	for i = 1, #dst_drops do
-	  if dst_drops[i].object and i == dst_drops[i].object.right_drop_id then
-		right_cnt = right_cnt + 1
-	  elseif dst_drops[i].object then		-- only if has object!
-		wrong_cnt = wrong_cnt + 1
-	  end --if
-	end -- for
---	print(right_cnt, wrong_cnt)
-	
-	-- if finished
-	if right_cnt+wrong_cnt == #dst_drops then
-	  self.right_cnt = self.right_cnt + right_cnt
-	  self.wrong_cnt = self.wrong_cnt + wrong_cnt
-	  self:next_task()
-	end
-  end
+  local sounds = {}
 
+  -------- private functions --------  
   local intersects = function(a, b)
     local overlays = function(ax1, ax2, bx1, bx2)
       return min(bx1, bx2) < max(ax1, ax2) and max(bx1, bx2) > min(ax1, ax2)
@@ -121,8 +218,27 @@ Mosaic = function(conf)
 	end -- for mover
   end
   
-  local ask = function(task)
-	assignment.text = task.assignment
+  local check_task_finish = function()
+	local right_cnt = 0
+	local wrong_cnt = 0
+	for i = 1, #dst_drops do
+	  if dst_drops[i].object and i == dst_drops[i].object.right_drop_id then
+		right_cnt = right_cnt + 1
+	  elseif dst_drops[i].object then		-- only if has object!
+		wrong_cnt = wrong_cnt + 1
+	  end --if
+	end -- for
+--	print(right_cnt, wrong_cnt)
+	
+	-- if finished
+	local finished = right_cnt+wrong_cnt == #dst_drops
+	if finished and self.onFinish ~= nil then
+		self.onFinish(right_cnt, wrong_cnt, self.hint_cnt)
+	end
+  end	
+  
+  self.ask = function(self, task)
+	self.assignment.text = task.assignment
 	local max_mover_width = 0
 
 	-- generate movers
@@ -130,7 +246,7 @@ Mosaic = function(conf)
 	for i = 1, #permut do
 	  local line = task.lines[permut[i]]
 	  local mover = take(drops, Mover(Text(line[3])), r0, 0)
-		root:add(mover)
+		self:add(mover)
 	  table.insert(movers, mover)
 	  
 	  -- check for max
@@ -153,13 +269,13 @@ Mosaic = function(conf)
 	  end
 	end --for 
 	
-	-- geneate labels, buttons and places
-	local y = assignment.y + assignment.height + self.margin
-	local dy = assignment.height * self.line_interval
+	-- generate labels, buttons and places
+	local y = self.assignment.y + self.assignment.height + self.margin
+	local dy = self.assignment.height * self.line_interval
 	for k, line in pairs(task.lines)
 	do
 	  local button = Button(TwoStateAnimation(Animation(load_config("Start.anim"))), screen_width / 2, y)
-		root:add(button)
+		self:add(button)
 		if k==1 then			-- first button is aligned by top
 			button.y = button.y + button.height/2
 			y = y + button.height/2
@@ -169,11 +285,11 @@ Mosaic = function(conf)
 	    FrameItem("interface/frame_glow", max_mover_width + self.margin / 2, 30)
 	  )	  
 	  local drop_dst = DropArea(twostate)
-		root:add(drop_dst)
+		self:add(drop_dst)
 		drop_dst.x = button.x - button.width/2 - self.margin - drop_dst.width/2
 		drop_dst.y = y
 	  local label = TextItem(line[1], -100, y)
-		root:add(label)
+		self:add(label)
 		label.x = drop_dst.x - drop_dst.width/2 - self.margin - label.width/2
 	  local snd = SoundEffect(line[2])
 		
@@ -208,94 +324,6 @@ Mosaic = function(conf)
 	else
 		error("Wrong movers_placement!");
 	end -- if movers_placement
-  end
-  
-  -------- public functions --------
-  self.show_results = function(dummy)
-	self:clear()
-	title.text = "Results"
-	
-	-- !!! putting to self exclusively not to be garbage-collected
-	local dy = title.height*self.line_interval
-	local y = title.y + title.height + self.margin
-	local x = screen_width/2 - 150
-	self.completed = TextItem("Completed tasks        "..(self.right_cnt+self.wrong_cnt), x, y)
-		root:add(self.completed)
-		self.completed.hpx_relative = 0
-		y = y + dy
-	self.right = TextItem("Completed right       "..(self.right_cnt), x, y)
-		root:add(self.right)
-		self.right.hpx_relative = 0
-		y = y + dy
-	self.wrong = TextItem("Completed wrong     "..(self.wrong_cnt), x, y)
-		root:add(self.wrong)
-		self.wrong.hpx_relative = 0
-		y = y + dy		
-	self.hints = TextItem("Hints used                   "..(self.hint_cnt), x, y)
-		root:add(self.hints)
-		self.hints.hpx_relative = 0
-		y = y + dy		
-  end
-  
-  self.next_task = function(dummy)
-	self.current_task = self.current_task + 1
-	if self.current_task > #self.tasks then
-		self:show_results()
-		return
-	end
-	
-	destroy_items_array(labels)
-	destroy_items_array(drops)
-	destroy_items_array(movers)
-	destroy_items_array(buttons)
-	destroy_items_array(dst_drops)
-	
-	ask(self.tasks[self.current_task])
-  end
-  
-  self.clear = function(self)
-    -- TODO better would be: scene.clear(self)
-	title.text=""
-	description:clear()
-	description:clearObstacles()
-	assignment.text=""
-	destroy_items_array(labels)
-	destroy_items_array(drops)
-	destroy_items_array(movers)
-	destroy_items_array(buttons)
-	destroy_items_array(dst_drops)
-  end
-  
-  self.start = function(self)
-    title.text = self.title
-	if self.description then
-		description:addItems(self.description)
-	end
-	if self.description.obstacles then
-		for _,obst in pairs(self.description.obstacles) do
-			local align = "left"
-			if type(obst)=="table" and #obst==2 then
-				align = obst[2]
-				obst = obst[1]
-			end -- if align supplied
-			-- recompute relative coords
-			if(align=="left") then
-				obst.x = -description.hpx + obst.x
-				obst.y = -description.hpy + obst.y
-			else
-				obst.x = description.width - obst.x - description.hpx
-				obst.y = -description.hpy + obst.y
-			end			
-			description:addObstacle(obst, align)
-		end -- for obstacles
-	end -- if obstacles
-	assignment.y = description.y + description.height + self.margin
-	
-	ask(self.tasks[self.current_task])
-  end
-  
-  self.destroy = function(self)
-    self:clear()
   end
   
   return self

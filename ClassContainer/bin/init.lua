@@ -3,8 +3,8 @@ dofile("test_mosaic.lua")
 --f = TwoStateAnimation(
 --	FrameItem("interface/frame", 100, 30),
 --	FrameItem("interface/frame_glow", 100, 30),
---	50, 15
+--	0, 0
 --)
---g = FrameItem("interface/frame_glow", 100, 30)
+--g = FrameItem("interface/frame_glow", 100, 30, 100, 15)
 --f = DropArea(f)
 --root:add(f)

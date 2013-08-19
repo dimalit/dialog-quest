@@ -214,7 +214,7 @@ function FlowLayout(w, x, y)
   local profile = { left = StairsProfile(), right = StairsProfile() }
   
   local lay_out = function()
-	local cur_x, cur_y = -self.hpx+profile.left:at(0,1), -self.hpy		-- from hotspot!
+	local cur_x, cur_y = profile.left:at(0,1), 0
 	for _,item in ipairs(items) do
 		-- TODO Check how to use == operator to compare references!
 		--assert(item.parent == self)
@@ -232,20 +232,20 @@ function FlowLayout(w, x, y)
 		end -- while line over	  
 	  -- if text
 	  else
-		item.firstLineDecrement = cur_x+self.hpx					-- TODO Align baselines here!!
-		item.x, item.y = -self.hpx, cur_y
+		item.firstLineDecrement = cur_x					-- TODO Align baselines here!!
+		item.x, item.y = 0, cur_y
 		item.width = self.width
 		profile.left:shifted(-cur_y)
 		item.leftObstacles = profile.left:shifted(-cur_y)
 		item.rightObstacles = profile.right:shifted(-cur_y)		
-		cur_x, cur_y = -self.hpx + item.lastLineEndX, cur_y + item.lastLineEndY
+		cur_x, cur_y = item.lastLineEndX, cur_y + item.lastLineEndY
 	  end -- select type
 	end -- for
 	self.height = cur_y + 24			-- same magic number!
 	
 	-- check also obstacles
 	for obst,_ in pairs(obstacles) do
-		if obst.bottom+self.hpy > self.height then self.height = obst.bottom+self.hpy end
+		if obst.bottom > self.height then self.height = obst.bottom end
 	end
   end -- lay_out()
   
@@ -277,11 +277,12 @@ function FlowLayout(w, x, y)
 	obstacles[obst] = true
 	self:add(obst)
 	if side=="left" then
-		profile["left"]:setInterval(obst.top, obst.height, obst.right+self.hpx)
+		profile["left"]:setInterval(obst.top, obst.height, obst.right)
 	else
-		profile["right"]:setInterval(obst.top, obst.height, self.width - (obst.left+self.hpx))
+		profile["right"]:setInterval(obst.top, obst.height, self.width - obst.left)
 	end
 	lay_out()
+	return self
   end
   
   self.clearObstacles = function(self)
@@ -304,17 +305,15 @@ function FrameItem(name, w, h, x, y)
   local self = CompositeItem(x, y)
   self.width, self.height = w, h
   
-  local left, right, top, bottom = self.left-self.x, self.right-self.x, self.top-self.y, self.bottom-self.y
-  
   local tex = {
-	c1 = ImageItem(name.."_c1.rttex", left, top),
-	c2 = ImageItem(name.."_c2.rttex", right, top),
-	c3 = ImageItem(name.."_c3.rttex", right, bottom),
-	c4 = ImageItem(name.."_c4.rttex", left, bottom),
-	bl = TextureItem(name.."_bl.rttex", 4, self.height-8, left, 0),
-	br = TextureItem(name.."_br.rttex", 4, self.height-8, right, 0),
-	bt = TextureItem(name.."_bt.rttex", self.width-8, 4,  0, top),
-	bb = TextureItem(name.."_bb.rttex", self.width-8, 4,  0, bottom)
+	c1 = ImageItem(name.."_c1.rttex", 0, 0),
+	c2 = ImageItem(name.."_c2.rttex", self.width, 0),
+	c3 = ImageItem(name.."_c3.rttex", self.width, self.height),
+	c4 = ImageItem(name.."_c4.rttex", 0, self.height),
+	bl = TextureItem(name.."_bl.rttex", 4, self.height-8, 0, 		    self.height/2),
+	br = TextureItem(name.."_br.rttex", 4, self.height-8, self.width,   self.height/2),
+	bt = TextureItem(name.."_bt.rttex", self.width-8,  4, self.width/2, 0),
+	bb = TextureItem(name.."_bb.rttex", self.width-8,  4, self.width/2, self.height)
   }
   tex.c1.hpx_relative, tex.c1.hpy_relative = 0, 0
   tex.c2.hpx_relative, tex.c2.hpy_relative = 1, 0
@@ -401,15 +400,18 @@ function TwoStateAnimation4(i1, i2, x, y)
   i1.visible, i2.visible = true, false
   -- TODO Mouse pointer checking will work wrong if we have x, y != 0
   self.width, self.height = i1.width, i1.height
+  i1.x, i1.y = i1.hpx, i1.hpy
   
   self.over = function(self, arg)
     if arg then
 		i1.visible, i2.visible = false, true
 		self.width, self.height = i2.width, i2.height
+		i2.x, i2.y = i2.hpx, i2.hpy
     elseif arg==false
     then
 		i1.visible, i2.visible = true, false
 		self.width, self.height = i1.width, i1.height
+		i1.x, i1.y = i1.hpx, i1.hpy
     else
       return i2.visible
     end

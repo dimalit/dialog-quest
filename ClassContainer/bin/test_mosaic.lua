@@ -1,25 +1,24 @@
-scene = Mosaic{
+scene = Mosaic.new{
   margin = 20,
   line_interval = 1.5,
+  tasks_count = 3		-- TODO: Very bad to remember to change it!
 --  description_interval = 20
 }
 
-scene.title = "Title"
---scene.description = "Here is a long long description of the scene as a whole. It consists of multiple 'tasks' each with its ow words."
-scene.description = {
-	TextBoxItem("Here is a long long description of the scene as a whole. It consists of multiple 'tasks' each with its ow words "),
+scene.title.text = "Title"
+
+scene.description:addItems({
+	TextBoxItem("Here is a long long description of the scene as a whole. It consists of multiple 'tasks' each with its own words "),
 	Button(TwoStateAnimation(Animation(load_config("Start.anim")))),
 	TextBoxItem(" Short text"),
 	Button(TwoStateAnimation(Animation(load_config("Start.anim"))))
-};
+});
 
-scene.description.obstacles = {
-	TextureItem("interface/menu_bg.rttex", 40, 40, 20, 20),
-	{ImageItem("interface/flask.rttex", 20, 20), "right"}
-}
+scene.description
+	:addObstacle(TextureItem("interface/menu_bg.rttex", 40, 40, 20, 20))
+	:addObstacle(ImageItem("interface/flask.rttex", scene.description.width - 20, 20), "right")
 
-scene.tasks = {
-  {
+scene.tasks[1]:ask({
 	assignment = "Match the capitals",
 	lines = {
 		{"Great Britain", "audio/click.wav", "London"},
@@ -31,8 +30,8 @@ scene.tasks = {
 		"Moscow", "Rio"
 	}, -- fake answers
 --	movers_placement = "random"
-  }, --task
-  {
+  })
+scene.tasks[2]:ask({
     assignment = "Who produces what",
 	lines = {
 		{"General Motors", "audio/click.wav", "cars"},
@@ -42,8 +41,8 @@ scene.tasks = {
 		{"IBM", "audio/click.wav", "computers"}
 	}, --lines
 	movers_placement = {"random vertical", 300}
-  }, --task
-  {
+  }) --task
+scene.tasks[3]:ask({
     assignment = "Match the parts of speech",
 	lines = {
 		{"Walk", "audio/click.wav", "verb"},
@@ -53,8 +52,7 @@ scene.tasks = {
 		{"Simply", "audio/click.wav", "adverb"}
 	}, --lines
 	movers_placement = "default"
-  } --task  
-} --tasks
+  }) --task  
 
 scene.onFinish = function()
   scene:destroy()
