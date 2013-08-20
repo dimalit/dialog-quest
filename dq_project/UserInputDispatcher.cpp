@@ -41,7 +41,8 @@ void UserInputDispatcher::onMouseMove(float x, float y, input_state state){
 		float dy = y - state.my;
 
 		for(std::set<MouseInputObject*>::iterator i = drag_objects.begin(); i != drag_objects.end(); i++){
-			(*i)->onDrag(dx, dy);
+			if((*i)->getVisible())
+				(*i)->onDrag(dx, dy);
 		}
 	}// drag mode
 	// free move mode - send overs/outs
@@ -51,7 +52,7 @@ void UserInputDispatcher::onMouseMove(float x, float y, input_state state){
 		for(std::set<MouseInputObject*>::iterator i = clients.begin();
 			i != clients.end(); ++i)
 		{
-			if((*i)->isPointIn(x, y) && over_objects.count(*i) == 0){
+			if((*i)->getVisible() && (*i)->isPointIn(x, y) && over_objects.count(*i) == 0){
 				(*i)->onMouseOver();
 				over_objects.insert(*i);
 			}
@@ -62,7 +63,7 @@ void UserInputDispatcher::onMouseMove(float x, float y, input_state state){
 		for(std::set<MouseInputObject*>::iterator i = over_objects.begin();
 			i != over_objects.end(); ++i)
 		{
-			if(!(*i)->isPointIn(x, y)){
+			if((*i)->getVisible() && !(*i)->isPointIn(x, y)){
 				(*i)->onMouseOut();
 				remove_them.push_back(*i);
 			}
@@ -92,7 +93,7 @@ void UserInputDispatcher::onMouseDown(int btn, input_state state){
 		MouseInputObject*  d = dynamic_cast<MouseInputObject*> (*i);
 
 		// handle drag
-		if(d){
+		if(d && d->getVisible()){
 			d->onDragStart();
 			drag_objects.insert(d);
 //			std::cout << "added " << d << " to drags\n";
@@ -110,7 +111,8 @@ void UserInputDispatcher::onMouseUp(int btn, input_state state){
 	for(std::set<MouseInputObject*>::iterator i = drag_objects.begin();
 		i != drag_objects.end(); ++i)
 	{
-		(*i)->onDragEnd();
+		if((*i)->getVisible())
+			(*i)->onDragEnd();
 	}
 	drag_objects.clear();
 //	std::cout << "removed all drags\n";
@@ -129,7 +131,7 @@ void UserInputDispatcher::onDbClick(input_state state){
 			i != over_objects.end(); ++i)
 		{
 			MouseInputObject* d = dynamic_cast<MouseInputObject*>(*i);
-			if(d)
+			if(d && d->getVisible())
 				d->onDbClick();
 		}// for
 	}

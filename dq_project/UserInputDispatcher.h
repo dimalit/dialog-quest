@@ -9,6 +9,8 @@ public:
 	MouseInputObject();
 	~MouseInputObject();
 
+	virtual bool getVisible() const = 0;			// invisible objects are nor processed
+
 	virtual bool isPointIn(float x,  float y) = 0;
 
 	virtual void onMouseOver(){}
