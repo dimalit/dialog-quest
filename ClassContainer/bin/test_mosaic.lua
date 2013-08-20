@@ -1,7 +1,6 @@
-scene = Mosaic.new{
+scene = Mosaic{
   margin = 20,
   line_interval = 1.5,
-  tasks_count = 3		-- TODO: Very bad to remember to change it!
 --  description_interval = 20
 }
 
@@ -18,8 +17,9 @@ scene.description
 	:addObstacle(TextureItem("interface/menu_bg.rttex", 40, 40, 20, 20), "left")
 	:addObstacle(ImageItem("interface/flask.rttex", scene.description.width - 20, 20), "right")
 
-print("task1")
-scene.tasks[1]:ask({
+local task
+
+task = Mosaic.Task{
 	assignment = "Match the capitals",
 	lines = {
 		{"Great Britain", "audio/click.wav", "London"},
@@ -31,32 +31,35 @@ scene.tasks[1]:ask({
 		"Moscow", "Rio"
 	}, -- fake answers
 --	movers_placement = "random"
-  })
-print("task2")
- scene.tasks[2]:ask({
-    assignment = "Who produces what",
-	lines = {
-		{"General Motors", "audio/click.wav", "cars"},
-		{"Scott", "audio/click.wav", "bycicles"},
-		{"Mivina", "audio/click.wav", "food"},
-		{"Q&Q", "audio/click.wav", "watches"},
-		{"IBM", "audio/click.wav", "computers"}
-	}, --lines
-	--movers_placement = {"random vertical", 300}
-  }) --task
-print("task3")
-scene.tasks[3]:ask({
-    assignment = "Match the parts of speech",
-	lines = {
-		{"Walk", "audio/click.wav", "verb"},
-		{"Home", "audio/click.wav", "noun"},
-		{"Eight", "audio/click.wav", "number"},
-		{"Nice", "audio/click.wav", "adjective"},
-		{"Simply", "audio/click.wav", "adverb"}
-	}, --lines
-	--movers_placement = "default"
-  }) --task  
+}
+scene.tasks:add(task)
+  
+task = Mosaic.Task{
+  assignment = "Who produces what",
+  lines = {
+	{"General Motors", "audio/click.wav", "cars"},
+	{"Scott", "audio/click.wav", "bycicles"},
+	{"Mivina", "audio/click.wav", "food"},
+	{"Q&Q", "audio/click.wav", "watches"},
+	{"IBM", "audio/click.wav", "computers"}
+  } --lines
+  --movers_placement = {"random vertical", 300}
+} --task
+scene.tasks:add(task)
 
+task = Mosaic.Task{
+  assignment = "Match the parts of speech",
+  lines = {
+	{"Walk", "audio/click.wav", "verb"},
+	{"Home", "audio/click.wav", "noun"},
+	{"Eight", "audio/click.wav", "number"},
+	{"Nice", "audio/click.wav", "adjective"},
+	{"Simply", "audio/click.wav", "adverb"}
+  }, --lines
+  --movers_placement = "default"
+} --task  
+scene.tasks:add(task)
+  
 scene.onFinish = function()
   scene:destroy()
 end

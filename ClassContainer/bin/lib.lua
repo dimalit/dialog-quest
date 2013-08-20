@@ -133,13 +133,15 @@ end
 
 TextItem = function(text, font_or_x, x_or_y, y_or_nil)
   local font, x, y
-  if type(font_or_x)=="number" then
-	x = font_or_x
-	y = x_or_y
+	if type(font_or_x)=="nil" then
+		x, y = 0, 0
+  elseif type(font_or_x)=="number" then
+		x = font_or_x
+		y = x_or_y
   else
-	font = font_or_x
-	x = x_or_y
-	y = y_or_nil
+		font = font_or_x
+		x = x_or_y
+		y = y_or_nil
   end
   local item = SimpleItem(x, y)
   local txt

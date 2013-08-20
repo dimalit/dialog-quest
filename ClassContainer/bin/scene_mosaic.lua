@@ -11,13 +11,15 @@ local take = function(drops, w)
     onDrag(drops, w)
   end
   w.onDragEnd = function()
+  print("drag end")
 	onDrop(drops, w)
   end
   return w
 end
 
 Mosaic = {}
-Mosaic.new = function(conf)
+setmetatable(Mosaic, {})
+getmetatable(Mosaic).__call = function(_,conf)
   -------- general vars --------
   if conf == nil then conf = {} end
   local self = CompositeItem(screen_width/2, 0)
@@ -55,17 +57,17 @@ Mosaic.new = function(conf)
   self.description.height = 100
   
   self.tasks = {}
-  for i=1,self.tasks_count do
-	local t = Mosaic.Task.new()
-	t.visible = false
-	t.hpy_relative = 0
-	t.x = screen_width / 2
-	t.y = self.description.y + self.description.height + self.margin
-	t.onFinish = onTaskFinish
-	t.margin = self.margin			-- temporary solution!!!
-	t.line_interval = self.line_interval
-	self.tasks[i] = t
-	self:add(t)
+  self.tasks.add = function(_, t)
+		t.visible = false
+		t.hpy_relative = 0
+		t.x = screen_width / 2
+		t.y = self.description.y + self.description.height + self.margin
+		t.onFinish = onTaskFinish
+		t.margin = self.margin			-- temporary solution!!!
+		t.line_interval = self.line_interval
+		t:lay_out()
+		table.insert(self.tasks, t)
+		self:add(t)
   end
   
   self.current_task = 1
@@ -153,10 +155,13 @@ Mosaic.new = function(conf)
   end
   
   return self
-end -- Mosaic.new
+end -- Mosaic()
+
+
 
 Mosaic.Task = {}
-Mosaic.Task.new = function()
+setmetatable(Mosaic.Task, {})
+getmetatable(Mosaic.Task).__call = function(_, task)
   local self = CompositeItem()
   self.width = screen_width			-- HACK Need some logic behind CompositeItem resize!
   
@@ -237,94 +242,106 @@ Mosaic.Task.new = function()
 	end
   end	
   
-  self.ask = function(self, task)
-	self.assignment.text = task.assignment
-	local max_mover_width = 0
+--self.ask = function(self, task)
+  do
+		self.assignment.text = task.assignment
+		local max_mover_width = 0
 
-	-- generate movers
-	local permut = random_permutation(#task.lines)
-	for i = 1, #permut do
-	  local line = task.lines[permut[i]]
-	  local mover = take(drops, Mover(Text(line[3])), r0, 0)
-		self:add(mover)
-	  table.insert(movers, mover)
-	  
-	  -- check for max
-	  if mover.width > max_mover_width then
-		max_mover_width = mover.width
-	  end
-	  
-	  -- remember my number
-	  mover.right_drop_id = permut[i]
-	  
-	  -- handle drop event
-	  local old_handler = mover.onDragEnd
-	  mover.onDragEnd = function(dummy)
-	    if old_handler~=nil then old_handler(mover) end
-		if mover.drop == dst_drops[mover.right_drop_id] and mover.drop.is_dst then			-- if wrong
-		  -- sound
-		  sounds[permut[i]]:play()
-		end
-		check_task_finish()
-	  end
-	end --for 
-	
-	-- generate labels, buttons and places
-	local y = self.assignment.y + self.assignment.height + self.margin
-	local dy = self.assignment.height * self.line_interval
-	for k, line in pairs(task.lines)
-	do
-	  local button = Button(TwoStateAnimation(Animation(load_config("Start.anim"))), screen_width / 2, y)
-		self:add(button)
-		if k==1 then			-- first button is aligned by top
-			button.y = button.y + button.height/2
-			y = y + button.height/2
-		end
-	  local twostate = TwoStateAnimation(
-		FrameItem("interface/frame", max_mover_width + self.margin/2, 30),
-	    FrameItem("interface/frame_glow", max_mover_width + self.margin / 2, 30)
-	  )	  
-	  local drop_dst = DropArea(twostate)
-		self:add(drop_dst)
-		drop_dst.x = button.x - button.width/2 - self.margin - drop_dst.width/2
-		drop_dst.y = y
-	  local label = TextItem(line[1], -100, y)
-		self:add(label)
-		label.x = drop_dst.x - drop_dst.width/2 - self.margin - label.width/2
-	  local snd = SoundEffect(line[2])
+		-- generate movers
+		local permut = random_permutation(#task.lines)
+		for i = 1, #permut do
+			local line = task.lines[permut[i]]
+			local mover = take(drops, Mover(Text(line[3])), r0, 0)
+			self:add(mover)
+			table.insert(movers, mover)
+			
+			-- check for max
+			if mover.width > max_mover_width then
+				max_mover_width = mover.width
+			end
+			
+			-- remember my number
+			mover.right_drop_id = permut[i]
+			
+			-- handle drop event
+			local old_handler = mover.onDragEnd
+			mover.onDragEnd = function(dummy)
+				if old_handler~=nil then old_handler(mover) end
+			if mover.drop == dst_drops[mover.right_drop_id] and mover.drop.is_dst then			-- if wrong
+				-- sound
+				sounds[permut[i]]:play()
+			end
+			check_task_finish()
+			end
+		end --for 
 		
-	  drop_dst.is_dst = true			-- needed in checking
-      button.onClick = function(dummy)
-		if not button.pressed_before then
-			self.hint_cnt = self.hint_cnt + 1
+		-- generate labels, buttons and places
+		for k, line in pairs(task.lines)
+		do
+			local button = Button(TwoStateAnimation(Animation(load_config("Start.anim"))), screen_width / 2, 0)
+			self:add(button)
+			local twostate = TwoStateAnimation(
+			  -- TODO: Here 10 was self.margin. How to use it here?
+				FrameItem("interface/frame", max_mover_width + 10, 30),
+				FrameItem("interface/frame_glow", max_mover_width + 10 / 2, 30)
+			)	  
+			local drop_dst = DropArea(twostate)
+			self:add(drop_dst)
+			local label = TextItem(line[1])
+			self:add(label)
+			local snd = SoundEffect(line[2])
+			
+			drop_dst.is_dst = true			-- needed in checking
+				button.onClick = function(dummy)
+			if not button.pressed_before then
+				self.hint_cnt = self.hint_cnt + 1
+			end
+			button_pressed_before = true
+			snd:play()
+				end
+		
+			table.insert(labels, label)
+			table.insert(drops, drop_dst)
+			table.insert(dst_drops, drop_dst)
+			table.insert(buttons, button)
+			table.insert(sounds, snd)
+		end -- for buttons
+	end -- do
+	
+	self.lay_out = function(_)
+		local y = self.assignment.y + self.assignment.height + self.margin
+		local dy = self.assignment.height * self.line_interval
+		
+		for k=1,#labels do
+		
+			buttons[k].y = y
+		
+			if k==1 then			-- first button is aligned by top
+				buttons[k].y = buttons[k].y + buttons[k].height/2
+				y = y + buttons[k].height/2
+			end		
+			
+			dst_drops[k].x = buttons[k].x - buttons[k].width/2 - self.margin - dst_drops[k].width/2
+			dst_drops[k].y = y		
+			
+			labels[k].x = dst_drops[k].x - dst_drops[k].width/2 - self.margin - labels[k].width/2
+			labels[k].y = y
+			y = y + dy
 		end
-		button_pressed_before = true
-		snd:play()
-      end
-	
-	  table.insert(labels, label)
-	  table.insert(drops, drop_dst)
-	  table.insert(dst_drops, drop_dst)
-	  table.insert(buttons, button)
-	  table.insert(sounds, snd)
-	  
-	  y = y + dy
-	end -- for buttons
-	
-	-- adjust mover position
-	for i=1, #movers do
-		movers[i].x, movers[i].y = buttons[i].right + self.margin + movers[i].width/2, buttons[i].y
-	end -- for movers
-	
-	if task.movers_placement=="random" then
-		placeMoversRandomly()
-	elseif type(task.movers_placement)=="table" and task.movers_placement[1]=="random vertical" then
-		placeMoversRandomly(task.movers_placement[2])
-	elseif task.movers_placement=="default" or task.movers_placement==nil then
-	else
-		error("Wrong movers_placement!");
-	end -- if movers_placement
-  end
+		-- adjust mover position
+		for i=1, #movers do
+			movers[i].x, movers[i].y = buttons[i].right + self.margin + movers[i].width/2, buttons[i].y
+		end -- for movers
+		
+		if task.movers_placement=="random" then
+			placeMoversRandomly()
+		elseif type(task.movers_placement)=="table" and task.movers_placement[1]=="random vertical" then
+			placeMoversRandomly(task.movers_placement[2])
+		elseif task.movers_placement=="default" or task.movers_placement==nil then
+		else
+			error("Wrong movers_placement!");
+		end -- if movers_placement
+  end -- lay_out
   
   return self
-end
+end -- Mosaic.Task()
