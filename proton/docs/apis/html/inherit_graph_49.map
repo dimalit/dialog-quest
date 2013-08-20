@@ -1,0 +1,4 @@
+<map id="G" name="G">
+<area shape="rect" id="node1" href="$classL__EffectManager.html" title="Effect manager is used for easier controlling or managing multiple effects at the same time..." alt="" coords="7,5,127,35"/>
+<area shape="rect" id="node3" href="$classL__EffectEmitter.html" title="Effect emitter can be used to emit multiple effects easily." alt="" coords="177,5,289,35"/>
+</map>

@@ -1,0 +1,14 @@
+<map id="G" name="G">
+<area shape="rect" id="node1" href="$classPCalculator.html" title="PCalculator" alt="" coords="17,85,108,115"/>
+<area shape="rect" id="node3" href="$classPEditInteraction.html" title="PEditInteraction" alt="" coords="196,32,311,61"/>
+<area shape="rect" id="node9" href="$classPKeySelectionInteraction.html" title="PKeySelectionInteraction" alt="" coords="169,85,337,115"/>
+<area shape="rect" id="node11" href="$classPSelectionInteraction.html" title="PSelectionInteraction" alt="" coords="180,139,327,168"/>
+<area shape="rect" id="node5" href="$classPDeleteInteraction.html" title="PDeleteInteraction" alt="" coords="409,5,540,35"/>
+<area shape="rect" id="node7" href="$classPVerticalCursorInteraction.html" title="PVerticalCursorInteraction" alt="" coords="388,59,561,88"/>
+<area shape="rect" id="node12" href="$classPDrawer.html" title="PDrawer" alt="" coords="27,272,99,301"/>
+<area shape="rect" id="node14" href="$classPainterTester.html" title="PainterTester" alt="" coords="204,352,303,381"/>
+<area shape="rect" id="node16" href="$classPCrosshairInteraction.html" title="PCrosshairInteraction" alt="" coords="180,245,327,275"/>
+<area shape="rect" id="node18" href="$classPPlot.html" title="PPlot" alt="" coords="227,299,280,328"/>
+<area shape="rect" id="node20" href="$classPZoomInteraction.html" title="PZoomInteraction" alt="" coords="191,192,316,221"/>
+<area shape="rect" id="node21" href="$classPPlotInteraction.html" title="PPlotInteraction" alt="" coords="5,139,120,168"/>
+</map>

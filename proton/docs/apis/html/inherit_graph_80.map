@@ -1,0 +1,5 @@
+<map id="G" name="G">
+<area shape="rect" id="node1" href="$classPointerEventHandler.html" title="PointerEventHandler" alt="" coords="7,32,148,61"/>
+<area shape="rect" id="node3" href="$classPassThroughPointerEventHandler.html" title="PassThroughPointerEventHandler" alt="" coords="224,5,443,35"/>
+<area shape="rect" id="node5" href="$classTouchDeviceEmulatorPointerEventHandler.html" title="Emulates a multitouch device with a single pointer device (such as a mouse on a desktop computer)..." alt="" coords="199,59,468,88"/>
+</map>

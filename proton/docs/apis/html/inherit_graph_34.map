@@ -1,0 +1,7 @@
+<map id="G" name="G">
+<area shape="rect" id="node1" href="$classGamepad.html" title="Gamepad" alt="" coords="7,85,84,115"/>
+<area shape="rect" id="node3" href="$classGamepad60Beat.html" title="Gamepad60Beat" alt="" coords="136,5,253,35"/>
+<area shape="rect" id="node5" href="$classGamepadDirectX.html" title="GamepadDirectX" alt="" coords="133,59,256,88"/>
+<area shape="rect" id="node7" href="$classGamepadiCade.html" title="GamepadiCade" alt="" coords="139,112,251,141"/>
+<area shape="rect" id="node9" href="$classGamepadMoga.html" title="GamepadMoga" alt="" coords="140,165,249,195"/>
+</map>

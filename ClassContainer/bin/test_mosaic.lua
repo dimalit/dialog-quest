@@ -15,9 +15,10 @@ scene.description:addItems({
 });
 
 scene.description
-	:addObstacle(TextureItem("interface/menu_bg.rttex", 40, 40, 20, 20))
+	:addObstacle(TextureItem("interface/menu_bg.rttex", 40, 40, 20, 20), "left")
 	:addObstacle(ImageItem("interface/flask.rttex", scene.description.width - 20, 20), "right")
 
+print("task1")
 scene.tasks[1]:ask({
 	assignment = "Match the capitals",
 	lines = {
@@ -31,7 +32,8 @@ scene.tasks[1]:ask({
 	}, -- fake answers
 --	movers_placement = "random"
   })
-scene.tasks[2]:ask({
+print("task2")
+ scene.tasks[2]:ask({
     assignment = "Who produces what",
 	lines = {
 		{"General Motors", "audio/click.wav", "cars"},
@@ -40,8 +42,9 @@ scene.tasks[2]:ask({
 		{"Q&Q", "audio/click.wav", "watches"},
 		{"IBM", "audio/click.wav", "computers"}
 	}, --lines
-	movers_placement = {"random vertical", 300}
+	--movers_placement = {"random vertical", 300}
   }) --task
+print("task3")
 scene.tasks[3]:ask({
     assignment = "Match the parts of speech",
 	lines = {
@@ -51,7 +54,7 @@ scene.tasks[3]:ask({
 		{"Nice", "audio/click.wav", "adjective"},
 		{"Simply", "audio/click.wav", "adverb"}
 	}, --lines
-	movers_placement = "default"
+	--movers_placement = "default"
   }) --task  
 
 scene.onFinish = function()

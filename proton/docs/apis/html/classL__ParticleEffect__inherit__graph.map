@@ -1,0 +1,5 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$classL__DroppingEffect.html" title="The simplest among particle effects. It drops a particle on its position each period." alt="" coords="5,83,128,112"/>
+<area shape="rect" id="node5" href="$classL__ExplosionEffect.html" title="Explosion effect, suitable to be used for explosion, smoking effects." alt="" coords="152,83,280,112"/>
+<area shape="rect" id="node7" href="$classL__ShootingEffect.html" title="Particle effect with constrait degree of emission." alt="" coords="304,83,427,112"/>
+</map>

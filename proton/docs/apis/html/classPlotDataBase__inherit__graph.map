@@ -1,0 +1,7 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$classCalculatedPlotData.html" title="CalculatedPlotData" alt="" coords="5,83,139,112"/>
+<area shape="rect" id="node5" href="$classDummyData.html" title="DummyData" alt="" coords="163,83,259,112"/>
+<area shape="rect" id="node7" href="$classPlotData.html" title="PlotData" alt="" coords="283,83,355,112"/>
+<area shape="rect" id="node9" href="$classPlotDataPointer.html" title="PlotDataPointer" alt="" coords="379,83,493,112"/>
+<area shape="rect" id="node11" href="$classStringData.html" title="StringData" alt="" coords="517,83,600,112"/>
+</map>

@@ -1,0 +1,9 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$classPCrosshairInteraction.html" title="PCrosshairInteraction" alt="" coords="180,5,327,35"/>
+<area shape="rect" id="node5" href="$classPEditInteraction.html" title="PEditInteraction" alt="" coords="196,59,311,88"/>
+<area shape="rect" id="node11" href="$classPKeySelectionInteraction.html" title="PKeySelectionInteraction" alt="" coords="169,112,337,141"/>
+<area shape="rect" id="node13" href="$classPSelectionInteraction.html" title="PSelectionInteraction" alt="" coords="180,165,327,195"/>
+<area shape="rect" id="node15" href="$classPZoomInteraction.html" title="PZoomInteraction" alt="" coords="191,219,316,248"/>
+<area shape="rect" id="node7" href="$classPDeleteInteraction.html" title="PDeleteInteraction" alt="" coords="409,32,540,61"/>
+<area shape="rect" id="node9" href="$classPVerticalCursorInteraction.html" title="PVerticalCursorInteraction" alt="" coords="388,85,561,115"/>
+</map>
