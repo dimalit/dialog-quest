@@ -83,15 +83,21 @@ public:
 	}
 	void setWidth(float w){
 		CL_Vec2f v = entity->GetVar("size2d")->GetVector2();
-		v.x = w;
-		entity->GetVar("size2d")->Set(v);
+		// prevent parent requestLayOut
+		if(v.x != w){
+			v.x = w;
+			entity->GetVar("size2d")->Set(v);
+		}
 		// note: pos is automatically adjusted in OnResize
 	}
 	void setHeight(float h){
 		// then grow it
 		CL_Vec2f v = entity->GetVar("size2d")->GetVector2();
-		v.y = h;
-		entity->GetVar("size2d")->Set(v);
+		// prevent parent requestLayOut
+		if(v.y != h){
+			v.y = h;
+			entity->GetVar("size2d")->Set(v);
+		}
 	}
 	float getHotSpotX()	const {
 		return entity->GetVar("rotationCenter")->GetVector2().x * getWidth();
@@ -175,17 +181,8 @@ protected:
 			assert(false);
 		}// sw
 	}
-	// CompositeItem also moves children
-	virtual void OnSizeChange(Variant* /*NULL*/){
-		// move corner
-		CL_Vec2f new_size = entity->GetVar("size2d")->GetVector2();
-		float dx = getHotSpotRelativeX() * (new_size.x - orig_width);
-		float dy = getHotSpotRelativeY() * (new_size.y - orig_height);
-		move(-dx, -dy);
-		
-		orig_width = new_size.x;
-		orig_height = new_size.y;
-	}
+
+	virtual void OnSizeChange(Variant* /*NULL*/);
 private:
 	float orig_width, orig_height;
 	CompositeItem* parent_item;
@@ -207,6 +204,8 @@ public:
 		w->setParent(this);
 		entity->AddEntity(w->entity);
 		children.insert(w);
+
+		requestLayOut();
 		return this;
 	}
 	CompositeItem* remove(ScreenItem* w){
@@ -214,14 +213,19 @@ public:
 		entity->RemoveEntityByAddress(w->entity, false);	// don't delete entity
 		children.erase(w);
 		w->setParent(NULL);
+
+		requestLayOut();
 		return this;
 	}
 private:
 	std::set<ScreenItem*> children;
+	// used to prevent invisible Entities from rendering
 	void FilterOnRender(VariantList* pVList){
 		if(!entity->GetVarWithDefault("visible", uint32(1))->GetUINT32())
 			pVList->m_variant[Entity::FILTER_INDEX].Set(uint32(Entity::FILTER_REFUSE_ALL));
 	}
+	// called by children when they change their size
+	virtual void requestLayOut(ScreenItem* caller = NULL){}
 };
 
 class SimpleItem: virtual public ScreenItem
