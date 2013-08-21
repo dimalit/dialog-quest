@@ -105,11 +105,8 @@ end
 
 ------------- ..Items ----------------
 
-ImageItem = function(path, x, y)
-  if x == nil then x = 0 end
-  if y == nil then y = 0 end
-  
-  local item = SimpleItem(x, y)
+ImageItem = function(path)
+  local item = SimpleItem()
   local image = Image(path)
   local self = {}
   setmetatable(self, inherit(item, image))
@@ -118,11 +115,8 @@ ImageItem = function(path, x, y)
   return self
 end
 
-TextureItem = function(path, width, height, x, y)
-  if x == nil then x = 0 end
-  if y == nil then y = 0 end
-
-  local item = SimpleItem(x, y)
+TextureItem = function(path, width, height)
+  local item = SimpleItem()
   local texture = Texture(path, width, height)
   local self = {}
   setmetatable(self, inherit(item, texture))
@@ -131,19 +125,8 @@ TextureItem = function(path, width, height, x, y)
   return self
 end
 
-TextItem = function(text, font_or_x, x_or_y, y_or_nil)
-  local font, x, y
-	if type(font_or_x)=="nil" then
-		x, y = 0, 0
-  elseif type(font_or_x)=="number" then
-		x = font_or_x
-		y = x_or_y
-  else
-		font = font_or_x
-		x = x_or_y
-		y = y_or_nil
-  end
-  local item = SimpleItem(x, y)
+TextItem = function(text, font)
+  local item = SimpleItem()
   local txt
 --  if font ~= nil then
 --    txt = Text(text, font)
@@ -158,12 +141,10 @@ TextItem = function(text, font_or_x, x_or_y, y_or_nil)
   return self
 end
 
-TextBoxItem = function(text, w, x, y)
+TextBoxItem = function(text, w)
   if w == nil then w = 0 end
-  if x == nil then x = 0 end
-  if y == nil then y = 0 end
   
-  local item = SimpleItem(x, y)
+  local item = SimpleItem()
   local txt
   txt = TextBox(text, w, 0)
 
@@ -176,11 +157,8 @@ TextBoxItem = function(text, w, x, y)
 end
 
 -- make playing animation item
-AnimatedItem = function(name, x, y)
-  if x == nil then x = 0 end
-  if y == nil then y = 0 end
-
-  local item = SimpleItem(x, y)
+AnimatedItem = function(name)
+  local item = SimpleItem()
   local anim = Animation(load_config(name))
  
   local self = {}
@@ -204,11 +182,8 @@ AnimatedItem = function(name, x, y)
   return self
 end
 
-function FlowLayout(w, x, y)
-  if x == nil then x = 0 end
-  if y == nil then y = 0 end
-
-  local self = CompositeItem(x, y)
+function FlowLayout(w)
+  local self = CompositeItem()
   self.width = w
   
   local items     = {}		-- array
@@ -273,18 +248,22 @@ function FlowLayout(w, x, y)
 	lay_out()
   end  
   
-  self.addObstacle = function(self, obst, side)
-	if side==nil then side="left" end
-	assert(side=="left" or side=="right")
-	obstacles[obst] = true
-	self:add(obst)
-	if side=="left" then
-		profile["left"]:setInterval(obst.top, obst.height, obst.right)
-	else
-		profile["right"]:setInterval(obst.top, obst.height, self.width - obst.left)
-	end
-	lay_out()
-	return self
+  self.addObstacle = function(self, obst, x, y, side)
+		if side==nil then side="left" end
+		assert(side=="left" or side=="right")
+		obstacles[obst] = true
+		self:add(obst)
+		
+		obst.x, obst.y = x, y
+		
+		if side=="left" then
+			profile["left"]:setInterval(obst.top, obst.height, obst.right)
+		else
+			obst.x = self.width - obst.x			-- coords from right
+			profile["right"]:setInterval(obst.top, obst.height, self.width - obst.left)
+		end
+		lay_out()
+		return self
   end
   
   self.clearObstacles = function(self)
@@ -300,31 +279,37 @@ function FlowLayout(w, x, y)
   return self
 end -- FlowLayoutItem
 
-function FrameItem(name, w, h, x, y)
-  if x == nil then x = 0 end
-  if y == nil then y = 0 end
-  
-  local self = CompositeItem(x, y)
+function FrameItem(name, w, h)
+  local self = CompositeItem()
   self.width, self.height = w, h
   
   local tex = {
-	c1 = ImageItem(name.."_c1.rttex", 0, 0),
-	c2 = ImageItem(name.."_c2.rttex", self.width, 0),
-	c3 = ImageItem(name.."_c3.rttex", self.width, self.height),
-	c4 = ImageItem(name.."_c4.rttex", 0, self.height),
-	bl = TextureItem(name.."_bl.rttex", 4, self.height-8, 0, 		    self.height/2),
-	br = TextureItem(name.."_br.rttex", 4, self.height-8, self.width,   self.height/2),
-	bt = TextureItem(name.."_bt.rttex", self.width-8,  4, self.width/2, 0),
-	bb = TextureItem(name.."_bb.rttex", self.width-8,  4, self.width/2, self.height)
+	c1 = ImageItem(name.."_c1.rttex"),
+	c2 = ImageItem(name.."_c2.rttex"),
+	c3 = ImageItem(name.."_c3.rttex"),
+	c4 = ImageItem(name.."_c4.rttex"),
+	bl = TextureItem(name.."_bl.rttex", 4, self.height-8),
+	br = TextureItem(name.."_br.rttex", 4, self.height-8),
+	bt = TextureItem(name.."_bt.rttex", self.width-8,  4),
+	bb = TextureItem(name.."_bb.rttex", self.width-8,  4)
   }
   tex.c1.hpx_relative, tex.c1.hpy_relative = 0, 0
+		tex.c1.x, tex.c1.y = 0, 0
   tex.c2.hpx_relative, tex.c2.hpy_relative = 1, 0
+		tex.c2.x, tex.c2.y = self.width, 0
   tex.c3.hpx_relative, tex.c3.hpy_relative = 1, 1
+		tex.c3.x, tex.c3.y = self.width, self.height	
   tex.c4.hpx_relative, tex.c4.hpy_relative = 0, 1
+		tex.c4.x, tex.c4.y = 0, self.height	
+		
   tex.bl.hpx_relative = 0
+		tex.bl.x, tex.bl.y = 0, self.height/2	
   tex.br.hpx_relative = 1
+		tex.br.x, tex.br.y = self.width, self.height/2	
   tex.bt.hpy_relative = 0
+		tex.bt.x, tex.bt.y = self.width/2, 0	
   tex.bb.hpy_relative = 1
+		tex.bb.x, tex.bb.y = self.width/2, self.height	
   
   -- TODO: Implement add(array)
   self:add(tex.c1):add(tex.c2):add(tex.c3):add(tex.c4):add(tex.bl):add(tex.br):add(tex.bt):add(tex.bb)
@@ -392,11 +377,8 @@ function TwoStateAnimation1(anim)
   return anim
 end
 
-function TwoStateAnimation4(i1, i2, x, y)
-  if x == nil then x = 0 end
-  if y == nil then y = 0 end
-
-  local self = CompositeItem(x, y)
+function TwoStateAnimation4(i1, i2)
+  local self = CompositeItem()
   self:add(i1):add(i2)
   
   i1.visible, i2.visible = true, false
@@ -505,11 +487,8 @@ onDrop = function(drops, obj)
   end
 end
 
-function Mover(view, x, y)
-  if x == nil then x = 0 end
-  if y == nil then y = 0 end
-
-  local item = MakeMover(SimpleItem(x, y))    -- put it into closure!
+function Mover(view)
+  local item = MakeMover(SimpleItem())    -- put it into closure!
   item.view = view
 
   local self = {
@@ -567,11 +546,8 @@ function Mover(view, x, y)
 end -- Mover
 
 ------------- button ------------------
-Button = function(view, x, y)
-  if x == nil then x = 0 end
-  if y == nil then y = 0 end
-  
-  local item = SimpleItem(x, y)
+Button = function(view)
+  local item = SimpleItem()
   local self = {}
   setmetatable(self, inherit(item, view))
   self.view = view

@@ -1,7 +1,7 @@
 #include "PlatformPrecomp.h"
 #include "ScreenItem.h"
 
-ScreenItem::ScreenItem(int x, int y)
+ScreenItem::ScreenItem()
 	:parent_item(NULL)
 {
 	orig_width = orig_height = 0;
@@ -10,7 +10,7 @@ ScreenItem::ScreenItem(int x, int y)
 
 	setHotSpotRelativeX(0.5f);
 	setHotSpotRelativeY(0.5f);
-	setX(x); setY(y);
+	setX(0); setY(0);
 
 	entity->GetVar("size2d")->GetSigOnChanged()->connect(1, boost::bind(&SimpleItem::OnSizeChange, this, _1));
 }
@@ -80,14 +80,14 @@ void ScreenItem::OnSizeChange(Variant* /*NULL*/){
 		getParent()->requestLayOut(this);
 }
 
-CompositeItem::CompositeItem(int x, int y):ScreenItem(x,y){
+CompositeItem::CompositeItem():ScreenItem(){
 	// we need to render visibility for children
 	entity->OnFilterAdd();
 	entity->GetFunction("FilterOnRender")->sig_function.connect(boost::bind(&CompositeItem::FilterOnRender, this, _1));
 }
 
-SimpleItem::SimpleItem(float x, float y)
-	:ScreenItem(x, y)
+SimpleItem::SimpleItem()
+	:ScreenItem()
 {
 	view = 0;
 //	this->visible = true;

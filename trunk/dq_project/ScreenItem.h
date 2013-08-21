@@ -18,7 +18,7 @@ public:
 	Entity* acquireEntity(Entity* e);
 
 	// ctor/dtor
-	ScreenItem(int x = 0, int y = 0);
+	ScreenItem();
 	virtual ~ScreenItem();
 
 	// parent/child relations
@@ -191,7 +191,7 @@ private:
 class CompositeItem: virtual public ScreenItem{
 	friend class ScreenItem;
 public:
-	CompositeItem(int x=0, int y=0);
+	CompositeItem();
 	virtual ~CompositeItem(){
 		std::set<ScreenItem*>::iterator it;
 		for(it=children.begin(); it != children.end(); it++){
@@ -232,7 +232,7 @@ class SimpleItem: virtual public ScreenItem
 {
 //!!!protected: for a while:
 public:
-	SimpleItem(float x=0.0f, float y=0.0f);
+	SimpleItem();
 	~SimpleItem();
 
 	// aggregates

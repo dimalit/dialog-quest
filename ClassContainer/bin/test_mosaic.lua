@@ -57,8 +57,8 @@ scene.description:addItems({
 });
   
 scene.description
-	:addObstacle(TextureItem("interface/menu_bg.rttex", 40, 40, 20, 20), "left")
-	:addObstacle(ImageItem("interface/flask.rttex", scene.description.width - 20, 20), "right")
+	:addObstacle(TextureItem("interface/menu_bg.rttex", 40, 40), 20, 20, "left")
+	:addObstacle(ImageItem("interface/flask.rttex"), 20, 20, "right")
 
 scene.onFinish = function()
   scene:destroy()

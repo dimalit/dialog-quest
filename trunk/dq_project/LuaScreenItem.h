@@ -9,7 +9,7 @@ class LuaCompositeItem;
 class LuaScreenItem: virtual public ScreenItem{
 public:
 	bool operator == (LuaScreenItem&){return false;}
-	LuaScreenItem(int x=0, int y=0);
+	LuaScreenItem();
 	static void luabind(lua_State* L);
 	LuaCompositeItem* getParent();
 
@@ -85,7 +85,7 @@ protected:
 class LuaCompositeItem: public CompositeItem, public LuaScreenItem{
 public:
 	bool operator == (LuaCompositeItem&){return false;}
-	LuaCompositeItem(int x=0, int y=0):CompositeItem(x,y), LuaScreenItem(x,y), ScreenItem(x,y){
+	LuaCompositeItem():CompositeItem(), LuaScreenItem(), ScreenItem(){
 	}
 	static void luabind(lua_State* L);
 
@@ -125,7 +125,7 @@ public:
 	}
 private:
 	luabind::object onRequestLayOut_cb;
-	LuaCompositeItem(const LuaCompositeItem&):CompositeItem(NULL){assert(false);}
+	LuaCompositeItem(const LuaCompositeItem&):CompositeItem(){assert(false);}
 	LuaCompositeItem& operator=(const LuaCompositeItem&){assert(false);}
 };
 
@@ -138,7 +138,7 @@ class LuaSimpleItem: public SimpleItem, public LuaScreenItem
 public:
 	// need to be public for luabind
 	bool operator == (LuaSimpleItem&){return false;}
-	LuaSimpleItem(int x=0, int y=0):SimpleItem(x, y), LuaScreenItem(x,y), ScreenItem(x,y){}
+	LuaSimpleItem():SimpleItem(), LuaScreenItem(), ScreenItem(){}
 	~LuaSimpleItem(){
 	}
 	static void luabind(lua_State* L);

@@ -25,19 +25,20 @@ setmetatable(Mosaic, {})
 getmetatable(Mosaic).__call = function(_,conf)
   -------- general vars --------
   if conf == nil then conf = {} end
-  local self = CompositeItem(screen_width/2, 0)
+  local self = CompositeItem()
+	self.x, self.y = screen_width/2, 0
   self.width, self.height = screen_width, screen_height
   self.hpy_relative = 0
 	root:add(self)
-  
+	
   -- copy everything to self
   for k, v in pairs(conf) do self[k] = v end
   conf = nil
   
   -- show general description
-  self.title = TextItem("self.title", self.width/2, 0)
+  self.title = TextItem("self.title")
 	self:add(self.title)
-  self.description = FlowLayout(self.width-Mosaic.margin*2, self.width/2, 0);
+  self.description = FlowLayout(self.width-Mosaic.margin*2);
 	self:add(self.description)
   self.description.hpy_relative = 0
 
@@ -53,7 +54,6 @@ getmetatable(Mosaic).__call = function(_,conf)
 		t.visible = false
 		t.hpy_relative = 0
 		t.onFinish = onTaskFinish
---		t:lay_out()
 		table.insert(self.tasks, t)
 		self:add(t)
   end
@@ -65,7 +65,9 @@ getmetatable(Mosaic).__call = function(_,conf)
   self.hint_cnt  = 0  
 
   self.onRequestLayOut = function(_, child)
+		self.title.x = self.width/2
 	  self.title.y = Mosaic.margin + self.title.height
+		self.description.x = self.width/2
 		self.description.y = self.title.y + self.title.height/2
 		-- TODO Function add() is also in this table - so when doinf pairs() it also appears :(
 		for _,t in ipairs(self.tasks) do
@@ -84,19 +86,23 @@ getmetatable(Mosaic).__call = function(_,conf)
 		local dy = self.title.height*Mosaic.line_interval
 		local y = self.title.y + self.title.height + Mosaic.margin
 		local x = screen_width/2 - 150
-		self.completed = TextItem("Completed tasks        "..(self.right_cnt+self.wrong_cnt), x, y)
+		self.completed = TextItem("Completed tasks        "..(self.right_cnt+self.wrong_cnt))
+			self.completed.x, self.completed.y = x, y
 			self:add(self.completed)
 			self.completed.hpx_relative = 0
 			y = y + dy
-		self.c_right = TextItem("Completed right       "..(self.right_cnt), x, y)
+		self.c_right = TextItem("Completed right       "..(self.right_cnt))
+			self.c_right.x, self.c_right.y = x, y
 			self:add(self.c_right)
 			self.c_right.hpx_relative = 0
 			y = y + dy
-		self.wrong = TextItem("Completed wrong     "..(self.wrong_cnt), x, y)
+		self.wrong = TextItem("Completed wrong     "..(self.wrong_cnt))
+			self.wrong.x, self.wrong.y = x, y
 			self:add(self.wrong)
 			self.wrong.hpx_relative = 0
 			y = y + dy		
-		self.hints = TextItem("Hints used                   "..(self.hint_cnt), x, y)
+		self.hints = TextItem("Hints used                   "..(self.hint_cnt))
+			self.hints.x, self.hints.y = x, y
 			self:add(self.hints)
 			self.hints.hpx_relative = 0
 			y = y + dy		
@@ -165,7 +171,8 @@ getmetatable(Mosaic.Task).__call = function(_, task)
   self.width = screen_width			-- HACK Need some logic behind CompositeItem resize!
   
   -------- specific vars --------
-  self.assignment = TextItem("assignment", screen_width/2, 0)
+  self.assignment = TextItem("assignment")
+	self.assignment.x, self.assignment.y = screen_width/2, 0
 	self:add(self.assignment)
   self.assignment.hpy_relative = 0
   self.hint_cnt = 0  
@@ -277,7 +284,8 @@ getmetatable(Mosaic.Task).__call = function(_, task)
 		-- generate labels, buttons and places
 		for k, line in pairs(task.lines)
 		do
-			local button = Button(TwoStateAnimation(Animation(load_config("Start.anim"))), screen_width / 2, 0)
+			local button = Button(TwoStateAnimation(Animation(load_config("Start.anim"))))
+			button.x, button.y = screen_width / 2, 0
 			self:add(button)
 			local twostate = TwoStateAnimation(
 			  -- TODO: Here 10 was Mosaic.margin. How to use it here?
