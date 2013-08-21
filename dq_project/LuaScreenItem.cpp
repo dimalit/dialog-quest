@@ -11,7 +11,7 @@
 CompositeItem* root_item(){
 	static LuaCompositeItem* root = 0;
 	if(!root){
-	root = new LuaCompositeItem(0,0);
+	root = new LuaCompositeItem();
 	root->setHotSpotRelativeX(0.0f);
 	root->setHotSpotRelativeY(0.0f);
 		Entity* e = new Entity("root");
@@ -21,7 +21,7 @@ CompositeItem* root_item(){
 	return root;
 }
 
-LuaScreenItem::LuaScreenItem(int x, int y):ScreenItem(x,y){
+LuaScreenItem::LuaScreenItem():ScreenItem(){
 }
 
 LuaCompositeItem* LuaScreenItem::getParent(){
@@ -33,7 +33,6 @@ LuaCompositeItem* LuaScreenItem::getParent(){
 void LuaScreenItem::luabind(lua_State* L){
 	luabind::module(L) [
 		luabind::class_<LuaScreenItem>("ScreenItem")
-		.def(luabind::constructor<int, int>())
 		.def(luabind::constructor<>())
 		.property("parent", &LuaScreenItem::getParent)
 		.property("gx", &LuaScreenItem::getAbsoluteX)
@@ -76,7 +75,6 @@ void LuaScreenItem::luabind(lua_State* L){
 void LuaCompositeItem::luabind(lua_State* L){
 	luabind::module(L) [
 		luabind::class_< LuaCompositeItem, LuaScreenItem >("CompositeItem")
-		.def(luabind::constructor<int,int>())
 		.def(luabind::constructor<>())
 		.def("add", &LuaCompositeItem::add)
 		.def("remove", &LuaCompositeItem::remove)
@@ -94,7 +92,6 @@ void LuaSimpleItem::luabind(lua_State* L){
 
 	luabind::module(L) [
 	luabind::class_<LuaSimpleItem, LuaScreenItem>("SimpleItem")
-		.def(luabind::constructor<int, int>())
 		.def(luabind::constructor<>())
 
 		// TODO How to adopt back to lua when assigning NULL?
