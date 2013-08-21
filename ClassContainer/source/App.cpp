@@ -306,7 +306,7 @@ void App::Update()
 	PROFILE_BEGIN(App_Update);
 	BaseApp::Update();
 	PostInitIfNeeded();
-//temporariky disable	gc_on_update();
+//temporarily disable	gc_on_update();
 //	PROFILE_END();
 }
 

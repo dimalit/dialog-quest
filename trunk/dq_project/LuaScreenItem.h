@@ -115,7 +115,16 @@ public:
 		return this;
 	}
 
+	virtual void requestLayOut(ScreenItem* child){
+		if(onRequestLayOut_cb)
+			luabind::call_function<void>(onRequestLayOut_cb, this, child);
+	}
+	virtual void requestLayOut(luabind::object child){
+		if(onRequestLayOut_cb)
+			luabind::call_function<void>(onRequestLayOut_cb, this, child);
+	}
 private:
+	luabind::object onRequestLayOut_cb;
 	LuaCompositeItem(const LuaCompositeItem&):CompositeItem(NULL){assert(false);}
 	LuaCompositeItem& operator=(const LuaCompositeItem&){assert(false);}
 };

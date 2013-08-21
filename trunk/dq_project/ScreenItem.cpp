@@ -66,6 +66,20 @@ void ScreenItem::setParent(CompositeItem* p){
 	parent_item = p;
 }
 
+void ScreenItem::OnSizeChange(Variant* /*NULL*/){
+	// move corner
+	CL_Vec2f new_size = entity->GetVar("size2d")->GetVector2();
+	float dx = getHotSpotRelativeX() * (new_size.x - orig_width);
+	float dy = getHotSpotRelativeY() * (new_size.y - orig_height);
+	move(-dx, -dy);
+	
+	orig_width = new_size.x;
+	orig_height = new_size.y;
+
+	if(getParent())
+		getParent()->requestLayOut(this);
+}
+
 CompositeItem::CompositeItem(int x, int y):ScreenItem(x,y){
 	// we need to render visibility for children
 	entity->OnFilterAdd();

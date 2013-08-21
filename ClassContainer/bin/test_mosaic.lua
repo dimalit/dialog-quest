@@ -1,21 +1,10 @@
-scene = Mosaic{
-  margin = 20,
-  line_interval = 1.5,
---  description_interval = 20
-}
+Mosaic.margin = 20
+Mosaic.line_interval = 1.5
+--Mosaic.description_interval = 20
+
+scene = Mosaic()
 
 scene.title.text = "Title"
-
-scene.description:addItems({
-	TextBoxItem("Here is a long long description of the scene as a whole. It consists of multiple 'tasks' each with its own words "),
-	Button(TwoStateAnimation(Animation(load_config("Start.anim")))),
-	TextBoxItem(" Short text"),
-	Button(TwoStateAnimation(Animation(load_config("Start.anim"))))
-});
-
-scene.description
-	:addObstacle(TextureItem("interface/menu_bg.rttex", 40, 40, 20, 20), "left")
-	:addObstacle(ImageItem("interface/flask.rttex", scene.description.width - 20, 20), "right")
 
 local task
 
@@ -59,7 +48,18 @@ task = Mosaic.Task{
   --movers_placement = "default"
 } --task  
 scene.tasks:add(task)
+
+scene.description:addItems({
+	TextBoxItem("Here is a long long description of the scene as a whole. It consists of multiple 'tasks' each with its own words "),
+	Button(TwoStateAnimation(Animation(load_config("Start.anim")))),
+	TextBoxItem(" Short text"),
+	Button(TwoStateAnimation(Animation(load_config("Start.anim"))))
+});
   
+scene.description
+	:addObstacle(TextureItem("interface/menu_bg.rttex", 40, 40, 20, 20), "left")
+	:addObstacle(ImageItem("interface/flask.rttex", scene.description.width - 20, 20), "right")
+
 scene.onFinish = function()
   scene:destroy()
 end

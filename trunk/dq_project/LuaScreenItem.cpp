@@ -80,6 +80,9 @@ void LuaCompositeItem::luabind(lua_State* L){
 		.def(luabind::constructor<>())
 		.def("add", &LuaCompositeItem::add)
 		.def("remove", &LuaCompositeItem::remove)
+		.def_readwrite("onRequestLayOut", &LuaCompositeItem::onRequestLayOut_cb)
+		.def("requestLayOut", (void (LuaCompositeItem::*)(ScreenItem*))&LuaCompositeItem::requestLayOut)
+		.def("requestLayOut", (void (LuaCompositeItem::*)(luabind::object))&LuaCompositeItem::requestLayOut)
 
 		.def(luabind::self == luabind::other<LuaCompositeItem&>())				// remove operator ==
 	];

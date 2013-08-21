@@ -17,7 +17,10 @@ local take = function(drops, w)
   return w
 end
 
-Mosaic = {}
+Mosaic = {
+	margin = 20,
+	line_interval = 1.5
+}
 setmetatable(Mosaic, {})
 getmetatable(Mosaic).__call = function(_,conf)
   -------- general vars --------
@@ -27,24 +30,16 @@ getmetatable(Mosaic).__call = function(_,conf)
   self.hpy_relative = 0
 	root:add(self)
   
-  -- set supplied values or defaults
-  conf.margin = conf.margin or 20
-  conf.line_interval = conf.line_interval or 1.5
-  conf.tasks_count = conf.tasks_count or 0
---  conf.description_interval =  conf.description_interval or conf.margin
-  
   -- copy everything to self
   for k, v in pairs(conf) do self[k] = v end
   conf = nil
   
   -- show general description
-  self.title = TextItem("self.title", screen_width/2, 0)
+  self.title = TextItem("self.title", self.width/2, 0)
 	self:add(self.title)
-  self.title.y = self.margin + self.title.height
-  self.description = FlowLayout(self.width-self.margin*2, self.width/2, 0);
+  self.description = FlowLayout(self.width-Mosaic.margin*2, self.width/2, 0);
 	self:add(self.description)
   self.description.hpy_relative = 0
-  self.description.y = self.title.y + self.title.height/2	
 
   local onTaskFinish = function(right_cnt, wrong_cnt, hint_cnt)
 		self.right_cnt = self.right_cnt + right_cnt
@@ -53,19 +48,12 @@ getmetatable(Mosaic).__call = function(_,conf)
 		self:next_task()
   end    
   
-  -- HACK Really we need lay_out() and onSmthChange()
-  self.description.height = 100
-  
   self.tasks = {}
   self.tasks.add = function(_, t)
 		t.visible = false
 		t.hpy_relative = 0
-		t.x = screen_width / 2
-		t.y = self.description.y + self.description.height + self.margin
 		t.onFinish = onTaskFinish
-		t.margin = self.margin			-- temporary solution!!!
-		t.line_interval = self.line_interval
-		t:lay_out()
+--		t:lay_out()
 		table.insert(self.tasks, t)
 		self:add(t)
   end
@@ -76,52 +64,63 @@ getmetatable(Mosaic).__call = function(_,conf)
   self.wrong_cnt = 0
   self.hint_cnt  = 0  
 
+  self.onRequestLayOut = function(_, child)
+	  self.title.y = Mosaic.margin + self.title.height
+		self.description.y = self.title.y + self.title.height/2
+		-- TODO Function add() is also in this table - so when doinf pairs() it also appears :(
+		for _,t in ipairs(self.tasks) do
+			t.x = self.width / 2
+			t.y = self.description.y + self.description.height + Mosaic.margin
+		end
+	end
+	self:onRequestLayOut()	
+	
   -------- public functions --------
   self.show_results = function(dummy)
-	self:clear()
-	self.title.text = "Results"
-	
-	-- !!! putting to self exclusively not to be garbage-collected
-	local dy = self.title.height*self.line_interval
-	local y = self.title.y + self.title.height + self.margin
-	local x = screen_width/2 - 150
-	self.completed = TextItem("Completed tasks        "..(self.right_cnt+self.wrong_cnt), x, y)
-		self:add(self.completed)
-		self.completed.hpx_relative = 0
-		y = y + dy
-	self.c_right = TextItem("Completed right       "..(self.right_cnt), x, y)
-		self:add(self.c_right)
-		self.c_right.hpx_relative = 0
-		y = y + dy
-	self.wrong = TextItem("Completed wrong     "..(self.wrong_cnt), x, y)
-		self:add(self.wrong)
-		self.wrong.hpx_relative = 0
-		y = y + dy		
-	self.hints = TextItem("Hints used                   "..(self.hint_cnt), x, y)
-		self:add(self.hints)
-		self.hints.hpx_relative = 0
-		y = y + dy		
-  end
-  
-  self.next_task = function(dummy)
-	self.tasks[self.current_task].visible = false
-	
-	self.current_task = self.current_task + 1
-	if self.current_task > #self.tasks then
-		self:show_results()
-		return
+		self:clear()
+		self.title.text = "Results"
+		
+		-- !!! putting to self exclusively not to be garbage-collected
+		local dy = self.title.height*Mosaic.line_interval
+		local y = self.title.y + self.title.height + Mosaic.margin
+		local x = screen_width/2 - 150
+		self.completed = TextItem("Completed tasks        "..(self.right_cnt+self.wrong_cnt), x, y)
+			self:add(self.completed)
+			self.completed.hpx_relative = 0
+			y = y + dy
+		self.c_right = TextItem("Completed right       "..(self.right_cnt), x, y)
+			self:add(self.c_right)
+			self.c_right.hpx_relative = 0
+			y = y + dy
+		self.wrong = TextItem("Completed wrong     "..(self.wrong_cnt), x, y)
+			self:add(self.wrong)
+			self.wrong.hpx_relative = 0
+			y = y + dy		
+		self.hints = TextItem("Hints used                   "..(self.hint_cnt), x, y)
+			self:add(self.hints)
+			self.hints.hpx_relative = 0
+			y = y + dy		
 	end
-	
-	self.tasks[self.current_task].visible = true
+		
+	self.next_task = function(dummy)
+		self.tasks[self.current_task].visible = false
+		
+		self.current_task = self.current_task + 1
+		if self.current_task > #self.tasks then
+			self:show_results()
+			return
+		end
+		
+		self.tasks[self.current_task].visible = true
   end
   
   self.clear = function(self)
-	for i=1,#self.tasks do
-		self.tasks[i].visible = false
-	end
-	self.title.text=""
-	self.description:clear()
-	self.description.clearObstacles()
+		for i=1,#self.tasks do
+			self.tasks[i].visible = false
+		end
+		self.title.text=""
+		self.description:clear()
+		self.description.clearObstacles()
   end
   
   self.start = function(self)
@@ -143,7 +142,7 @@ getmetatable(Mosaic).__call = function(_,conf)
 --			description:addObstacle(obst, align)
 --		end -- for obstacles
 --	end -- if obstacles
---	assignment.y = description.y + description.height + self.margin
+--	assignment.y = description.y + description.height + Mosaic.margin
 	
 --	ask(self.tasks[self.current_task])
 	-- TODO Zero everything and make tasks invisible
@@ -201,9 +200,9 @@ getmetatable(Mosaic.Task).__call = function(_, task)
 	local left = drops[1].width/2
 	local right = screen_height - drops[1].width/2
 	local top = buttons[1].y
-	local bottom = screen_height - self.margin - movers[1].hpy
-	local vert_middle = buttons[#buttons-1].bottom + self.margin + movers[1].hpy
-	local horz_middle = buttons[1].right + self.margin + movers[1].hpx
+	local bottom = screen_height - Mosaic.margin - movers[1].hpy
+	local vert_middle = buttons[#buttons-1].bottom + Mosaic.margin + movers[1].hpy
+	local horz_middle = buttons[1].right + Mosaic.margin + movers[1].hpx
 	if height ~= nil then bottom = top + height - buttons[1].height end
 	
 	local placed_movers = {}
@@ -212,7 +211,7 @@ getmetatable(Mosaic.Task).__call = function(_, task)
 		repeat
 			mover.y = top + rand()*(bottom-top)
 			if height ~= nil then
-				mover.x = buttons[1].right + self.margin + mover.hpx
+				mover.x = buttons[1].right + Mosaic.margin + mover.hpx
 			elseif mover.y > vert_middle then
 				mover.x = left + rand()*(right-left)
 			else
@@ -224,22 +223,22 @@ getmetatable(Mosaic.Task).__call = function(_, task)
   end
   
   local check_task_finish = function()
-	local right_cnt = 0
-	local wrong_cnt = 0
-	for i = 1, #dst_drops do
-	  if dst_drops[i].object and i == dst_drops[i].object.right_drop_id then
-		right_cnt = right_cnt + 1
-	  elseif dst_drops[i].object then		-- only if has object!
-		wrong_cnt = wrong_cnt + 1
-	  end --if
-	end -- for
---	print(right_cnt, wrong_cnt)
-	
-	-- if finished
-	local finished = right_cnt+wrong_cnt == #dst_drops
-	if finished and self.onFinish ~= nil then
-		self.onFinish(right_cnt, wrong_cnt, self.hint_cnt)
-	end
+		local right_cnt = 0
+		local wrong_cnt = 0
+		for i = 1, #dst_drops do
+			if dst_drops[i].object and i == dst_drops[i].object.right_drop_id then
+			right_cnt = right_cnt + 1
+			elseif dst_drops[i].object then		-- only if has object!
+			wrong_cnt = wrong_cnt + 1
+			end --if
+		end -- for
+	--	print(right_cnt, wrong_cnt)
+		
+		-- if finished
+		local finished = right_cnt+wrong_cnt == #dst_drops
+		if finished and self.onFinish ~= nil then
+			self.onFinish(right_cnt, wrong_cnt, self.hint_cnt)
+		end
   end	
   
 --self.ask = function(self, task)
@@ -281,9 +280,9 @@ getmetatable(Mosaic.Task).__call = function(_, task)
 			local button = Button(TwoStateAnimation(Animation(load_config("Start.anim"))), screen_width / 2, 0)
 			self:add(button)
 			local twostate = TwoStateAnimation(
-			  -- TODO: Here 10 was self.margin. How to use it here?
+			  -- TODO: Here 10 was Mosaic.margin. How to use it here?
 				FrameItem("interface/frame", max_mover_width + 10, 30),
-				FrameItem("interface/frame_glow", max_mover_width + 10 / 2, 30)
+				FrameItem("interface/frame_glow", max_mover_width + 10, 30)
 			)	  
 			local drop_dst = DropArea(twostate)
 			self:add(drop_dst)
@@ -308,9 +307,9 @@ getmetatable(Mosaic.Task).__call = function(_, task)
 		end -- for buttons
 	end -- do
 	
-	self.lay_out = function(_)
-		local y = self.assignment.y + self.assignment.height + self.margin
-		local dy = self.assignment.height * self.line_interval
+	self.onRequestLayOut = function(_)
+		local y = self.assignment.y + self.assignment.height + Mosaic.margin
+		local dy = self.assignment.height * Mosaic.line_interval
 		
 		for k=1,#labels do
 		
@@ -321,16 +320,16 @@ getmetatable(Mosaic.Task).__call = function(_, task)
 				y = y + buttons[k].height/2
 			end		
 			
-			dst_drops[k].x = buttons[k].x - buttons[k].width/2 - self.margin - dst_drops[k].width/2
+			dst_drops[k].x = buttons[k].x - buttons[k].width/2 - Mosaic.margin - dst_drops[k].width/2
 			dst_drops[k].y = y		
 			
-			labels[k].x = dst_drops[k].x - dst_drops[k].width/2 - self.margin - labels[k].width/2
+			labels[k].x = dst_drops[k].x - dst_drops[k].width/2 - Mosaic.margin - labels[k].width/2
 			labels[k].y = y
 			y = y + dy
 		end
 		-- adjust mover position
 		for i=1, #movers do
-			movers[i].x, movers[i].y = buttons[i].right + self.margin + movers[i].width/2, buttons[i].y
+			movers[i].x, movers[i].y = buttons[i].right + Mosaic.margin + movers[i].width/2, buttons[i].y
 		end -- for movers
 		
 		if task.movers_placement=="random" then
@@ -342,6 +341,7 @@ getmetatable(Mosaic.Task).__call = function(_, task)
 			error("Wrong movers_placement!");
 		end -- if movers_placement
   end -- lay_out
+	self:onRequestLayOut()
   
   return self
 end -- Mosaic.Task()
