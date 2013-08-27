@@ -226,6 +226,11 @@ private:
 	}
 	// called by children when they change their size
 	virtual void requestLayOut(ScreenItem* caller = NULL){}
+	// change MY size!
+	virtual void OnSizeChange(Variant* v){
+		ScreenItem::OnSizeChange(v);
+		requestLayOut(this);
+	}
 };
 
 class SimpleItem: virtual public ScreenItem
