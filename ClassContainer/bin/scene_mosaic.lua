@@ -1,11 +1,3 @@
-local destroy_items_array = function(arr)
-	local i = table.remove(arr)
-    while i do
-      i:destroy()
-	  i = table.remove(arr)
-    end
-end
-
 local take = function(drops, w)
   w.onDrag = function(obj, dx, dy)
     onDrag(drops, w)
@@ -69,7 +61,7 @@ getmetatable(Mosaic).__call = function(_,conf)
 	  self.title.y = Mosaic.margin + self.title.height
 		self.description.x = self.width/2
 		self.description.y = self.title.y + self.title.height/2
-		-- TODO Function add() is also in this table - so when doinf pairs() it also appears :(
+		-- TODO Function add() is also in this table - so when doing pairs() it also appears :(
 		for _,t in ipairs(self.tasks) do
 			t.x = self.width / 2
 			t.y = self.description.y + self.description.height + Mosaic.margin
@@ -130,29 +122,8 @@ getmetatable(Mosaic).__call = function(_,conf)
   end
   
   self.start = function(self)
---	if self.description.obstacles then
---		for _,obst in pairs(self.description.obstacles) do
---			local align = "left"
---			if type(obst)=="table" and #obst==2 then
---				align = obst[2]
---				obst = obst[1]
---			end -- if align supplied
---			-- recompute relative coords
---			if(align=="left") then
---				obst.x = -description.hpx + obst.x
---				obst.y = -description.hpy + obst.y
---			else
---				obst.x = description.width - obst.x - description.hpx
---				obst.y = -description.hpy + obst.y
---			end			
---			description:addObstacle(obst, align)
---		end -- for obstacles
---	end -- if obstacles
---	assignment.y = description.y + description.height + Mosaic.margin
-	
---	ask(self.tasks[self.current_task])
-	-- TODO Zero everything and make tasks invisible
-	self.tasks[1].visible = true
+		-- TODO Zero everything and make tasks invisible
+		self.tasks[1].visible = true
   end
   
   self.destroy = function(self)

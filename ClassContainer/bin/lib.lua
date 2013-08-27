@@ -183,6 +183,7 @@ AnimatedItem = function(name)
 end
 
 function FlowLayout(w)
+	if w == nil then w = 0 end
   local self = CompositeItem()
   self.width = w
   
@@ -198,24 +199,24 @@ function FlowLayout(w)
 	    item.hpx_relative, item.hpy_relative = 0, 0	
 	  -- if item
 	  if type(item.firstLineDecrement)=="nil" then
-		item.x, item.y = cur_x, cur_y
-		cur_x = cur_x + item.width
-		while cur_x > self.width-profile.right:at(cur_y, item.height) do
-			cur_y = cur_y + 24							-- TODO Must know font line height here!!
-			cur_x = profile.left:at(cur_y, item.height)
 			item.x, item.y = cur_x, cur_y
 			cur_x = cur_x + item.width
-			assert(cur_y < 10000)						-- in case of hanging
-		end -- while line over	  
+			while cur_x > self.width-profile.right:at(cur_y, item.height) do
+				cur_y = cur_y + 24							-- TODO Must know font line height here!!
+				cur_x = profile.left:at(cur_y, item.height)
+				item.x, item.y = cur_x, cur_y
+				cur_x = cur_x + item.width
+				assert(cur_y < 10000)						-- in case of hanging
+			end -- while line over	  
 	  -- if text
 	  else
-		item.firstLineDecrement = cur_x					-- TODO Align baselines here!!
-		item.x, item.y = 0, cur_y
-		item.width = self.width
-		profile.left:shifted(-cur_y)
-		item.leftObstacles = profile.left:shifted(-cur_y)
-		item.rightObstacles = profile.right:shifted(-cur_y)		
-		cur_x, cur_y = item.lastLineEndX, cur_y + item.lastLineEndY
+			item.firstLineDecrement = cur_x					-- TODO Align baselines here!!
+			item.x, item.y = 0, cur_y
+			item.width = self.width
+			profile.left:shifted(-cur_y)
+			item.leftObstacles = profile.left:shifted(-cur_y)
+			item.rightObstacles = profile.right:shifted(-cur_y)		
+			cur_x, cur_y = item.lastLineEndX, cur_y + item.lastLineEndY
 	  end -- select type
 	end -- for
 	self.height = cur_y + 24			-- same magic number!
@@ -227,9 +228,9 @@ function FlowLayout(w)
   end -- lay_out()
   
   self.addItem = function(self, item)
-	self:add(item)
-	table.insert(items, item)
-	lay_out()
+		self:add(item)
+		table.insert(items, item)
+		lay_out()
   end
   
   self.clear = function(self)
@@ -275,6 +276,10 @@ function FlowLayout(w)
 	profile.right = StairsProfile()
 	lay_out()
   end
+	
+	self.onRequestLayOut = function()
+		lay_out()
+	end
   
   return self
 end -- FlowLayoutItem

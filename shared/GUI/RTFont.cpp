@@ -605,7 +605,7 @@ string RTFont::GetNextLine(int w, char **pCur, float scale, CL_Vec2f &vEnclosing
 	if ( (*pCur)[0] == '\n')
 	{
 		(*pCur) += 1;
-		return "";
+		//return "";			// don't add empty line!!!
 	}
 
 	rtRectf r(0,0,0,0);
