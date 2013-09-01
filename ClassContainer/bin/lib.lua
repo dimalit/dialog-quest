@@ -50,14 +50,14 @@ local function inherit(...)
 
     -- find existing and do assignment
     __newindex = function(self, key, val)
-      for i=1, table.getn(arg) do
+      for i=1, #arg do
         if arg[i][key]~=nil then
           arg[i][key]=val
           return
         end
       end
 	  -- set to ALL! if not found
-      for i=1, table.getn(arg) do
+      for i=1, #arg do
         arg[i][key] = val
       end
     end
@@ -182,8 +182,9 @@ AnimatedItem = function(name)
   return self
 end
 
-function FlowLayout(w)
+function FlowLayout(w, indent)
 	if w == nil then w = 0 end
+	if indent==nil then indent = 0 end
   local self = CompositeItem()
   self.width = w
   
@@ -192,39 +193,44 @@ function FlowLayout(w)
   local profile = { left = StairsProfile(), right = StairsProfile() }
   
   local lay_out = function()
-	local cur_x, cur_y = profile.left:at(0,1), 0
-	for _,item in ipairs(items) do
-		-- TODO Check how to use == operator to compare references!
-		--assert(item.parent == self)
-	    item.hpx_relative, item.hpy_relative = 0, 0	
-	  -- if item
-	  if type(item.firstLineDecrement)=="nil" then
-			item.x, item.y = cur_x, cur_y
-			cur_x = cur_x + item.width
-			while cur_x > self.width-profile.right:at(cur_y, item.height) do
-				cur_y = cur_y + 24							-- TODO Must know font line height here!!
-				cur_x = profile.left:at(cur_y, item.height)
+		local cur_x, cur_y = profile.left:at(0,1)+indent, 0
+		for _,item in ipairs(items) do
+			-- TODO Check how to use == operator to compare references!
+			--assert(item.parent == self)
+				item.hpx_relative, item.hpy_relative = 0, 0	
+			-- if item
+			if type(item.firstLineDecrement)=="nil" then
 				item.x, item.y = cur_x, cur_y
 				cur_x = cur_x + item.width
-				assert(cur_y < 10000)						-- in case of hanging
-			end -- while line over	  
-	  -- if text
-	  else
-			item.firstLineDecrement = cur_x					-- TODO Align baselines here!!
-			item.x, item.y = 0, cur_y
-			item.width = self.width
-			profile.left:shifted(-cur_y)
-			item.leftObstacles = profile.left:shifted(-cur_y)
-			item.rightObstacles = profile.right:shifted(-cur_y)		
-			cur_x, cur_y = item.lastLineEndX, cur_y + item.lastLineEndY
-	  end -- select type
-	end -- for
-	self.height = cur_y + 24			-- same magic number!
-	
-	-- check also obstacles
-	for obst,_ in pairs(obstacles) do
-		if obst.bottom > self.height then self.height = obst.bottom end
-	end
+				while cur_x > self.width-profile.right:at(cur_y, item.height) do
+					cur_y = cur_y + 24							-- TODO Must know font line height here!!
+					cur_x = profile.left:at(cur_y, item.height)
+					item.x, item.y = cur_x, cur_y
+					cur_x = cur_x + item.width
+					assert(cur_y < 10000)						-- in case of hanging
+				end -- while line over	  
+			-- if text
+			else
+				item.firstLineDecrement = cur_x					-- TODO Align baselines here!!
+				item.x, item.y = 0, cur_y
+				item.width = self.width
+				profile.left:shifted(-cur_y)
+				item.leftObstacles = profile.left:shifted(-cur_y)
+				item.rightObstacles = profile.right:shifted(-cur_y)		
+				cur_x, cur_y = item.lastLineEndX, cur_y + item.lastLineEndY
+			end -- select type
+		end -- for
+		local	self_height = cur_y + 24			-- same magic number!
+		
+		-- check also obstacles
+		for obst,_ in pairs(obstacles) do
+			if obst.bottom > self_height then
+				self_height = obst.bottom
+			end
+		end
+		
+		-- we use tempprary var here because changing self.height will trigger new lay_out()!
+		self.height = self_height
   end -- lay_out()
   
   self.addItem = function(self, item)
@@ -335,31 +341,20 @@ end
 
 ---------- Layouts -------------
 function MakeLayoutAgent(obj)
+	local self = {}
+	self.item = obj
+	
 	local agent = {
 		x = obj.x,
 		y = obj.y
 	}
 	
-	local self = {}
-	self.item = obj
-	setmetatable(self, inherit(agent, obj))	-- agent first because of x,y
-	
 	local pos_origin, pos_origin_xr, pos_origin_yr
 	local width_origin
 	local height_origin
-	local dependents = {}
 	
-	-- hook access to x and y to make movement relative
-	setmetatable(agent, {})
-	getmetatable(agent).__newindex = function(_, key, val)
-		rawset(agent, key, val)
-		if pos_origin~=nil and (key=='x' or key=='y') then
-			self:updateLocation(pos_origin)
-		elseif pos_origin==nil and (key=='x' or key=='y') then
-			obj.x, obj.y = x, y
-		end
-	end	
-	
+	local dependents = {}	
+
 	local old_onmove = obj.onMove
 	obj.onMove = function(_)
 		if old_onmove then old_onmove(obj) end
@@ -384,7 +379,7 @@ function MakeLayoutAgent(obj)
 		end
 	end
 	
-	agent.setLocationOrigin = function(_, ref_obj, xr, yr)
+	self.setLocationOrigin = function(_, ref_obj, xr, yr)
 		if pos_origin then pos_origin:removeDependent(self) end
 		pos_origin, pos_origin_xr, pos_origin_yr = ref_obj, xr, yr
 		if pos_origin then
@@ -394,7 +389,7 @@ function MakeLayoutAgent(obj)
 			obj.x, obj.y = agent.x, agent.y	-- if nil
 		end		
 	end
-	agent.setWidthOrigin = function(_, ref_obj)
+	self.setWidthOrigin = function(_, ref_obj)
 		if width_origin then width_origin:removeDependent(self) end
 		width_origin = ref_obj
 		if width_origin then
@@ -402,7 +397,7 @@ function MakeLayoutAgent(obj)
 			self:updateLocation(width_origin)
 		end
 	end
-	agent.setHeightOrigin = function(_, ref_obj)
+	self.setHeightOrigin = function(_, ref_obj)
 		if height_origin then height_origin:removeDependent(self) end
 		height_origin = ref_obj
 		if height_origin then
@@ -411,21 +406,42 @@ function MakeLayoutAgent(obj)
 		end	
 	end
 	
-	agent.addDependent = function(_, dep)
+	self.addDependent = function(_, dep)
 		dependents[dep] = true
 	end
-	agent.removeDependent = function(_, dep)
+	self.removeDependent = function(_, dep)
 		dependents[dep] = nil
 	end
+	
+	local obj_mt = inherit(obj)
+	-- hook access to x and y to make movement relative
+	setmetatable(self, {})
+	getmetatable(self).__newindex = function(_, key, val)
+	-- handle x/y
+		if key=='x' or key=='y' then
+			agent[key] = val
+			if pos_origin~=nil then
+				self:updateLocation(pos_origin)
+			elseif pos_origin==nil then
+				obj[key] = val
+			end
+		else
+	-- handle anything else
+			obj_mt.__newindex(_, key, val)		
+		end -- if not x, y
+	end	-- newindex	
+	getmetatable(self).__index = obj_mt.__index
 	
 	return self
 end -- MakeLayoutAgent
 
+-- TODO: spacing is not dynamic - if you change it later on - nothing happens!
 -- height can be nil which means automatic
 VBox = function(width, use_height)
 	local self = ScreenItem()
 	self.width = width
 	if use_height~=nil then self.height=use_height end
+	self.spacing = 0
 	
 	local items = {}
 	
@@ -433,7 +449,7 @@ VBox = function(width, use_height)
 	self.onMove = function(_)
 		local width = self.width
 			local item_height = nil
-			if use_height~=nil then item_height = self.height / #items end
+			if use_height~=nil and #items>0 then item_height = (self.height-self.spacing*(#items-1)) / #items end
 		-- re-align!
 		local y = self.top
 		for i, obj in ipairs(items) do
@@ -442,9 +458,13 @@ VBox = function(width, use_height)
 			if item_height~=nil then obj.height = item_height end
 			obj.x = self.left
 			obj.y = y
-			y = y + obj.height
+			y = y + obj.height + self.spacing
 		end
-		if use_height==nil then self.height = y end
+		if use_height==nil then
+			local h = y-self.top-self.spacing
+			if h < 0 then h = 0 end
+			self.height = h
+		end
 	end
 	
 	self.add = function(_, obj, pos)
@@ -453,6 +473,7 @@ VBox = function(width, use_height)
 		else
 			table.insert(items, pos, obj)
 		end
+		self.parent:add(obj)
 		self:onMove()
 		return self
 	end
@@ -462,6 +483,7 @@ VBox = function(width, use_height)
 		for pos=1,#items do
 			if items[pos]==obj then
 				table.remove(items, pos)
+				self.parent:remove(obj)
 				self:onMove()
 				return
 			end
@@ -475,13 +497,14 @@ end
 HBox = function(use_width, height)
 	-- height is mandatory!
 	if height==nil then
-		height=width
+		height=use_width
 		use_width=nil
 	end
 
 	local self = ScreenItem()
 	self.height = height
 	if use_width~=nil then self.width=use_width end
+	self.spacing = 0
 	
 	local items = {}
 	
@@ -489,7 +512,7 @@ HBox = function(use_width, height)
 	self.onMove = function(_)
 		local height = self.height
 			local item_width = nil
-			if use_width~=nil then item_width=self.width/#items end
+			if use_width~=nil and #items>0 then item_width=(self.width-self.spacing*(#items-1))/#items end
 		-- re-align!
 		local x = self.left
 		for i, obj in ipairs(items) do
@@ -498,9 +521,13 @@ HBox = function(use_width, height)
 			if item_width~=nil then obj.width=item_width end
 			obj.x = x
 			obj.y = self.top
-			x = x + obj.width
+			x = x + obj.width + self.spacing
 		end		
-		if use_width==nil then self.width = x end
+		if use_width==nil then
+			local w = x-self.left-self.spacing
+			if w < 0 then w = 0 end
+			self.width = w
+		end
 	end
 	
 	self.add = function(_, obj, pos)
@@ -509,6 +536,7 @@ HBox = function(use_width, height)
 		else
 			table.insert(items, pos, obj)
 		end
+		self.parent:add(obj)
 		self:onMove()
 		return self
 	end
@@ -518,6 +546,7 @@ HBox = function(use_width, height)
 		for pos=1,#items do
 			if items[pos]==obj then
 				table.remove(items, pos)
+				self.parent:remove(obj)
 				self:onMove()
 				return
 			end

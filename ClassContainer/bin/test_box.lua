@@ -3,10 +3,9 @@ frame = FrameItem("interface/frame", 15, 15)
 
 box = VBox(100, 100)
 box.hpx_relative, box.hpy_relative = 0, 0
-box:add(button):add(frame)
 
-root:add(button):add(frame)
 root:add(box)
+box:add(button):add(frame)
 
 box.width = 200
 
