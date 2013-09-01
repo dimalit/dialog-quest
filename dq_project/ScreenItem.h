@@ -37,7 +37,10 @@ public:
 
 	// position
 	void move(float dx, float dy){
-		entity->GetVar("pos2d")->GetVector2() += CL_Vec2f(dx, dy);
+		if(dx != 0.0f || dy != 0.0f){
+			CL_Vec2f pos = entity->GetVar("pos2d")->GetVector2();
+			entity->GetVar("pos2d")->Set(pos.x+dx, pos.y+dy);
+		}
 	}
 
 	void setX(float x);
@@ -183,6 +186,7 @@ protected:
 	}
 
 	virtual void OnSizeChange(Variant* /*NULL*/);
+	virtual void onMove(Variant* /*NULL*/);
 private:
 	float orig_width, orig_height;
 	CompositeItem* parent_item;

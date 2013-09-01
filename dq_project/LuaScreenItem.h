@@ -37,12 +37,19 @@ private:
 		return res;
 	}
 
+	luabind::object onMove_cb;
 	luabind::object onDrag_cb;
 	luabind::object onDbClick_cb;
 	luabind::object onDragStart_cb;
 	luabind::object onDragEnd_cb;
 	luabind::object onChar_cb;
 	luabind::object onFocusLose_cb;
+
+	virtual void onMove(Variant* v){
+		ScreenItem::onMove(v);
+		if(onMove_cb)
+			luabind::call_function<void>(onMove_cb, this);
+	}
 
 	virtual void onDrag(float dx, float dy){
 		if(onDrag_cb)
@@ -82,7 +89,7 @@ protected:
 		}
 };
 
-class LuaCompositeItem: public CompositeItem, public LuaScreenItem{
+class LuaCompositeItem: public LuaScreenItem, public CompositeItem{
 public:
 	bool operator == (LuaCompositeItem&){return false;}
 	LuaCompositeItem():CompositeItem(), LuaScreenItem(), ScreenItem(){
@@ -133,7 +140,7 @@ class CompositeItem;
 
 // needs to be public!
 // error C2243: 'type cast' : conversion from 'LuaSimpleItem *' to 'ScreenItem *' exists, but is inaccessible
-class LuaSimpleItem: public SimpleItem, public LuaScreenItem
+class LuaSimpleItem: public LuaScreenItem, public SimpleItem
 {
 public:
 	// need to be public for luabind
