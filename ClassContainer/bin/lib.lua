@@ -298,30 +298,233 @@ function FrameItem(name, w, h)
 	bt = TextureItem(name.."_bt.rttex", self.width-8,  4),
 	bb = TextureItem(name.."_bb.rttex", self.width-8,  4)
   }
-  tex.c1.hpx_relative, tex.c1.hpy_relative = 0, 0
-		tex.c1.x, tex.c1.y = 0, 0
-  tex.c2.hpx_relative, tex.c2.hpy_relative = 1, 0
-		tex.c2.x, tex.c2.y = self.width, 0
-  tex.c3.hpx_relative, tex.c3.hpy_relative = 1, 1
-		tex.c3.x, tex.c3.y = self.width, self.height	
-  tex.c4.hpx_relative, tex.c4.hpy_relative = 0, 1
-		tex.c4.x, tex.c4.y = 0, self.height	
-		
-  tex.bl.hpx_relative = 0
-		tex.bl.x, tex.bl.y = 0, self.height/2	
-  tex.br.hpx_relative = 1
-		tex.br.x, tex.br.y = self.width, self.height/2	
-  tex.bt.hpy_relative = 0
-		tex.bt.x, tex.bt.y = self.width/2, 0	
-  tex.bb.hpy_relative = 1
-		tex.bb.x, tex.bb.y = self.width/2, self.height	
-  
+	
   -- TODO: Implement add(array)
-  self:add(tex.c1):add(tex.c2):add(tex.c3):add(tex.c4):add(tex.bl):add(tex.br):add(tex.bt):add(tex.bb)
-  
-  self.tex = tex
+  self:add(tex.c1):add(tex.c2):add(tex.c3):add(tex.c4):add(tex.bl):add(tex.br):add(tex.bt):add(tex.bb)	
+	self.tex = tex
+	
+	-- will be called on resize
+	self.onRequestLayOut = function(_, child)
+		tex.bl.height = self.height-8
+		tex.br.height = self.height-8
+		tex.bt.width  = self.width-8
+		tex.bb.width  = self.width-8
+	
+		tex.c1.hpx_relative, tex.c1.hpy_relative = 0, 0
+			tex.c1.x, tex.c1.y = 0, 0
+		tex.c2.hpx_relative, tex.c2.hpy_relative = 1, 0
+			tex.c2.x, tex.c2.y = self.width, 0
+		tex.c3.hpx_relative, tex.c3.hpy_relative = 1, 1
+			tex.c3.x, tex.c3.y = self.width, self.height	
+		tex.c4.hpx_relative, tex.c4.hpy_relative = 0, 1
+			tex.c4.x, tex.c4.y = 0, self.height	
+			
+		tex.bl.hpx_relative = 0
+			tex.bl.x, tex.bl.y = 0, self.height/2	
+		tex.br.hpx_relative = 1
+			tex.br.x, tex.br.y = self.width, self.height/2	
+		tex.bt.hpy_relative = 0
+			tex.bt.x, tex.bt.y = self.width/2, 0	
+		tex.bb.hpy_relative = 1
+			tex.bb.x, tex.bb.y = self.width/2, self.height	
+	end
+	self:onRequestLayOut(self)
   
   return self
+end
+
+---------- Layouts -------------
+function MakeLayoutAgent(obj)
+	local agent = {
+		x = obj.x,
+		y = obj.y
+	}
+	
+	local self = {}
+	self.item = obj
+	setmetatable(self, inherit(agent, obj))	-- agent first because of x,y
+	
+	local pos_origin, pos_origin_xr, pos_origin_yr
+	local width_origin
+	local height_origin
+	local dependents = {}
+	
+	-- hook access to x and y to make movement relative
+	setmetatable(agent, {})
+	getmetatable(agent).__newindex = function(_, key, val)
+		rawset(agent, key, val)
+		if pos_origin~=nil and (key=='x' or key=='y') then
+			self:updateLocation(pos_origin)
+		elseif pos_origin==nil and (key=='x' or key=='y') then
+			obj.x, obj.y = x, y
+		end
+	end	
+	
+	local old_onmove = obj.onMove
+	obj.onMove = function(_)
+		if old_onmove then old_onmove(obj) end
+		for dep,_ in pairs(dependents) do
+			dep:updateLocation(self)
+		end
+	end
+	
+	self.updateLocation = function(_, origin)
+		-- update position
+		if origin==pos_origin then
+			obj.x = origin.left + origin.width*pos_origin_xr  + agent.x
+			obj.y = origin.top  + origin.height*pos_origin_yr + agent.y
+		end
+		-- update width
+		if origin==width_origin then
+			obj.width = origin.width
+		end
+		-- update height
+		if origin==height_origin then
+			obj.height = origin.height
+		end
+	end
+	
+	agent.setLocationOrigin = function(_, ref_obj, xr, yr)
+		if pos_origin then pos_origin:removeDependent(self) end
+		pos_origin, pos_origin_xr, pos_origin_yr = ref_obj, xr, yr
+		if pos_origin then
+			pos_origin:addDependent(self)
+			self:updateLocation(pos_origin)
+		else
+			obj.x, obj.y = agent.x, agent.y	-- if nil
+		end		
+	end
+	agent.setWidthOrigin = function(_, ref_obj)
+		if width_origin then width_origin:removeDependent(self) end
+		width_origin = ref_obj
+		if width_origin then
+			width_origin:addDependent(self)
+			self:updateLocation(width_origin)
+		end
+	end
+	agent.setHeightOrigin = function(_, ref_obj)
+		if height_origin then height_origin:removeDependent(self) end
+		height_origin = ref_obj
+		if height_origin then
+			height_origin:addDependent(self)
+			self:updateLocation(height_origin)
+		end	
+	end
+	
+	agent.addDependent = function(_, dep)
+		dependents[dep] = true
+	end
+	agent.removeDependent = function(_, dep)
+		dependents[dep] = nil
+	end
+	
+	return self
+end -- MakeLayoutAgent
+
+-- height can be nil which means automatic
+VBox = function(width, use_height)
+	local self = ScreenItem()
+	self.width = width
+	if use_height~=nil then self.height=use_height end
+	
+	local items = {}
+	
+	-- resize and move all children
+	self.onMove = function(_)
+		local width = self.width
+			local item_height = nil
+			if use_height~=nil then item_height = self.height / #items end
+		-- re-align!
+		local y = self.top
+		for i, obj in ipairs(items) do
+			obj.hpx_relative, obj.hpy_relative = 0, 0
+			obj.width = width
+			if item_height~=nil then obj.height = item_height end
+			obj.x = self.left
+			obj.y = y
+			y = y + obj.height
+		end
+		if use_height==nil then self.height = y end
+	end
+	
+	self.add = function(_, obj, pos)
+		if pos==nil then
+			table.insert(items, obj)
+		else
+			table.insert(items, pos, obj)
+		end
+		self:onMove()
+		return self
+	end
+	
+	self.remove = function(_, obj)
+		local pos = 0
+		for pos=1,#items do
+			if items[pos]==obj then
+				table.remove(items, pos)
+				self:onMove()
+				return
+			end
+		end
+	end
+	
+	return self
+end
+
+-- width can be nil!
+HBox = function(use_width, height)
+	-- height is mandatory!
+	if height==nil then
+		height=width
+		use_width=nil
+	end
+
+	local self = ScreenItem()
+	self.height = height
+	if use_width~=nil then self.width=use_width end
+	
+	local items = {}
+	
+	-- resize and move all children
+	self.onMove = function(_)
+		local height = self.height
+			local item_width = nil
+			if use_width~=nil then item_width=self.width/#items end
+		-- re-align!
+		local x = self.left
+		for i, obj in ipairs(items) do
+			obj.hpx_relative, obj.hpy_relative = 0, 0
+			obj.height = height
+			if item_width~=nil then obj.width=item_width end
+			obj.x = x
+			obj.y = self.top
+			x = x + obj.width
+		end		
+		if use_width==nil then self.width = x end
+	end
+	
+	self.add = function(_, obj, pos)
+		if pos==nil then
+			table.insert(items, obj)
+		else
+			table.insert(items, pos, obj)
+		end
+		self:onMove()
+		return self
+	end
+	
+	self.remove = function(_, obj)
+		local pos = 0
+		for pos=1,#items do
+			if items[pos]==obj then
+				table.remove(items, pos)
+				self:onMove()
+				return
+			end
+		end
+	end
+	
+	return self
 end
 
 ---------- MakeMover -----------

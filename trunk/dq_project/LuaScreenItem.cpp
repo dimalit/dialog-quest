@@ -57,6 +57,7 @@ void LuaScreenItem::luabind(lua_State* L){
 		.property("hpx_relative", &LuaScreenItem::getHotSpotRelativeX, &LuaScreenItem::setHotSpotRelativeX)
 		.property("hpy_relative", &LuaScreenItem::getHotSpotRelativeY, &LuaScreenItem::setHotSpotRelativeY)
 
+		.def_readwrite("onMove", &LuaScreenItem::onMove_cb)
 		.def_readwrite("onDbClick", &LuaScreenItem::onDbClick_cb)
 		.def_readwrite("onDrag", &LuaScreenItem::onDrag_cb)
 		.def_readwrite("onDragStart", &LuaScreenItem::onDragStart_cb)

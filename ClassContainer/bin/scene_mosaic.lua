@@ -228,7 +228,7 @@ getmetatable(Mosaic.Task).__call = function(_, task)
 		local permut = random_permutation(#task.lines)
 		for i = 1, #permut do
 			local line = task.lines[permut[i]]
-			local mover = take(drops, Mover(Text(line[3])), r0, 0)
+			local mover = take(drops, Mover(Text(line[3])))
 			self:add(mover)
 			table.insert(movers, mover)
 			

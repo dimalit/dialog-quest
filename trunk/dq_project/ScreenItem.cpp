@@ -7,12 +7,14 @@ ScreenItem::ScreenItem()
 	orig_width = orig_height = 0;
 
 	entity = new Entity("ScreenItem");
+	setVisible(1);
 
 	setHotSpotRelativeX(0.5f);
 	setHotSpotRelativeY(0.5f);
 	setX(0); setY(0);
 
-	entity->GetVar("size2d")->GetSigOnChanged()->connect(1, boost::bind(&SimpleItem::OnSizeChange, this, _1));
+	entity->GetVar("size2d")->GetSigOnChanged()->connect(1, boost::bind(&ScreenItem::OnSizeChange, this, _1));
+	entity->GetVar("pos2d")->GetSigOnChanged()->connect(1, boost::bind(&ScreenItem::onMove, this, _1));
 }
 
 ScreenItem::~ScreenItem(void)
@@ -32,13 +34,17 @@ Entity* ScreenItem::acquireEntity(Entity* e){
 // my hotSpot is also rotation center. Proton's - not.
 void ScreenItem::setX(float x){
 	CL_Vec2f v = entity->GetVar("pos2d")->GetVector2();
-	v.x = x - getHotSpotX();
-	entity->GetVar("pos2d")->Set(v);
+	if(v.x != x - getHotSpotX()){
+		v.x = x - getHotSpotX();
+		entity->GetVar("pos2d")->Set(v);
+	}
 }
 void ScreenItem::setY(float y){
 	CL_Vec2f v = entity->GetVar("pos2d")->GetVector2();
-	v.y = y - getHotSpotY();
-	entity->GetVar("pos2d")->Set(v);
+	if(v.y != y - getHotSpotY()){
+		v.y = y - getHotSpotY();
+		entity->GetVar("pos2d")->Set(v);
+	}
 }
 float ScreenItem::getX() const {
 	float x = entity->GetVar("pos2d")->GetVector2().x + getHotSpotX();
@@ -71,13 +77,21 @@ void ScreenItem::OnSizeChange(Variant* /*NULL*/){
 	CL_Vec2f new_size = entity->GetVar("size2d")->GetVector2();
 	float dx = getHotSpotRelativeX() * (new_size.x - orig_width);
 	float dy = getHotSpotRelativeY() * (new_size.y - orig_height);
-	move(-dx, -dy);
-	
+
 	orig_width = new_size.x;
 	orig_height = new_size.y;
 
+	// call onMove even if dx=dy=0
+	CL_Vec2f pos = entity->GetVar("pos2d")->GetVector2();
+	entity->GetVar("pos2d")->Set(pos.x-dx, pos.y-dy);
+
 	if(getParent())
 		getParent()->requestLayOut(this);
+}
+
+void ScreenItem::onMove(Variant* /*NULL*/){
+	// nothing
+	// will be handled in Lua
 }
 
 CompositeItem::CompositeItem():ScreenItem(){
