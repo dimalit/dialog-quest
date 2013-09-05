@@ -188,11 +188,24 @@ function FlowLayout(w, indent)
   local self = CompositeItem()
   self.width = w
   
+	local old_width = w					-- need it when resizing
   local items     = {}		-- array
   local obstacles = {}		-- set
+	-- both profiles base on left edge
   local profile = { left = StairsProfile(), right = StairsProfile() }
   
-  local lay_out = function()
+  self.onRequestLayOut = function(_)
+		local dw = self.width-old_width
+		if dw ~= 0 then
+			old_width = self.width				-- prevents recursion		
+			profile.right:add(-dw)
+			for obst, side in pairs(obstacles) do
+				if side=="right" then
+					obst:move(dw, 0)
+				end
+			end
+		end
+	
 		local cur_x, cur_y = profile.left:at(0,1)+indent, 0
 		for _,item in ipairs(items) do
 			-- TODO Check how to use == operator to compare references!
@@ -202,7 +215,7 @@ function FlowLayout(w, indent)
 			if type(item.firstLineDecrement)=="nil" then
 				item.x, item.y = cur_x, cur_y
 				cur_x = cur_x + item.width
-				while cur_x > self.width-profile.right:at(cur_y, item.height) do
+				while cur_x > self.width - profile.right:at(cur_y, item.height) do
 					cur_y = cur_y + 24							-- TODO Must know font line height here!!
 					cur_x = profile.left:at(cur_y, item.height)
 					item.x, item.y = cur_x, cur_y
@@ -231,34 +244,32 @@ function FlowLayout(w, indent)
 		
 		-- we use tempprary var here because changing self.height will trigger new lay_out()!
 		self.height = self_height
-  end -- lay_out()
+  end -- onRequestLayOut
   
   self.addItem = function(self, item)
 		self:add(item)
 		table.insert(items, item)
-		lay_out()
   end
   
   self.clear = function(self)
-	for _,item in ipairs(items) do
-		self:remove(item)
-		item:destroy()
-	end
-	items = {}
+		for _,item in ipairs(items) do
+			self:remove(item)
+			item:destroy()
+		end
+		items = {}
   end
   
   self.addItems = function(self, added)
-	for i,item in ipairs(added) do
-		self:add(item)
-		table.insert(items, item)
-	end
-	lay_out()
+		for i,item in ipairs(added) do
+			self:add(item)
+			table.insert(items, item)
+		end
   end  
   
   self.addObstacle = function(self, obst, x, y, side)
 		if side==nil then side="left" end
 		assert(side=="left" or side=="right")
-		obstacles[obst] = true
+		obstacles[obst] = side		-- t/f/nil
 		self:add(obst)
 		
 		obst.x, obst.y = x, y
@@ -267,9 +278,8 @@ function FlowLayout(w, indent)
 			profile["left"]:setInterval(obst.top, obst.height, obst.right)
 		else
 			obst.x = self.width - obst.x			-- coords from right
-			profile["right"]:setInterval(obst.top, obst.height, self.width - obst.left)
+			profile["right"]:setInterval(obst.top, obst.height, self.width-obst.left)
 		end
-		lay_out()
 		return self
   end
   
@@ -280,12 +290,7 @@ function FlowLayout(w, indent)
 	obstacles = {}
 	profile.left = StairsProfile()
 	profile.right = StairsProfile()
-	lay_out()
   end
-	
-	self.onRequestLayOut = function()
-		lay_out()
-	end
   
   return self
 end -- FlowLayoutItem

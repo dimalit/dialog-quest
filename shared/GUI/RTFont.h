@@ -17,6 +17,7 @@ class StairsProfile{
 public:
 	int operator()(int x) const;
 	int operator()(int x1, int width) const;
+	void operator+=(int w);
 	void setInterval(int x1, int width, int val);
 	StairsProfile shifted(int dx) const;
 private:

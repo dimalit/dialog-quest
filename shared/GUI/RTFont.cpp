@@ -956,6 +956,12 @@ int StairsProfile::operator()(int x, int w) const {
 	return max;
 }
 
+void StairsProfile::operator+=(int w){
+	if(w==0)return;
+	for(int i=0; i<vy.size(); i++)
+		vy[i] += w;
+}
+
 int StairsProfile::operator()(int x) const {
 	// find interval with our x
 	int i = interval_with_x(x);

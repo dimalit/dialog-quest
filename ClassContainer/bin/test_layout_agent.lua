@@ -1,4 +1,4 @@
-f1 = ScreenItem()--FrameItem("interface/frame_glow", 100, 30)
+f1 = FrameItem("interface/frame_glow", 100, 30)
 f1.width, f1.height = 100, 30
 f1.x, f1.y = 0, 0
 f1.hpx_relative, f1.hpy_relative = 0, 0
