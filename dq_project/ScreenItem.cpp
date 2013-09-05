@@ -67,6 +67,23 @@ float ScreenItem::getAbsoluteY() const {
 		return parent_item->getAbsoluteY() - parent_item->getHotSpotY()  + getY();
 }
 
+void ScreenItem::setAbsoluteX(float gx){
+	if(parent_item == 0)
+		setX(gx);
+	else{
+		float parent_gleft = parent_item->getAbsoluteX() - parent_item->getHotSpotX();
+		setX(gx - parent_gleft);
+	}
+}
+void ScreenItem::setAbsoluteY(float gy){
+	if(parent_item == 0)
+		setY(gy);
+	else{
+		float parent_gtop = parent_item->getAbsoluteY() - parent_item->getHotSpotY();
+		setY(gy - parent_gtop);
+	}
+}
+
 // very unsafe and is called only from parent
 void ScreenItem::setParent(CompositeItem* p){
 	parent_item = p;

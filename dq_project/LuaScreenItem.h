@@ -93,24 +93,28 @@ class LuaCompositeItem: public LuaScreenItem, public CompositeItem{
 public:
 	bool operator == (LuaCompositeItem&){return false;}
 	LuaCompositeItem():CompositeItem(), LuaScreenItem(), ScreenItem(){
+		children = luabind::newtable(L);
 	}
 	static void luabind(lua_State* L);
 
 	LuaCompositeItem* add(luabind::object child){
 		LuaScreenItem* it;
-		while(luabind::type(child) != LUA_TUSERDATA)
+		while(luabind::type(child) != LUA_TUSERDATA && luabind::type(child) != LUA_TNIL){
 			child = child["item"];
+		}
 		it = luabind::object_cast<LuaScreenItem*>(child);
 		if(it==NULL)
 			luaL_error(child.interpreter(), "Can't convert value to ScreenItem!");
 		else
 			CompositeItem::add(it);
+		//luabind::call_function<void>(L, "table.insert", children, 
+		children[child] = true;
 		return this;
 	}
 
 	LuaCompositeItem* remove(luabind::object child){
 		LuaScreenItem* it;
-		if(luabind::type(child) == LUA_TUSERDATA)
+		if(luabind::type(child) != LUA_TUSERDATA && luabind::type(child) != LUA_TNIL)
 			it = luabind::object_cast<LuaScreenItem*>(child);
 		else
 			it = luabind::object_cast<LuaScreenItem*>(child["item"]);
@@ -118,6 +122,7 @@ public:
 			luaL_error(child.interpreter(), "Can't convert value to ScreenItem!");
 		else
 			CompositeItem::remove(it);
+		children[child] = luabind::nil;
 		return this;
 	}
 
@@ -131,6 +136,7 @@ public:
 	}
 private:
 	luabind::object onRequestLayOut_cb;
+	luabind::object children;
 	LuaCompositeItem(const LuaCompositeItem&):CompositeItem(){assert(false);}
 	LuaCompositeItem& operator=(const LuaCompositeItem&){assert(false);}
 };
