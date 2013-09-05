@@ -62,4 +62,5 @@ Scene = function(conf)
 end
 
 dofile("scene_mosaic.lua")
-dofile("scene_explain.lua")
+--dofile("scene_explain.lua")
+dofile("scene_explain_rel.lua")

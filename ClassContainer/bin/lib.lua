@@ -38,7 +38,7 @@ local function inherit(...)
           if type(arg[i][key]) == "function"
           then
             local par = arg;
-            return function(...) par[i][key](par[i], unpack(arg, 2)) end
+            return function(...) return par[i][key](par[i], unpack(arg, 2)) end
           else
             return arg[i][key]
           end -- if func
@@ -108,36 +108,31 @@ end
 ImageItem = function(path)
   local item = SimpleItem()
   local image = Image(path)
+  item.view = image
   local self = {}
-  setmetatable(self, inherit(item, image))
   self.item = item
-  self.view = image
+  setmetatable(self, inherit(item, image))
   return self
 end
 
 TextureItem = function(path, width, height)
   local item = SimpleItem()
   local texture = Texture(path, width, height)
+  item.view = texture
   local self = {}
-  setmetatable(self, inherit(item, texture))
   self.item = item
-  self.view = texture
+  setmetatable(self, inherit(item, texture))
   return self
 end
 
 TextItem = function(text, font)
   local item = SimpleItem()
-  local txt
---  if font ~= nil then
---    txt = Text(text, font)
---   else
-    txt = Text(text)
---  end
+  local txt = Text(text)
+	item.view = txt
 
   local self = {}
-  setmetatable(self, inherit(item, txt))
   self.item = item
-  self.view = txt
+  setmetatable(self, inherit(item, txt))
   return self
 end
 
@@ -145,14 +140,12 @@ TextBoxItem = function(text, w)
   if w == nil then w = 0 end
   
   local item = SimpleItem()
-  local txt
-  txt = TextBox(text, w, 0)
+  local txt = TextBox(text, w, 0)
+  item.view = txt
 
   local self = {}
-  setmetatable(self, inherit(item, txt))
   self.item = item
-  item.view = txt	-- TODO Which of these and why second doesn't work?
---  self.view = txt 
+  setmetatable(self, inherit(item, txt))
   return self
 end
 
@@ -160,11 +153,11 @@ end
 AnimatedItem = function(name)
   local item = SimpleItem()
   local anim = Animation(load_config(name))
+  item.view = anim
  
   local self = {}
-  setmetatable(self, inherit(item, anim))
   self.item = item
-  self.view = anim
+  setmetatable(self, inherit(item, anim))
 
   -- moved this after self.view=anim because of Components
   anim.loop = true
@@ -346,12 +339,16 @@ end
 
 ---------- Layouts -------------
 function MakeLayoutAgent(obj)
+	if obj.rel_x ~= nil then
+		print("Warning: attempt of repeated MakeLayoutAgent")
+		return obj
+	end
 	local self = {}
 	self.item = obj
 	
-	local agent = {
-		x = obj.x,
-		y = obj.y
+	local cord = {
+		rel_x = obj.x,
+		rel_y = obj.y
 	}
 	
 	local pos_origin, pos_origin_xr, pos_origin_yr
@@ -371,8 +368,8 @@ function MakeLayoutAgent(obj)
 	self.updateLocation = function(_, origin)
 		-- update position
 		if origin==pos_origin then
-			obj.x = origin.left + origin.width*pos_origin_xr  + agent.x
-			obj.y = origin.top  + origin.height*pos_origin_yr + agent.y
+			obj.gx = origin.gx - origin.hpx + origin.width*pos_origin_xr  + cord.rel_x
+			obj.gy = origin.gy - origin.hpy + origin.height*pos_origin_yr + cord.rel_y
 		end
 		-- update width
 		if origin==width_origin then
@@ -391,7 +388,7 @@ function MakeLayoutAgent(obj)
 			pos_origin:addDependent(self)
 			self:updateLocation(pos_origin)
 		else
-			obj.x, obj.y = agent.x, agent.y	-- if nil
+			obj.x, obj.y = cord.rel_x, cord.rel_y	-- if nil
 		end		
 	end
 	self.setWidthOrigin = function(_, ref_obj)
@@ -418,13 +415,14 @@ function MakeLayoutAgent(obj)
 		dependents[dep] = nil
 	end
 	
+	-- NOTE: Cannot use direct indexing here because functions need correct 1st arg!
 	local obj_mt = inherit(obj)
 	-- hook access to x and y to make movement relative
 	setmetatable(self, {})
 	getmetatable(self).__newindex = function(_, key, val)
 	-- handle x/y
-		if key=='x' or key=='y' then
-			agent[key] = val
+		if key=='rel_x' or key=='rel_y' then
+			cord[key] = val
 			if pos_origin~=nil then
 				self:updateLocation(pos_origin)
 			elseif pos_origin==nil then
@@ -435,7 +433,13 @@ function MakeLayoutAgent(obj)
 			obj_mt.__newindex(_, key, val)		
 		end -- if not x, y
 	end	-- newindex	
-	getmetatable(self).__index = obj_mt.__index
+	getmetatable(self).__index = function(_, key)
+		if key=='rel_x' or key=='rel_y' then
+			return cord[key]
+		else
+			return obj_mt.__index(_, key)
+		end -- if not x, y
+	end	-- newindex	
 	
 	return self
 end -- MakeLayoutAgent
@@ -790,10 +794,10 @@ end -- Mover
 ------------- button ------------------
 Button = function(view)
   local item = SimpleItem()
+  item.view = view
   local self = {}
-  setmetatable(self, inherit(item, view))
-  self.view = view
   self.item = item
+  setmetatable(self, inherit(item, view))
   
   item.onDragStart = function(item)
     view:over(true)
@@ -814,8 +818,10 @@ function print_table(t, shift)
   local shift_str = string.rep("\t", shift)
 
   for k,v in pairs(t) do
-    if(type(v) ~= "number" and type(v)~="string") then v = type(v) end
-    print(shift_str, k, " => ", v)
+		if(type(v) ~= "number" and type(v)~="string") then v = type(v) end
+    local k2 = k
+		if(type(k2) ~= "number" and type(k2)~="string") then k2 = type(k2) end
+    print(shift_str, k2, " => ", v)
     if type(t[k]) == "table" and shift < 2 then print_table(t[k], shift+1) end
   end
 end
@@ -841,5 +847,5 @@ function getupvalues(f)
 end
 
 ----------- initialization ------------
---add_layer("default")
+dofile("make_layout_agents.lua")
 dofile("scene.lua")

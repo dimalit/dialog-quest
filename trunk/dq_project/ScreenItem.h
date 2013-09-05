@@ -49,6 +49,8 @@ public:
 	float getY() const;
 	float getAbsoluteX() const;
 	float getAbsoluteY() const;
+	void setAbsoluteX(float gx);
+	void setAbsoluteY(float gy);
 
 	// rotation
 	void rotate(float r){entity->GetVar("rotation")->GetFloat() += r * 180.0f / (float)M_PI;}
