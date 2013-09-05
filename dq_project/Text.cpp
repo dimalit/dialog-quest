@@ -60,6 +60,10 @@ public:
 		return (*this)(x1, w);
 	}
 
+	void add(int w){
+		(*this) += w;
+	}
+
 	LuaStairsProfile shifted(int dx) const{
 		return LuaStairsProfile(StairsProfile::shifted(dx));
 	}
@@ -90,6 +94,7 @@ void LuaTextBox::luabind(lua_State* L){
 		luabind::class_<LuaStairsProfile>("StairsProfile")
 			.def(luabind::constructor<>())
 			.def("at", &LuaStairsProfile::at)
+			.def("add", &LuaStairsProfile::add)
 			.def("setInterval", &LuaStairsProfile::setInterval)
 			.def("shifted", &LuaStairsProfile::shifted)
 	];
