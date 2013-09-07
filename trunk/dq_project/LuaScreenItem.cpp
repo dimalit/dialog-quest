@@ -54,8 +54,8 @@ void LuaScreenItem::luabind(lua_State* L){
 		.property("rotation", &LuaScreenItem::getRotation, &LuaScreenItem::setRotation)
 		.property("width", &LuaScreenItem::getWidth, &LuaScreenItem::setWidth)
 		.property("height", &LuaScreenItem::getHeight, &LuaScreenItem::setHeight)
-		.property("hpx_relative", &LuaScreenItem::getHotSpotRelativeX, &LuaScreenItem::setHotSpotRelativeX)
-		.property("hpy_relative", &LuaScreenItem::getHotSpotRelativeY, &LuaScreenItem::setHotSpotRelativeY)
+		.property("rel_hpx", &LuaScreenItem::getHotSpotRelativeX, &LuaScreenItem::setHotSpotRelativeX)
+		.property("rel_hpy", &LuaScreenItem::getHotSpotRelativeY, &LuaScreenItem::setHotSpotRelativeY)
 
 		.def_readwrite("onMove", &LuaScreenItem::onMove_cb)
 		.def_readwrite("onDbClick", &LuaScreenItem::onDbClick_cb)

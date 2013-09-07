@@ -13,12 +13,12 @@ getmetatable(Explain).__call = function(_,conf)
 	
   self.title = TextItem("self.title")
 	self:add(self.title)
-	self.title.hpy_relative = 0
+	self.title.rel_hpy = 0
 	self.title.y = 0
 	self.title.x = self.width / 2
 	
 	self.content = CompositeItem()
-	self.content.hpy_relative = 0
+	self.content.rel_hpy = 0
 	self.content.rel_y = Explain.paragraph_interval
 	self:add(self.content)
 	self.content:setLocationOrigin(self.title, 0.5, 1)
@@ -34,7 +34,7 @@ getmetatable(Explain).__call = function(_,conf)
 	end
 	
 	self.agree_button = Button(TwoStateAnimation(Animation(load_config("Start.anim"))))
-	self.agree_button.hpy_relative = 1
+	self.agree_button.rel_hpy = 1
 	self.agree_button.x = self.width / 2
 	self.agree_button.y = self.height
 	self:add(self.agree_button)

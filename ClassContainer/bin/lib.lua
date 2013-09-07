@@ -35,10 +35,13 @@ local function inherit(...)
       for i=1, #arg do
         if arg[i][key]~=nil then
           -- handle functions!
-          if type(arg[i][key]) == "function"
+          if false and type(arg[i][key]) == "function"
           then
-            local par = arg;
-            return function(...) return par[i][key](par[i], unpack(arg, 2)) end
+            local parent = arg[i];
+						-- NOTE: Need to remember it before returning function
+						-- because parents[i][key] may be changed later!
+						local parent_func = parent[key]
+            return function(...) return parent_func(parent, unpack(arg, 2)) end
           else
             return arg[i][key]
           end -- if func
@@ -203,7 +206,7 @@ function FlowLayout(w, indent)
 		for _,item in ipairs(items) do
 			-- TODO Check how to use == operator to compare references!
 			--assert(item.parent == self)
-				item.hpx_relative, item.hpy_relative = 0, 0	
+				item.rel_hpx, item.rel_hpy = 0, 0	
 			-- if item
 			if type(item.firstLineDecrement)=="nil" then
 				item.x, item.y = cur_x, cur_y
@@ -314,22 +317,22 @@ function FrameItem(name, w, h)
 		tex.bt.width  = self.width-8
 		tex.bb.width  = self.width-8
 	
-		tex.c1.hpx_relative, tex.c1.hpy_relative = 0, 0
+		tex.c1.rel_hpx, tex.c1.rel_hpy = 0, 0
 			tex.c1.x, tex.c1.y = 0, 0
-		tex.c2.hpx_relative, tex.c2.hpy_relative = 1, 0
+		tex.c2.rel_hpx, tex.c2.rel_hpy = 1, 0
 			tex.c2.x, tex.c2.y = self.width, 0
-		tex.c3.hpx_relative, tex.c3.hpy_relative = 1, 1
+		tex.c3.rel_hpx, tex.c3.rel_hpy = 1, 1
 			tex.c3.x, tex.c3.y = self.width, self.height	
-		tex.c4.hpx_relative, tex.c4.hpy_relative = 0, 1
+		tex.c4.rel_hpx, tex.c4.rel_hpy = 0, 1
 			tex.c4.x, tex.c4.y = 0, self.height	
 			
-		tex.bl.hpx_relative = 0
+		tex.bl.rel_hpx = 0
 			tex.bl.x, tex.bl.y = 0, self.height/2	
-		tex.br.hpx_relative = 1
+		tex.br.rel_hpx = 1
 			tex.br.x, tex.br.y = self.width, self.height/2	
-		tex.bt.hpy_relative = 0
+		tex.bt.rel_hpy = 0
 			tex.bt.x, tex.bt.y = self.width/2, 0	
-		tex.bb.hpy_relative = 1
+		tex.bb.rel_hpy = 1
 			tex.bb.x, tex.bb.y = self.width/2, self.height	
 	end
 	self:onRequestLayOut(self)
@@ -352,8 +355,8 @@ function MakeLayoutAgent(obj)
 	}
 	
 	local pos_origin, pos_origin_xr, pos_origin_yr
-	local width_origin
-	local height_origin
+	local width_origin, width_ratio
+	local height_origin, height_ratio
 	
 	local dependents = {}	
 
@@ -373,11 +376,11 @@ function MakeLayoutAgent(obj)
 		end
 		-- update width
 		if origin==width_origin then
-			obj.width = origin.width
+			obj.width = origin.width * width_ratio
 		end
 		-- update height
 		if origin==height_origin then
-			obj.height = origin.height
+			obj.height = origin.height * height_ratio
 		end
 	end
 	
@@ -391,17 +394,21 @@ function MakeLayoutAgent(obj)
 			obj.x, obj.y = cord.rel_x, cord.rel_y	-- if nil
 		end		
 	end
-	self.setWidthOrigin = function(_, ref_obj)
+	self.setWidthOrigin = function(_, ref_obj, ratio)
 		if width_origin then width_origin:removeDependent(self) end
+		if ratio==nil then ratio = 1 end
 		width_origin = ref_obj
+		width_ratio = ratio
 		if width_origin then
 			width_origin:addDependent(self)
 			self:updateLocation(width_origin)
 		end
 	end
-	self.setHeightOrigin = function(_, ref_obj)
+	self.setHeightOrigin = function(_, ref_obj, ratio)
 		if height_origin then height_origin:removeDependent(self) end
+		if ratio==nil then ratio = 1 end
 		height_origin = ref_obj
+		height_ratio = ratio		
 		if height_origin then
 			height_origin:addDependent(self)
 			self:updateLocation(height_origin)
@@ -462,7 +469,7 @@ VBox = function(width, use_height)
 		-- re-align!
 		local y = self.top
 		for i, obj in ipairs(items) do
-			obj.hpx_relative, obj.hpy_relative = 0, 0
+			obj.rel_hpx, obj.rel_hpy = 0, 0
 			obj.width = width
 			if item_height~=nil then obj.height = item_height end
 			obj.x = self.left
@@ -525,7 +532,7 @@ HBox = function(use_width, height)
 		-- re-align!
 		local x = self.left
 		for i, obj in ipairs(items) do
-			obj.hpx_relative, obj.hpy_relative = 0, 0
+			obj.rel_hpx, obj.rel_hpy = 0, 0
 			obj.height = height
 			if item_width~=nil then obj.width=item_width end
 			obj.x = x
@@ -584,11 +591,11 @@ function MakeMover(self)
     self:onFrame(dt)
   end)
   self.start = function(self)
-	self.flying = true
-	self.timer:start()
+		self.flying = true
+		self.timer:start()
   end
   self.stop  = function(self)
-	self.flying = false
+		self.flying = false
 --    self.onFrame = nil
     if self.timer then self.timer:cancel() end
 --    self.timer = nil
@@ -733,24 +740,25 @@ onDrop = function(drops, obj)
   end
 end
 
-function Mover(view)
-  local item = MakeMover(SimpleItem())    -- put it into closure!
-  item.view = view
+-- NOTE: We make composition with item to not to exhibit
+-- its onDrag etc. Instead we use our "outer" handlers.
+function Mover(item)
+  item = MakeMover(item)
 
   local self = {
     item = item,
-    view = view
+		-- can be set outside!
+		ox = x,		-- origin x
+		oy = y		-- origin y		
   }
   
-  local ox = x		-- origin x
-  local oy = y		-- origin y
   local drop = nil
 
   item.onFrame = function(dummy, dt)
 --    print(self.x, self.y, self.ox, self.oy, dt)
-    local norm = dist(ox, oy, self.x, self.y)
+    local norm = dist(self.ox, self.oy, self.x, self.y)
     if norm > self.prev_norm or norm < 50 then	-- if passed over!
-      self.x = ox; self.y = oy
+      self.x = self.ox; self.y = self.oy
       item:stop()
     else
       local dx = self.vx * dt
@@ -767,7 +775,7 @@ function Mover(view)
 
   item.onDragStart = function(dummy)
 	if self.flying then return end
-    ox=item.x oy=item.y
+    self.ox=item.x self.oy=item.y
     if self.onDragStart then self:onDragStart() end
   end
   item.onDrag = function (item, dx, dy)
@@ -780,9 +788,9 @@ function Mover(view)
 
   self.goHome = function(self)
     self.prev_norm = 1e+9
-	local norm = dist(ox, oy, self.x, self.y)
-	self.vx = (ox - self.x) / norm * 2000
-    self.vy = (oy - self.y) / norm * 2000
+	local norm = dist(self.ox, self.oy, self.x, self.y)
+	self.vx = (self.ox - self.x) / norm * 2000
+    self.vy = (self.oy - self.y) / norm * 2000
     item:start()
   end -- goHome
 

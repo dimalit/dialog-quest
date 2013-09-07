@@ -3,8 +3,8 @@ local take = function(drops, w)
     onDrag(drops, w)
   end
   w.onDragEnd = function()
-  print("drag end")
-	onDrop(drops, w)
+		print("drag end")
+		onDrop(drops, w)
   end
   return w
 end
@@ -20,7 +20,7 @@ getmetatable(Mosaic).__call = function(_,conf)
   local self = CompositeItem()
 	self.x, self.y = screen_width/2, 0
   self.width, self.height = screen_width, screen_height
-  self.hpy_relative = 0
+  self.rel_hpy = 0
 	root:add(self)
 	
   -- copy everything to self
@@ -32,9 +32,10 @@ getmetatable(Mosaic).__call = function(_,conf)
 	self:add(self.title)
   self.description = FlowLayout(self.width-Mosaic.margin*2);
 	self:add(self.description)
-  self.description.hpy_relative = 0
+  self.description.rel_hpy = 0
 
-  local onTaskFinish = function(right_cnt, wrong_cnt, hint_cnt)
+	-- NOTE First arg is mandatory because such way inherit(...) works!!!
+  local onTaskFinish = function(_, right_cnt, wrong_cnt, hint_cnt)
 		self.right_cnt = self.right_cnt + right_cnt
 		self.wrong_cnt = self.wrong_cnt + wrong_cnt
 		self.hint_cnt = self.hint_cnt + hint_cnt
@@ -44,7 +45,7 @@ getmetatable(Mosaic).__call = function(_,conf)
   self.tasks = {}
   self.tasks.add = function(_, t)
 		t.visible = false
-		t.hpy_relative = 0
+		t.rel_hpy = 0
 		t.onFinish = onTaskFinish
 		table.insert(self.tasks, t)
 		self:add(t)
@@ -81,22 +82,22 @@ getmetatable(Mosaic).__call = function(_,conf)
 		self.completed = TextItem("Completed tasks        "..(self.right_cnt+self.wrong_cnt))
 			self.completed.x, self.completed.y = x, y
 			self:add(self.completed)
-			self.completed.hpx_relative = 0
+			self.completed.rel_hpx = 0
 			y = y + dy
 		self.c_right = TextItem("Completed right       "..(self.right_cnt))
 			self.c_right.x, self.c_right.y = x, y
 			self:add(self.c_right)
-			self.c_right.hpx_relative = 0
+			self.c_right.rel_hpx = 0
 			y = y + dy
 		self.wrong = TextItem("Completed wrong     "..(self.wrong_cnt))
 			self.wrong.x, self.wrong.y = x, y
 			self:add(self.wrong)
-			self.wrong.hpx_relative = 0
+			self.wrong.rel_hpx = 0
 			y = y + dy		
 		self.hints = TextItem("Hints used                   "..(self.hint_cnt))
 			self.hints.x, self.hints.y = x, y
 			self:add(self.hints)
-			self.hints.hpx_relative = 0
+			self.hints.rel_hpx = 0
 			y = y + dy		
 	end
 		
@@ -145,7 +146,7 @@ getmetatable(Mosaic.Task).__call = function(_, task)
   self.assignment = TextItem("assignment")
 	self.assignment.x, self.assignment.y = screen_width/2, 0
 	self:add(self.assignment)
-  self.assignment.hpy_relative = 0
+  self.assignment.rel_hpy = 0
   self.hint_cnt = 0  
   
   local labels = {}  
@@ -215,7 +216,7 @@ getmetatable(Mosaic.Task).__call = function(_, task)
 		-- if finished
 		local finished = right_cnt+wrong_cnt == #dst_drops
 		if finished and self.onFinish ~= nil then
-			self.onFinish(right_cnt, wrong_cnt, self.hint_cnt)
+			self:onFinish(right_cnt, wrong_cnt, self.hint_cnt)
 		end
   end	
   
@@ -228,7 +229,7 @@ getmetatable(Mosaic.Task).__call = function(_, task)
 		local permut = random_permutation(#task.lines)
 		for i = 1, #permut do
 			local line = task.lines[permut[i]]
-			local mover = take(drops, Mover(Text(line[3])))
+			local mover = take(drops, Mover(TextItem(line[3])))
 			self:add(mover)
 			table.insert(movers, mover)
 			
@@ -244,12 +245,12 @@ getmetatable(Mosaic.Task).__call = function(_, task)
 			local old_handler = mover.onDragEnd
 			mover.onDragEnd = function(dummy)
 				if old_handler~=nil then old_handler(mover) end
-			if mover.drop == dst_drops[mover.right_drop_id] and mover.drop.is_dst then			-- if wrong
-				-- sound
-				sounds[permut[i]]:play()
-			end
-			check_task_finish()
-			end
+				if mover.drop == dst_drops[mover.right_drop_id] and mover.drop.is_dst then			-- if wrong
+					-- sound
+					sounds[permut[i]]:play()
+				end
+				check_task_finish()
+			end -- onDragEnd
 		end --for 
 		
 		-- generate labels, buttons and places

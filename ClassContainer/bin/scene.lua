@@ -37,13 +37,13 @@ Scene = function(conf)
       elseif key=="title" then
         if val == nil then val = "" end
         title.view.text = val
-        title.hpx_relative = 0.5
-        title.hpy_relative = 0.5
+        title.rel_hpx = 0.5
+        title.rel_hpy = 0.5
       elseif key=="subtitle" then
         if val == nil then val = "" end
         subtitle.view.text = val
-        subtitle.hpx_relative = 0.5
-        subtitle.hpy_relative = 0.5
+        subtitle.rel_hpx = 0.5
+        subtitle.rel_hpy = 0.5
       elseif key=="person" then
         if person ~= nil then person:destroy() end      
         person = val
@@ -62,5 +62,5 @@ Scene = function(conf)
 end
 
 dofile("scene_mosaic.lua")
---dofile("scene_explain.lua")
 dofile("scene_explain_rel.lua")
+dofile("scene_basket.lua")
