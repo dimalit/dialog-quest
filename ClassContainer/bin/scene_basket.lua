@@ -25,18 +25,18 @@ getmetatable(Basket).__call = function(_,conf)
 	self.x, self.y = screen_width/2, screen_height/2
 	root:add(self)
 	
-	self.title = TextItem("self.title")
-	self:add(self.title)
-	self.title.rel_hpy = 0
-	self.title.y = 0
-	self.title.x = self.width / 2
-	
 	local left_side = WordsPlacement()
 		self:add(left_side)
 	local right_side = WordsPlacement()
 		self:add(right_side)
 	local bottom_side = WordsPlacement()
 		self:add(bottom_side)
+	
+	self.title = TextItem("self.title")
+	self:add(self.title)
+	self.title.rel_hpy = 0
+	self.title.y = 0
+	self.title.x = self.width / 2
 	
 	bottom_side:setWidthOrigin(self)
 	bottom_side.rel_hpy = 1
@@ -46,7 +46,7 @@ getmetatable(Basket).__call = function(_,conf)
 	left_side:setLocationOrigin(self.title, 0.5, 1)
 	left_side.rel_y = Basket.margin
 	left_side:setWidthOrigin(self, 0.5)
-
+	
 	right_side.rel_hpx, right_side.rel_hpy = 0, 0
 	right_side:setLocationOrigin(self.title, 0.5, 1)
 	right_side.rel_y = Basket.margin	
@@ -127,13 +127,13 @@ getmetatable(Basket).__call = function(_,conf)
 	return self
 end
 
-WordsPlacement = {
-	top_margin = 20,
-	spacing = 10
-}
-setmetatable(WordsPlacement, {})
-getmetatable(WordsPlacement).__call = function(_)
-	local self = ScreenItem()
+class 'WordsPlacement'(ScreenItem)
+
+WordsPlacement.top_margin = 20
+WordsPlacement.spacing = 10
+
+WordsPlacement.__init = function(self)
+	ScreenItem.__init(self)
 	
 	local items = {}
 	

@@ -91,11 +91,16 @@ protected:
 
 class LuaCompositeItem: public LuaScreenItem, public CompositeItem{
 public:
-	bool operator == (LuaCompositeItem&){return false;}
+	bool operator == (LuaScreenItem&){return false;}
 	LuaCompositeItem():CompositeItem(), LuaScreenItem(), ScreenItem(){
 		children = luabind::newtable(L);
 	}
 	static void luabind(lua_State* L);
+
+	LuaCompositeItem* add(LuaScreenItem* child){
+		CompositeItem::add(child);
+		return this;
+	}
 
 	LuaCompositeItem* add(luabind::object child){
 		LuaScreenItem* it;
@@ -149,7 +154,7 @@ class LuaSimpleItem: public LuaScreenItem, public SimpleItem
 {
 public:
 	// need to be public for luabind
-	bool operator == (LuaSimpleItem&){return false;}
+	bool operator == (LuaScreenItem&){return false;}
 	LuaSimpleItem():SimpleItem(), LuaScreenItem(), ScreenItem(){}
 	~LuaSimpleItem(){
 	}

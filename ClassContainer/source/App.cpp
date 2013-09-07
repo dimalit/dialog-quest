@@ -21,9 +21,9 @@
 #include "LuaTimer.h"
 #include "LuaSoundEffect.h"
 #include "Texture.h"
-//#include "lua_layers.h"
 #include "lua_lib.h"
 
+#include <luabind/class_info.hpp>
 #include <stdio.h>
 
 SurfaceAnim g_surf;
@@ -250,6 +250,7 @@ else
 	luaL_openlibs(L);
 	luabind::open(L);
 	luabind::set_pcall_callback(&lua_error_handler);
+	luabind::bind_class_info(L);
 
 	lua_gc(L, LUA_GCSTOP, 0);			// !!!
 
@@ -266,10 +267,13 @@ else
 	LuaSoundEffect::luabind(L);
 	LuaTexture::luabind(L);
 
-	if(luaL_dofile(L, "lib.lua") != 0){
-		std::cout << lua_tostring(L,-1) << "\n";
-		return false;
-	}
+	//if(luaL_dofile(L, "lib.lua") != 0){
+	//	std::cout << lua_tostring(L,-1) << "\n";
+	//	return false;
+	//}
+	lua_pushcfunction(L, lua_error_handler);
+    luaL_loadfile(L, "lib.lua");
+	lua_pcall(L, 0, LUA_MULTRET, -2);
 
 	return true;
 }

@@ -1,5 +1,4 @@
 -------------- general ----------------
-
 function max(a, b)
   if a > b then return a
   else return b end
@@ -35,13 +34,21 @@ local function inherit(...)
       for i=1, #arg do
         if arg[i][key]~=nil then
           -- handle functions!
-          if false and type(arg[i][key]) == "function"
+					-- NOTE: Pure-Lua classes can hadnle dirived instance as self
+					-- binded classes - cannot
+          if type(arg[i] == "userdata") and
+						 type(arg[i][key]) == "function" and
+						 getmetatable(arg[i]).__luabind_class~=nil
           then
             local parent = arg[i];
 						-- NOTE: Need to remember it before returning function
 						-- because parents[i][key] may be changed later!
 						local parent_func = parent[key]
-            return function(...) return parent_func(parent, unpack(arg, 2)) end
+            return function(...)
+							assert(arg[1] == self, "1st arg must be self")
+							-- but we change it to appropriate parent
+							return parent_func(parent, unpack(arg, 2))
+						end -- func body
           else
             return arg[i][key]
           end -- if func
@@ -341,17 +348,18 @@ function FrameItem(name, w, h)
 end
 
 ---------- Layouts -------------
-function MakeLayoutAgent(obj)
-	if obj.rel_x ~= nil then
+-- NOTE We need Luabind-inheritance from this class
+-- so we must re-use obj and not make new self
+function MakeLayoutAgent(self)
+
+	if self.rel_x ~= nil then
 		print("Warning: attempt of repeated MakeLayoutAgent")
-		return obj
+		return self
 	end
-	local self = {}
-	self.item = obj
 	
 	local cord = {
-		rel_x = obj.x,
-		rel_y = obj.y
+		rel_x = self.x,
+		rel_y = self.y
 	}
 	
 	local pos_origin, pos_origin_xr, pos_origin_yr
@@ -360,27 +368,33 @@ function MakeLayoutAgent(obj)
 	
 	local dependents = {}	
 
-	local old_onmove = obj.onMove
-	obj.onMove = function(_)
-		if old_onmove then old_onmove(obj) end
+	local old_onmove = self.onMove
+	self.onMove = function(_)
+		if old_onmove then old_onmove(self) end
 		for dep,_ in pairs(dependents) do
 			dep:updateLocation(self)
 		end
 	end
 	
 	self.updateLocation = function(_, origin)
+		-- print("------------------------------")
+		-- print(type(pos_origin), class_info(pos_origin).name)
+		-- print_table(class_info(pos_origin).methods)
+		-- print(class_info(origin).name)
+		-- print_table(class_info(origin).methods)
+		
 		-- update position
 		if origin==pos_origin then
-			obj.gx = origin.gx - origin.hpx + origin.width*pos_origin_xr  + cord.rel_x
-			obj.gy = origin.gy - origin.hpy + origin.height*pos_origin_yr + cord.rel_y
+			self.gx = origin.gx - origin.hpx + origin.width*pos_origin_xr  + cord.rel_x
+			self.gy = origin.gy - origin.hpy + origin.height*pos_origin_yr + cord.rel_y
 		end
 		-- update width
 		if origin==width_origin then
-			obj.width = origin.width * width_ratio
+			self.width = origin.width * width_ratio
 		end
 		-- update height
 		if origin==height_origin then
-			obj.height = origin.height * height_ratio
+			self.height = origin.height * height_ratio
 		end
 	end
 	
@@ -391,7 +405,7 @@ function MakeLayoutAgent(obj)
 			pos_origin:addDependent(self)
 			self:updateLocation(pos_origin)
 		else
-			obj.x, obj.y = cord.rel_x, cord.rel_y	-- if nil
+			self.x, self.y = cord.rel_x, cord.rel_y	-- if nil
 		end		
 	end
 	self.setWidthOrigin = function(_, ref_obj, ratio)
@@ -421,34 +435,60 @@ function MakeLayoutAgent(obj)
 	self.removeDependent = function(_, dep)
 		dependents[dep] = nil
 	end
-	
-	-- NOTE: Cannot use direct indexing here because functions need correct 1st arg!
-	local obj_mt = inherit(obj)
-	-- hook access to x and y to make movement relative
-	setmetatable(self, {})
-	getmetatable(self).__newindex = function(_, key, val)
-	-- handle x/y
-		if key=='rel_x' or key=='rel_y' then
-			cord[key] = val
+
+	self.rel_x = function(_, x)
+		if x~=nil then
+			cord.rel_x = x
 			if pos_origin~=nil then
 				self:updateLocation(pos_origin)
-			elseif pos_origin==nil then
-				obj[key] = val
+			else
+				self.x = x
 			end
 		else
-	-- handle anything else
-			obj_mt.__newindex(_, key, val)		
-		end -- if not x, y
-	end	-- newindex	
-	getmetatable(self).__index = function(_, key)
-		if key=='rel_x' or key=='rel_y' then
-			return cord[key]
+			return cord.rel_x
+		end
+	end
+
+	self.rel_y = function(_, y)
+		if y~=nil then
+			cord.rel_y = y
+			if pos_origin~=nil then
+				self:updateLocation(pos_origin)
+			else
+				self.y = y
+			end
 		else
-			return obj_mt.__index(_, key)
-		end -- if not x, y
-	end	-- newindex	
+			return cord.rel_y
+		end
+	end	
 	
-	return self
+	-- -- NOTE: Cannot use direct indexing here because functions need correct 1st arg!
+	-- local obj_mt = inherit(obj)
+	-- -- hook access to x and y to make movement relative
+	-- setmetatable(self, {})
+	-- getmetatable(self).__newindex = function(_, key, val)
+	-- -- handle x/y
+		-- if key=='rel_x' or key=='rel_y' then
+			-- cord[key] = val
+			-- if pos_origin~=nil then
+				-- self:updateLocation(pos_origin)
+			-- elseif pos_origin==nil then
+				-- if key=="rel_x" then obj.x = val end
+				-- if key=="rel_y" then obj.y = val end
+			-- end
+		-- else
+	-- -- handle anything else
+			-- obj_mt.__newindex(_, key, val)		
+		-- end -- if not x, y
+	-- end	-- newindex	
+	-- getmetatable(self).__index = function(_, key)
+		-- if key=='rel_x' or key=='rel_y' then
+			-- return cord[key]
+		-- else
+			-- return obj_mt.__index(_, key)
+		-- end -- if not x, y
+	-- end	-- newindex	
+	-- no return - we just change self!
 end -- MakeLayoutAgent
 
 -- TODO: spacing is not dynamic - if you change it later on - nothing happens!

@@ -30,9 +30,21 @@ LuaCompositeItem* LuaScreenItem::getParent(){
 	return ret;
 }
 
+///////////////////// WRAPPERS //////////////////////////
+// used to derive from ScreenItem in Lua
+// FIXME: Now we ignore the possibility to call overridden in Lua functions from C++!
+
+class LuaScreenItemWrapper: public LuaScreenItem, public luabind::wrap_base{
+public:
+	LuaScreenItemWrapper()
+		:LuaScreenItem()
+	{}
+};
+//////////////////// END WRAPPERS //////////////////////
+
 void LuaScreenItem::luabind(lua_State* L){
 	luabind::module(L) [
-		luabind::class_<LuaScreenItem>("ScreenItem")
+		luabind::class_<LuaScreenItem, LuaScreenItemWrapper>("ScreenItem")
 		.def(luabind::constructor<>())
 		.property("parent", &LuaScreenItem::getParent)
 		.property("gx", &LuaScreenItem::getAbsoluteX, &LuaScreenItem::setAbsoluteX)
@@ -77,14 +89,15 @@ void LuaCompositeItem::luabind(lua_State* L){
 	luabind::module(L) [
 		luabind::class_< LuaCompositeItem, LuaScreenItem >("CompositeItem")
 		.def(luabind::constructor<>())
-		.def("add", &LuaCompositeItem::add)
+		.def("add", (LuaCompositeItem* (LuaCompositeItem::*)(LuaScreenItem*))&LuaCompositeItem::add)
+		.def("add", (LuaCompositeItem* (LuaCompositeItem::*)(luabind::object))&LuaCompositeItem::add)
 		.def("remove", &LuaCompositeItem::remove)
 		.def_readwrite("children", &LuaCompositeItem::children)
 		.def_readwrite("onRequestLayOut", &LuaCompositeItem::onRequestLayOut_cb)
 		.def("requestLayOut", (void (LuaCompositeItem::*)(ScreenItem*))&LuaCompositeItem::requestLayOut)
 		.def("requestLayOut", (void (LuaCompositeItem::*)(luabind::object))&LuaCompositeItem::requestLayOut)
 
-		.def(luabind::self == luabind::other<LuaCompositeItem&>())				// remove operator ==
+		.def(luabind::self == luabind::other<LuaScreenItem&>())				// remove operator ==
 	];
 
 	luabind::globals(L)["root"] = dynamic_cast<LuaCompositeItem*>(root_item());
@@ -98,7 +111,7 @@ void LuaSimpleItem::luabind(lua_State* L){
 
 		// TODO How to adopt back to lua when assigning NULL?
 		.property("view", &LuaSimpleItem::getView, &LuaSimpleItem::setView, luabind::detail::null_type(), luabind::adopt(_2))
-		.def(luabind::self == luabind::other<LuaSimpleItem&>())				// remove operator ==
+		.def(luabind::self == luabind::other<LuaScreenItem&>())				// remove operator ==
 
 	];
 }
