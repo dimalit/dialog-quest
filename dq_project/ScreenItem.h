@@ -150,6 +150,10 @@ public:
 		}
 		return res;
 	}
+	bool getDebugDrawBox() const;
+	void setDebugDrawBox(bool v){
+		entity->GetVar("debugDrawBox")->Set(uint32(v));
+	}
 protected:
 	void setParent(CompositeItem* p);
 	// utilitary
@@ -190,6 +194,7 @@ protected:
 	virtual void OnSizeChange(Variant* /*NULL*/);
 	virtual void onMove(Variant* /*NULL*/);
 private:
+	uint32* debug_draw_box;
 	float orig_width, orig_height;
 	CompositeItem* parent_item;
 };
