@@ -271,8 +271,11 @@ else
 	//	std::cout << lua_tostring(L,-1) << "\n";
 	//	return false;
 	//}
-	lua_pushcfunction(L, lua_error_handler);
-    luaL_loadfile(L, "lib.lua");
+	lua_pushcfunction(L, lua_error_handler);		// don't move it below: order matters
+    if(luaL_loadfile(L, "lib.lua")!=0){
+		std::cout << lua_tostring(L,-1) << "\n";
+		return false;
+	}
 	lua_pcall(L, 0, LUA_MULTRET, -2);
 
 	return true;

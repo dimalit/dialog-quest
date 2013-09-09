@@ -25,6 +25,12 @@ getmetatable(Basket).__call = function(_,conf)
 	self.x, self.y = screen_width/2, screen_height/2
 	root:add(self)
 	
+	self.title = TextItem("self.title")
+	self:add(self.title)
+	self.title.rel_hpy = 0
+	self.title.y = 0
+	self.title.x = self.width / 2	
+	
 	local left_side = WordsPlacement()
 		self:add(left_side)
 	local right_side = WordsPlacement()
@@ -32,27 +38,61 @@ getmetatable(Basket).__call = function(_,conf)
 	local bottom_side = WordsPlacement()
 		self:add(bottom_side)
 	
-	self.title = TextItem("self.title")
-	self:add(self.title)
-	self.title.rel_hpy = 0
-	self.title.y = 0
-	self.title.x = self.width / 2
+	-- bottom_side:setWidthOrigin(self)
+	self:link(bottom_side, 0, 1, self, 0, 1)
+	self:link(bottom_side, 1, 1, self, 1, 1)
+	-- bottom_side.rel_hpy = 1
+	-- bottom_side:setLocationOrigin(self, 0.5, 1)
 	
-	bottom_side:setWidthOrigin(self)
-	bottom_side.rel_hpy = 1
-	bottom_side:setLocationOrigin(self, 0.5, 1)
+	-- left_side.rel_hpx, left_side.rel_hpy = 1, 0
+	-- left_side:setLocationOrigin(self.title, 0.5, 1)
+	-- left_side.rel_y = Basket.margin
+	-- left_side:setWidthOrigin(self, 0.5)
+	self:link(left_side, 0, nil, self, 0, nil)
+	self:link(left_side, 1, 0, self.title, 0.5, 1, 0, Basket.margin)
 	
-	left_side.rel_hpx, left_side.rel_hpy = 1, 0
-	left_side:setLocationOrigin(self.title, 0.5, 1)
-	left_side.rel_y = Basket.margin
-	left_side:setWidthOrigin(self, 0.5)
+	-- right_side.rel_hpx, right_side.rel_hpy = 0, 0
+	-- right_side:setLocationOrigin(self.title, 0.5, 1)
+	-- right_side.rel_y = Basket.margin	
+	-- right_side:setWidthOrigin(self, 0.5)
+	self:link(right_side, 1, nil, self, 1, nil)
+	self:link(right_side, 0, 0, self.title, 0.5, 1, 0, Basket.margin)
 	
-	right_side.rel_hpx, right_side.rel_hpy = 0, 0
-	right_side:setLocationOrigin(self.title, 0.5, 1)
-	right_side.rel_y = Basket.margin	
-	right_side:setWidthOrigin(self, 0.5)
+	self.left_title = TextItem("left_title")
+	self:add(self.left_title)
+	-- self.left_title.rel_hpy = 0
+	-- self.left_title:setLocationOrigin(left_side, 0.5, 0)
+	self:link(self.left_title, 0.5, 0, left_side, 0.5, 0)
 	
-	self.onRequestLayOut = function(_)
+	self.right_title = TextItem("left_title")
+	self:add(self.right_title)
+	-- self.right_title.rel_hpy = 0
+	-- self.right_title:setLocationOrigin(right_side, 0.5, 0)
+	self:link(self.right_title, 0.5, 0, right_side, 0.5, 0)	
+	
+	-- TODO TextureItem sometimes needs to have flexible size!!
+	self.vert_bar = TextureItem("interface/frame_glow_bl.rttex", 4, 4)
+	self:add(self.vert_bar)
+	-- self.vert_bar:setHeightOrigin(left_side)
+	-- self.vert_bar:setLocationOrigin(left_side, 1, 0.5)
+	self:link(self.vert_bar, 0.5, 0, left_side, 1, 0)
+	self:link(self.vert_bar, 0.5, 1, left_side, 1, 1)
+	
+	self.horz_bar = TextureItem("interface/frame_glow_bt.rttex", 200, 4)
+	self:add(self.horz_bar)
+	self.horz_bar.name="horz"
+	-- self.horz_bar.rel_hpy = 1
+	-- self.horz_bar:setWidthOrigin(bottom_side)
+	-- self.horz_bar:setLocationOrigin(bottom_side, 0.5, 0)
+	self:link(self.horz_bar, 0, 1, bottom_side, 0, 0)
+	self:link(self.horz_bar, 1, 1, bottom_side, 1, 0)
+	self:link(self.horz_bar, nil, 0, bottom_side, nil, 0, 0, -4)
+	
+	
+	local old_onRequestLayout = self.onRequestLayOut
+	self.onRequestLayOut = function(...)
+		if old_onRequestLayout then old_onRequestLayout(unpack(arg)) end
+	
 		local total_h = bottom_side.bottom - left_side.top
 		local bot = total_h * Basket.bottom_ratio
 		bottom_side.height = bot
@@ -66,6 +106,14 @@ getmetatable(Basket).__call = function(_,conf)
 		dummy = {}
 	}
 	local all_words = {}
+	
+	local check_finish = function()
+		if #left_side.items + #right_side.items == #all_words and
+			 self.onFinish
+		then
+			 self:onFinish()
+		end
+	end
 	
 	local add_words = function(words_, side)
 		for i,w in ipairs(words_) do
@@ -83,6 +131,7 @@ getmetatable(Basket).__call = function(_,conf)
 				else
 					item:goHome()
 				end
+				check_finish()
 			end
 		end
 	end
@@ -129,8 +178,10 @@ end
 
 class 'WordsPlacement'(ScreenItem)
 
-WordsPlacement.top_margin = 20
-WordsPlacement.spacing = 10
+-- TODO Here we need link to left/right_title!
+-- maybe put title inside "side"?
+WordsPlacement.top_margin = 0
+WordsPlacement.spacing = 0
 
 WordsPlacement.__init = function(self)
 	ScreenItem.__init(self)
@@ -163,6 +214,8 @@ WordsPlacement.__init = function(self)
 			y = y + item.height + WordsPlacement.spacing
 		end
 	end
+	
+	self.items = items
 	
 	return self
 end

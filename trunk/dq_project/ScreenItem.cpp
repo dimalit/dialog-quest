@@ -4,7 +4,12 @@
 #include <functional>
 
 void draw_item_rect(ScreenItem* item, VariantList*){
-	DrawRect(item->getAbsoluteX() - item->getHotSpotX(), item->getAbsoluteY() - item->getHotSpotY(), item->getWidth(), item->getHeight());
+	if(item->getDebugDrawBox())
+		DrawRect(item->getAbsoluteX() - item->getHotSpotX(), item->getAbsoluteY() - item->getHotSpotY(), item->getWidth(), item->getHeight());
+}
+
+bool ScreenItem::getDebugDrawBox() const{
+	return *debug_draw_box || (getParent() && getParent()->getDebugDrawBox());
 }
 
 ScreenItem::ScreenItem()
@@ -18,6 +23,8 @@ ScreenItem::ScreenItem()
 	setHotSpotRelativeX(0.5f);
 	setHotSpotRelativeY(0.5f);
 	setX(0); setY(0);
+
+	debug_draw_box = &entity->GetVarWithDefault("debugDrawBox", uint32(0))->GetUINT32();
 
 	entity->GetVar("size2d")->GetSigOnChanged()->connect(1, boost::bind(&ScreenItem::OnSizeChange, this, _1));
 	entity->GetVar("pos2d")->GetSigOnChanged()->connect(1, boost::bind(&ScreenItem::onMove, this, _1));

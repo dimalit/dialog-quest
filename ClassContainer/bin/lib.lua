@@ -223,6 +223,7 @@ function FlowLayout(w, indent)
 					cur_x = profile.left:at(cur_y, item.height)
 					item.x, item.y = cur_x, cur_y
 					cur_x = cur_x + item.width
+					if cur_y > 1000 then print ("W:", self.width) end
 					assert(cur_y < 10000)						-- in case of hanging
 				end -- while line over	  
 			-- if text
@@ -461,35 +462,113 @@ function MakeLayoutAgent(self)
 			return cord.rel_y
 		end
 	end	
-	
-	-- -- NOTE: Cannot use direct indexing here because functions need correct 1st arg!
-	-- local obj_mt = inherit(obj)
-	-- -- hook access to x and y to make movement relative
-	-- setmetatable(self, {})
-	-- getmetatable(self).__newindex = function(_, key, val)
-	-- -- handle x/y
-		-- if key=='rel_x' or key=='rel_y' then
-			-- cord[key] = val
-			-- if pos_origin~=nil then
-				-- self:updateLocation(pos_origin)
-			-- elseif pos_origin==nil then
-				-- if key=="rel_x" then obj.x = val end
-				-- if key=="rel_y" then obj.y = val end
-			-- end
-		-- else
-	-- -- handle anything else
-			-- obj_mt.__newindex(_, key, val)		
-		-- end -- if not x, y
-	-- end	-- newindex	
-	-- getmetatable(self).__index = function(_, key)
-		-- if key=='rel_x' or key=='rel_y' then
-			-- return cord[key]
-		-- else
-			-- return obj_mt.__index(_, key)
-		-- end -- if not x, y
-	-- end	-- newindex	
 	-- no return - we just change self!
 end -- MakeLayoutAgent
+
+local old_CompositeItem = CompositeItem.__init
+CompositeItem.__init = function(...)
+	old_CompositeItem(unpack(arg))
+	
+	-- add our own stuff
+	local self = arg[1]
+	local links = {}				-- key=nurse, val=array of link_obj
+	local depends_cnt = {}	-- key=child if it has nurse, used to find independent nurses
+	
+	self.link = function(_, patient, px, py, nurse, nx, ny, dx, dy)
+		if dx == nil then dx = 0 end
+		if dy == nil then dy = 0 end
+		link_obj = {
+			patient = patient,
+			px = px,
+			py = py,
+			nx = nx,
+			ny = ny,
+			dx = dx,
+			dy = dy
+		}
+		if links[nurse] == nil then links[nurse]={} end
+		table.insert(links[nurse],link_obj)
+		if depends_cnt[patient]==nil then depends_cnt[patient]=0 end
+		depends_cnt[patient] = depends_cnt[patient] + 1
+		self:requestLayOut(self)
+	end
+	
+	local adjust_dependents			-- for recursion
+	adjust_dependents = function(nurse)
+		if links[nurse]==nil then return end
+
+		for _,link in ipairs(links[nurse]) do
+			local patient = link.patient
+			assert(patient.parent==nurse or nurse.parent==patient or patient.parent==nurse.parent)
+				-- both nils or both non-nils!
+			assert(((link.nx==nil) == (link.px==nil)) and ((link.ny==nil) == (link.py==nil)))
+			-- TODO: Bad to create two identical parts for x and y...
+						
+			if link.nx ~= nil then
+			local tx = nurse.left+nurse.width*link.nx + link.dx		-- target
+				if patient.parent==nurse then tx=tx-nurse.left end	-- left=0 if i am parent
+			-- if 0
+			if link.px==0 then
+				assert(nurse.parent~=patient)				-- left edje of parent cannot depend on child
+				if patient.right - tx >= 0 then patient.width = patient.right - tx end
+				patient.x = patient.x + (tx-patient.left)
+			-- if 1
+			elseif link.px==1 then
+				if nurse.parent~=patient then
+					if tx - patient.left >= 0 then patient.width = tx - patient.left end
+					patient.x = patient.x + (tx-patient.right)
+				else
+					if tx >=0 then patient.width = tx end
+				end
+			-- else just move
+			else
+				assert(nurse.parent~=patient)												-- parent pos cannot depend on child
+				local sx = patient.left+patient.width*link.px				-- source			
+				patient.x = patient.x + (tx-sx)
+			end
+			end -- if nx ~= nil
+			
+			if link.ny ~= nil then
+			local ty = nurse.top+nurse.height*link.ny + link.dy		-- target
+				if patient.parent==nurse then ty=ty-nurse.top end	-- left=0 if i am parent
+			-- if 0
+			if link.py==0 then
+				assert(nurse.parent~=patient)				-- left edje of parent cannot depend on child
+				if patient.bottom - ty >= 0 then patient.height = patient.bottom - ty end
+				patient.y = patient.y + (ty-patient.top)
+			-- if 1
+			elseif link.py==1 then
+				if nurse.parent~=patient then
+					if ty - patient.top >= 0 then patient.height = ty - patient.top end
+					patient.y = patient.y + (ty-patient.bottom)
+				else
+					if ty >=0 then patient.height = ty end
+				end
+			-- else just move
+			else
+				assert(nurse.parent~=patient)												-- parent pos cannot depend on child
+				local sy = patient.top+patient.height*link.py				-- source			
+				patient.y = patient.y + (ty-sy)
+			end
+			end -- if link.ny ~= nil
+			
+			-- recurse!
+			adjust_dependents(patient)
+		end -- for
+	end -- adjust_dependents
+	
+	self.onRequestLayOut = function()
+		-- adjust those who explicitly depend on me
+		adjust_dependents(self)
+		-- adjust those who just have x,y
+		local children = self.children
+		for ch in pairs(children) do
+			if ch.text~=nil then
+			end
+			if depends_cnt[ch]==nil or depends_cnt[ch]==0 then adjust_dependents(ch) end
+		end -- for
+	end
+end -- CompositeItem:__init
 
 -- TODO: spacing is not dynamic - if you change it later on - nothing happens!
 -- height can be nil which means automatic
@@ -895,5 +974,5 @@ function getupvalues(f)
 end
 
 ----------- initialization ------------
-dofile("make_layout_agents.lua")
+--dofile("make_layout_agents.lua")
 dofile("scene.lua")

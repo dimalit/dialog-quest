@@ -32,12 +32,26 @@ LuaCompositeItem* LuaScreenItem::getParent(){
 
 ///////////////////// WRAPPERS //////////////////////////
 // used to derive from ScreenItem in Lua
-// FIXME: Now we ignore the possibility to call overridden in Lua functions from C++!
+// FIXME: For now we ignore the possibility to call overridden in Lua functions from C++!
 
 class LuaScreenItemWrapper: public LuaScreenItem, public luabind::wrap_base{
 public:
 	LuaScreenItemWrapper()
 		:LuaScreenItem()
+	{}
+};
+
+class LuaCompositeItemWrapper: public LuaCompositeItem, public luabind::wrap_base{
+public:
+	LuaCompositeItemWrapper()
+		:LuaCompositeItem()
+	{}
+};
+
+class LuaSimpleItemWrapper: public LuaSimpleItem, public luabind::wrap_base{
+public:
+	LuaSimpleItemWrapper()
+		:LuaSimpleItem()
 	{}
 };
 //////////////////// END WRAPPERS //////////////////////
@@ -80,6 +94,7 @@ void LuaScreenItem::luabind(lua_State* L){
 		.def_readwrite("onFocusLose", &LuaScreenItem::onFocusLose_cb)
 
 		.def("destroy", &LuaScreenItem::destroy)
+		.property("debugDrawBox", &LuaScreenItem::getDebugDrawBox, &LuaScreenItem::setDebugDrawBox)
 
 		.def(luabind::self == luabind::other<LuaScreenItem&>())				// remove operator ==
 	];
@@ -87,7 +102,7 @@ void LuaScreenItem::luabind(lua_State* L){
 
 void LuaCompositeItem::luabind(lua_State* L){
 	luabind::module(L) [
-		luabind::class_< LuaCompositeItem, LuaScreenItem >("CompositeItem")
+		luabind::class_< LuaCompositeItem, LuaScreenItem, LuaCompositeItemWrapper>("CompositeItem")
 		.def(luabind::constructor<>())
 		.def("add", (LuaCompositeItem* (LuaCompositeItem::*)(LuaScreenItem*))&LuaCompositeItem::add)
 		.def("add", (LuaCompositeItem* (LuaCompositeItem::*)(luabind::object))&LuaCompositeItem::add)
@@ -106,7 +121,7 @@ void LuaCompositeItem::luabind(lua_State* L){
 void LuaSimpleItem::luabind(lua_State* L){
 
 	luabind::module(L) [
-	luabind::class_<LuaSimpleItem, LuaScreenItem>("SimpleItem")
+	luabind::class_<LuaSimpleItem, LuaScreenItem, LuaSimpleItemWrapper>("SimpleItem")
 		.def(luabind::constructor<>())
 
 		// TODO How to adopt back to lua when assigning NULL?
