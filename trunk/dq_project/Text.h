@@ -16,10 +16,10 @@ public:
 	std::string getText(){return GetVar("text")->GetString();}
 //	void setFont(std::string fnt){load_font(fnt);}
 
-	float getWidth(){
+	int getWidth(){
 		return GetParent()->GetVar("size2d")->GetVector2().x;
 	}
-	float getHeight(){
+	int getHeight(){
 		return GetParent()->GetVar("size2d")->GetVector2().y;
 	}
 };
@@ -36,10 +36,10 @@ public:
 	void setText(std::string txt){GetVar("text")->Set(txt);}
 	std::string getText(){return GetVar("text")->GetString();}
 
-	float getWidth() const{
+	int getWidth() const{
 		return width;
 	}
-	float getHeight(){
+	int getHeight(){
 		if(GetParent())
 			return GetParent()->GetVar("size2d")->GetVector2().y;
 		else{
