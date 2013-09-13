@@ -52,8 +52,9 @@ void Animation::OnFrameChange(Variant* val){
 		finished = 1;
 		frame = nframes - 1;
 	}
-	if(GetVar("frame")->GetFloat() == 0.0f)
-		finished = 1;
+// TODO: Commented out - why was it here?!
+//	if(GetVar("frame")->GetFloat() == 0.0f)
+//		finished = 1;
 
 	GetVar("frameY")->Set((uint32)(frame / frames_x));
 	GetVar("frameX")->Set((uint32)(frame % frames_x));
