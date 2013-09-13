@@ -34,7 +34,7 @@ local function inherit(...)
       for i=1, #arg do
         if arg[i][key]~=nil then
           -- handle functions!
-					-- NOTE: Pure-Lua classes can hadnle dirived instance as self
+					-- NOTE: Pure-Lua classes can handle derived instance as self
 					-- binded classes - cannot
           if type(arg[i] == "userdata") and
 						 type(arg[i][key]) == "function" and
@@ -180,7 +180,7 @@ AnimatedItem = function(name)
   end
 --  self.pause = function()
 --    self.view:pause()
---  end  
+--  end
   
   return self
 end

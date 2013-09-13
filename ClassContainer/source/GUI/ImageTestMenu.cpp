@@ -90,14 +90,14 @@ Entity * ImageTestMenuCreate(Entity *pParentEnt)
 	//	return 0;
 	//};
 
-	if(luaL_dostring(
-	L,
-	"s = SoundEffect(\"audio/click.wav\")\n"
-	"s:play()\n"
-	)!=0){
-		LogMsg( "%s\n", lua_tostring(L,-1) );
-		return 0;
-	};
+	//if(luaL_dostring(
+	//L,
+	//"s = SoundEffect(\"audio/click.wav\")\n"
+	//"s:play()\n"
+	//)!=0){
+	//	LogMsg( "%s\n", lua_tostring(L,-1) );
+	//	return 0;
+	//};
 
 	//SimpleItem* si;
 	//Texture *t = new Texture("interface/flask.rttex", 300, 300);

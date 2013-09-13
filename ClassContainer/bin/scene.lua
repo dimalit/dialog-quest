@@ -64,3 +64,4 @@ end
 dofile("scene_mosaic.lua")
 dofile("scene_explain_rel.lua")
 dofile("scene_basket.lua")
+dofile("scene_baloons.lua")
