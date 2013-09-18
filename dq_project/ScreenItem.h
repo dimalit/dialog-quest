@@ -30,6 +30,7 @@ public:
 	void setVisible(bool v){
 		entity->GetVar("visible")->Set(uint32(v));
 	}
+	bool getReallyVisible() const;
 
 	// geometry
 	// polymorphic

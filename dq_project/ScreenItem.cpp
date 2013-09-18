@@ -99,6 +99,13 @@ void ScreenItem::setAbsoluteY(int gy){
 	}
 }
 
+bool ScreenItem::getReallyVisible() const {
+		bool p = true;
+		if(getParent())
+			p = getParent()->getReallyVisible();
+		return p && getVisible();
+}
+
 // very unsafe and is called only from parent
 void ScreenItem::setParent(CompositeItem* p){
 	parent_item = p;

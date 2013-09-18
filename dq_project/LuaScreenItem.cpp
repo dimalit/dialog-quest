@@ -15,6 +15,7 @@ CompositeItem* root_item(){
 	root->setHotSpotRelativeX(0.0f);
 	root->setHotSpotRelativeY(0.0f);
 		Entity* e = new Entity("root");
+		e->GetVar("visible")->Set(uint32(1));
 		AddFocusIfNeeded(e);
 		root->acquireEntity(e);
 	}
@@ -64,6 +65,7 @@ void LuaScreenItem::luabind(lua_State* L){
 		.property("gx", &LuaScreenItem::getAbsoluteX, &LuaScreenItem::setAbsoluteX)
 		.property("gy", &LuaScreenItem::getAbsoluteY, &LuaScreenItem::setAbsoluteY)
 		.property("visible", &LuaScreenItem::getVisible, &LuaScreenItem::setVisible)
+		.property("really_visible", &LuaScreenItem::getReallyVisible)
 		.def("move", &LuaScreenItem::move)
 		.property("quad", &LuaScreenItem::getQuad)
 
