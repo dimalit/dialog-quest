@@ -2,7 +2,8 @@ Explain.margin = 20
 Explain.paragraph_interval = 10
 
 scene = Explain()
-scene.content.debugDrawBox = true
+root:add(scene)
+--scene.content.debugDrawBox = true
 
 scene.title.text = "Unit 2 шаг1"
 
@@ -39,11 +40,4 @@ local i = ImageItem("interface/flask.rttex")
 	-- i:setLocationOrigin(p2, 0.75, 1)
 	-- i:rel_y(30)
 	scene.content:link(i, 0.5, 0, p2, 0.75, 1, 0, 50)
-	
-scene.onFinish = function()
-	scene.visible = false
---!!!	root:remove(scene)
-	dofile("test_basket.lua")
-end
-
 scene:start()

@@ -50,7 +50,6 @@ getmetatable(Baloons).__call = function()
 	self.width = screen_width
 	self.height = screen_height
 	self.x, self.y = screen_width/2, screen_height/2
-	root:add(self)
 	
 	-- self:property("margin").value = 20
 	-- self:property("margin").onChange = function() print("MARGIN CHANGED") end	
@@ -72,21 +71,16 @@ getmetatable(Baloons).__call = function()
 	local launch
 	
 	-- TODO: do not need this func
-	local killed = function(do_launch)
+	local killed = function()
 		onscreen_baloons = onscreen_baloons - 1
-		
-		if do_launch and self.launch_time_policy == "count" and onscreen_baloons < self.onscreen_count then
-			if #self.baloons > 0 then
-				launch()
-			else
-				
-			end
-		end -- if "count" policy
+		if onscreen_baloons==0 and #self.baloons==0 and self.onFinish then
+			self:onFinish()
+		end
 	end
 	
 	local out = function(b)
 		table.insert(lost, b)
-		killed(true)
+		killed()
 	end
 	
 	local hit = function(b)
@@ -97,7 +91,7 @@ getmetatable(Baloons).__call = function()
 				speed = speed + (self.max_speed - self.launch_speed)*0.1
 				if speed > self.max_speed then speed = self.max_speed end
 			end
-			killed(false)
+			killed()
 		-- wrong
 		else
 			table.insert(hit_wrong, b)
@@ -191,9 +185,11 @@ getmetatable(Baloons).__call = function()
 	return self
 end
 
+Baloons.mover_image = "interface/flask.rttex"
+
 Baloons.Baloon = function(text)
 	local self = CompositeItem()
-	local oimage = ImageItem("interface/flask.rttex")
+	local oimage = ImageItem(Baloons.mover_image)
 		self.width, self.height = oimage.width, oimage.height
 		oimage.rel_hpx, oimage.rel_hpy = 0, 0
 	local otext  = TextItem(text)

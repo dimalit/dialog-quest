@@ -23,7 +23,6 @@ getmetatable(Basket).__call = function(_,conf)
 	self.width = screen_width - Basket.margin*2
 	self.height = screen_height - Basket.margin*2
 	self.x, self.y = screen_width/2, screen_height/2
-	root:add(self)
 	
 	self.title = TextItem("self.title")
 	self:add(self.title)

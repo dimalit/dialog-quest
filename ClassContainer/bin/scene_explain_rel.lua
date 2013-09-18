@@ -9,7 +9,6 @@ getmetatable(Explain).__call = function(_,conf)
 	self.width = screen_width - Explain.margin*2
 	self.height = screen_height - Explain.margin*2
 	self.x, self.y = screen_width/2, screen_height/2
-	root:add(self)
 	
   self.title = TextItem("self.title")
 	self:add(self.title)

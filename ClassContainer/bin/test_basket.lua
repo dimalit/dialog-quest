@@ -4,6 +4,8 @@ WordsPlacement.top_margin = 34
 WordsPlacement.spacing = 5
 
 scene = Basket()
+root:add(scene)
+
 scene.title.text = "Hello, Basket"
 scene.left_title.text = "Greek letters"
 scene.right_title.text = "Latin letters"
@@ -13,10 +15,3 @@ scene:addLeftWords{"A", "B", "C", "D"}
 --scene:addDummyWords{"Á", "Ö"}
 
 scene:placeWordsRandomly()
-
-h = scene.horz_bar
-
-scene.onFinish = function()
-	scene.visible = false
-	dofile("test_mosaic.lua")
-end
