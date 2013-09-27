@@ -28,7 +28,7 @@ public:
 class TextBox: public TextBoxRenderComponent
 {
 public:
-	TextBox(std::string txt, int width, eAlignment align);
+	TextBox(std::string txt, int width, eAlignment align, eFont font=FONT_SMALL);
 	~TextBox();
 
 	void OnAdd(Entity* e);
@@ -73,20 +73,12 @@ public:
 		right_obstacles = p;
 		GetVar("text")->GetSigOnChanged()->operator()(NULL);
 	}
-	//int getLeftObstacle(int y, int w=0) const{
-	//	return left_obstacles(y, w);
-	//}
-	//int getRightObstacle(int y, int w=0) const{
-	//	return right_obstacles(y, w);
-	//}
-	//void setLeftObstacle(int y, int w, int val){
-	//	left_obstacles.setInterval(y, w, val);
-	//	GetVar("text")->GetSigOnChanged()->operator()(NULL);
-	//}
-	//void setRightObstacle(int y, int w, int val){
-	//	right_obstacles.setInterval(y, w, val);
-	//	GetVar("text")->GetSigOnChanged()->operator()(NULL);
-	//}
+	eFont getFont(){
+		return (eFont)GetVar("font")->GetUINT32();
+	}
+	void setFont(eFont f){
+		GetVar("font")->Set(uint32(f));
+	}
 	int getLastLineEndX(){
 		return GetVar("lastLineEndX")->GetUINT32();
 	}
@@ -112,6 +104,7 @@ class LuaStairsProfile;
 class LuaTextBox: public TextBox{
 public:
 	LuaTextBox(std::string txt, int width, eAlignment align);
+	LuaTextBox(std::string txt, int width, eAlignment align, eFont font);
 	static void luabind(lua_State* L);
 
 	const LuaStairsProfile getLeftObstacles() const;
