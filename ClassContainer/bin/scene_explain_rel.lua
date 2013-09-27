@@ -8,7 +8,12 @@ getmetatable(Explain).__call = function(_,conf)
 	local self = CompositeItem()
 	self.width = screen_width - Explain.margin*2
 	self.height = screen_height - Explain.margin*2
-	self.x, self.y = screen_width/2, screen_height/2
+	self.rel_hpx, self.rel_hpy = 0, 0
+	self.x, self.y = Explain.margin, Explain.margin
+
+	self.background = TextureItem("", screen_width, screen_height)
+	self.background.rel_hpx, self.background.rel_hpy = self.x/self.background.width, self.y/self.background.height
+	self:add(self.background)
 	
   self.title = TextItem("self.title")
 	self:add(self.title)

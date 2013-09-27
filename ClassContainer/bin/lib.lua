@@ -146,11 +146,12 @@ TextItem = function(text, font)
   return self
 end
 
-TextBoxItem = function(text, w)
+TextBoxItem = function(text, w, font)
   if w == nil then w = 0 end
+	if font == nil then font = 0 end
   
   local item = SimpleItem()
-  local txt = TextBox(text, w, 0)
+  local txt = TextBox(text, w, 0, font)
   item.view = txt
 
   local self = {}
@@ -253,6 +254,7 @@ function FlowLayout(w, indent)
   self.addItem = function(self, item)
 		self:add(item)
 		table.insert(items, item)
+		return self
   end
   
   self.clear = function(self)

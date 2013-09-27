@@ -49,32 +49,40 @@ getmetatable(Baloons).__call = function()
 	
 	self.width = screen_width
 	self.height = screen_height
-	self.x, self.y = screen_width/2, screen_height/2
-	
+	self.rel_hpx, self.rel_hpy = 0, 0
+	self.x, self.y = 0, 0
+
+	self.background = TextureItem("", screen_width, screen_height)
+	self.background.rel_hpx, self.background.rel_hpy = self.x/self.background.width, self.y/self.background.height
+	self:add(self.background)	
+
 	-- self:property("margin").value = 20
 	-- self:property("margin").onChange = function() print("MARGIN CHANGED") end	
 	
 	self.baloons = {}
 	self.baloons.add = function(_, b)
-		local obj = {text = b[1], sound = b[2]}
+		if b[2]==nil then b[2]="" end
+		if b[3]==nil then b[3]=b[2] end
+		local obj = {text = b[1], sound = b[2], answer = b[3]}
 		table.insert(self.baloons, obj)
 		return self.baloons
 	end
 	
 	local onscreen_baloons = 0
 	local hit_right = {}
-	local hit_wrong = {}
+	local hit_wrong = {}			-- not currently in use
 	local lost = {}
 	local speed
-	local current_answer = nil
+	local current_answer = ""
 	
 	local launch
 	
 	-- TODO: do not need this func
 	local killed = function()
 		onscreen_baloons = onscreen_baloons - 1
-		if onscreen_baloons==0 and #self.baloons==0 and self.onFinish then
-			self:onFinish()
+		if onscreen_baloons==0 and #self.baloons==0 then
+			print("Results: ", #hit_right, #lost)
+			if self.onFinish then self:onFinish() end
 		end
 	end
 	
@@ -83,23 +91,26 @@ getmetatable(Baloons).__call = function()
 		killed()
 	end
 	
+	-- returns true if right
 	local hit = function(b)
 		-- right
-		if b==current_answer then
+		if b.answer==current_answer then
 			table.insert(hit_right, b)
 			if self.max_speed ~= nil then
 				speed = speed + (self.max_speed - self.launch_speed)*0.1
 				if speed > self.max_speed then speed = self.max_speed end
 			end
 			killed()
+			return true
 		-- wrong
 		else
-			table.insert(hit_wrong, b)
+--			table.insert(hit_wrong, b)
 			if self.max_speed ~= nil then
 				speed = speed - (self.max_speed - self.launch_speed)*0.1
 				if speed < self.launch_speed then speed = self.launch_speed end
 			end			
-			killed(false)
+--			killed()
+			return false
 		end
 	end
 	
@@ -137,29 +148,29 @@ getmetatable(Baloons).__call = function()
 		if b.sound~=nil and b.sound~="" then
 			local s = SoundEffect(b.sound)
 			s.onFinish = function()
-				current_answer = b
+				current_answer = b.sound
 			end
 			s:play()
 		end
 				
 		-- TODO: check if really mouse over
 		obj.onDragEnd = function()
+			-- process logic
+			if hit(b) then
 			-- remove
-			obj:stop()
-			obj.visible = false
-			local x = obj.left + obj.width/2
-			local y = obj.top + obj.height/2
-			self:remove(obj)
+				local x = obj.left + obj.width/2
+				local y = obj.top + obj.height/2
+				obj:stop()
+				obj.visible = false				
+				self:remove(obj)				
 			
 			-- explode
-			local explosion = AnimatedItem("explosion.anim")
-			explosion.x, explosion.y = x, y
-			self:add(explosion)
-			explosion.onFinish = function() explosion:stop() explosion.visible=false end
-			explosion:play()
-			
-			-- process logic
-			hit(b)
+				local explosion = AnimatedItem("explosion.anim")
+				explosion.x, explosion.y = x, y
+				self:add(explosion)
+				explosion.onFinish = function() explosion:stop() explosion.visible=false end
+				explosion:play()
+			end
 		end -- onDragEnd
 		
 		onscreen_baloons = onscreen_baloons + 1

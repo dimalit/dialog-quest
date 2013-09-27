@@ -110,7 +110,7 @@ void LuaCompositeItem::luabind(lua_State* L){
 		.def("add", (LuaCompositeItem* (LuaCompositeItem::*)(luabind::object))&LuaCompositeItem::add)
 		.def("remove", (LuaCompositeItem* (LuaCompositeItem::*)(LuaScreenItem*))&LuaCompositeItem::remove)
 		.def("remove", (LuaCompositeItem* (LuaCompositeItem::*)(luabind::object))&LuaCompositeItem::remove)
-		.def_readwrite("children", &LuaCompositeItem::children)
+		.def_readonly("children", &LuaCompositeItem::children)
 		.def_readwrite("onRequestLayOut", &LuaCompositeItem::onRequestLayOut_cb)
 		.def("requestLayOut", (void (LuaCompositeItem::*)(ScreenItem*))&LuaCompositeItem::requestLayOut)
 		.def("requestLayOut", (void (LuaCompositeItem::*)(luabind::object))&LuaCompositeItem::requestLayOut)

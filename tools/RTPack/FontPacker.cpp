@@ -42,7 +42,7 @@ bool FontPacker::WriteHeaderBitMapFontGenerator(FILE *fp, string fntFile, rtfont
 	int charCount = CL_String::to_int(parms[1]);
 
 	header.firstChar = 32;
-	header.lastChar = 255;
+	header.lastChar = 256;
 
 	fwrite(&header, 1, sizeof(rtfont_header), fp);
 	//add the character data
@@ -53,7 +53,8 @@ bool FontPacker::WriteHeaderBitMapFontGenerator(FILE *fp, string fntFile, rtfont
 	for (int i=0; i < header.lastChar-header.firstChar; i++)
 	{
 		if (t.m_lines.size() <= i)
-		{
+			LogMsg("Hit if (t.m_lines.size() <= i) - shouldn't!");
+		if((4+i)-skipped >= t.m_lines.size()){
 			//no line here, avoid crash
 			parms.clear();
 		} else

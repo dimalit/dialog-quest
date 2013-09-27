@@ -1,56 +1,981 @@
-3/5 at 13:37:57: 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>REM Make fonts 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>set PACK_EXE=..\..\.\shared\win\utils\RTPack.exe 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>REM Delete all existing packed textures from this dir 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>cd interface 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>for /R %f in (*.rttex) do del %f 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>del D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\bkgd_stone.rttex 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>del D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\checkbox.rttex 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>del D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\explosion.rttex 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>del D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\flask.rttex 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>del D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_bb.rttex 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>del D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_bl.rttex 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>del D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_br.rttex 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>del D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_bt.rttex 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>del D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_c1.rttex 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>del D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_c2.rttex 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>del D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_c3.rttex 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>del D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_c4.rttex 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>del D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_bb.rttex 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>del D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_bl.rttex 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>del D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_br.rttex 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>del D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_bt.rttex 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>del D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_c1.rttex 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>del D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_c2.rttex 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>del D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_c3.rttex 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>del D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_c4.rttex 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>del D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\menu_bg.rttex 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>del D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\place_ani.rttex 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>del D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\proton-128.rttex 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>del D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\p_plus.rttex 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>del D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\rtsoft_logo.rttex 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>del D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\scroll_bar_caps.rttex 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>del D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\slider_button.rttex 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>del D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\start2.rttex 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>del D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\summary_bg.rttex 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>del D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\summary_continue.rttex 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>del D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\summary_overlay_bottom.rttex 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>del D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\summary_overlay_top.rttex 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>del D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\cflight.rttex 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>del D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\circle.rttex 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>del D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\explosion.rttex 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>del D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\light16p.rttex 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>del D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\pointer.rttex 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>del D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\sketch.rttex 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>del D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\small.rttex 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>del D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\star.rttex 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>cd .. 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>for /R %f in (font*.txt) do ..\..\.\shared\win\utils\RTPack.exe -make_font %f 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>..\..\.\shared\win\utils\RTPack.exe -make_font D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\font_phonetic.txt 
+
 RTPack V1.4 by Seth A. Robinson.  /h for help
 
-3/5 at 13:37:57: Saved out ./interface/font_trajan_big_00.rttex (512 X 512) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
-3/5 at 13:37:58: Compressing ./interface/font_trajan_big.rtfont..
-3/5 at 13:37:58: Compressed to ./interface/font_trajan_big.rtfont.  (64 kb, 6%%)
-3/5 at 13:37:58: Finished creating ./interface/font_trajan_big.rtfont.  223 chars, 20 font state definitions.
-3/5 at 13:37:58: 
+Saved out D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\font_phonetic_0.rttex (512 X 256) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Hit if (t.m_lines.size() <= i) - shouldn't!
+Compressing D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\font_phonetic.rtfont..
+Compressed to D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\font_phonetic.rtfont.  (4 kb, 1%)
+Finished creating D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\font_phonetic.rtfont.  224 chars, 20 font state definitions.
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>..\..\.\shared\win\utils\RTPack.exe -make_font D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\font_times.txt 
+
 RTPack V1.4 by Seth A. Robinson.  /h for help
 
-3/5 at 13:37:58: Saved out ./interface/font_trajan_00.rttex (512 X 256) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
-3/5 at 13:37:58: Compressing ./interface/font_trajan.rtfont..
-3/5 at 13:37:58: Compressed to ./interface/font_trajan.rtfont.  (30 kb, 6%%)
-3/5 at 13:37:58: Finished creating ./interface/font_trajan.rtfont.  223 chars, 20 font state definitions.
-3/5 at 14:3:31: 
+Saved out D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\font_times_0.rttex (512 X 256) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
+Compressing D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\font_times.rtfont..
+Compressed to D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\font_times.rtfont.  (21 kb, 4%)
+Finished creating D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\font_times.rtfont.  224 chars, 20 font state definitions.
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>..\..\.\shared\win\utils\RTPack.exe -make_font D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\font_trajan.txt 
+
 RTPack V1.4 by Seth A. Robinson.  /h for help
 
-3/5 at 14:3:31: Saved out ./interface/font_trajan_big_00.rttex (512 X 512) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
-3/5 at 14:3:32: Compressing ./interface/font_trajan_big.rtfont..
-3/5 at 14:3:32: Compressed to ./interface/font_trajan_big.rtfont.  (64 kb, 6%%)
-3/5 at 14:3:32: Finished creating ./interface/font_trajan_big.rtfont.  223 chars, 20 font state definitions.
-3/5 at 14:3:32: 
+Saved out D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\font_trajan_00.rttex (512 X 256) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
+Compressing D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\font_trajan.rtfont..
+Compressed to D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\font_trajan.rtfont.  (30 kb, 6%)
+Finished creating D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\font_trajan.rtfont.  224 chars, 20 font state definitions.
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>..\..\.\shared\win\utils\RTPack.exe -make_font D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\font_trajan_big.txt 
+
 RTPack V1.4 by Seth A. Robinson.  /h for help
 
-3/5 at 14:3:32: Saved out ./interface/font_trajan_00.rttex (512 X 256) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
-3/5 at 14:3:32: Compressing ./interface/font_trajan.rtfont..
-3/5 at 14:3:32: Compressed to ./interface/font_trajan.rtfont.  (30 kb, 6%%)
-3/5 at 14:3:32: Finished creating ./interface/font_trajan.rtfont.  223 chars, 20 font state definitions.
-3/5 at 14:43:57: 
+Saved out D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\font_trajan_big_00.rttex (512 X 512) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
+Compressing D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\font_trajan_big.rtfont..
+Compressed to D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\font_trajan_big.rtfont.  (64 kb, 6%)
+Finished creating D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\font_trajan_big.rtfont.  224 chars, 20 font state definitions.
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>REM Process our images and textures and copy them into the bin directory 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>REM -pvrtc4 for compressed, -pvrt4444 or -pvrt8888 (32 bit)  for uncompressed 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>cd game 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\game>for /R %f in (*.bmp *.png) do ..\..\..\.\shared\win\utils\RTPack.exe  -pvrt8888 -ultra_compress 90 %f 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\game>cd .. 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>cd interface 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>for /R %f in (*.bmp *.png) do ..\..\..\.\shared\win\utils\RTPack.exe  -pvrt8888  -ultra_compress 90 %f 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>..\..\..\.\shared\win\utils\RTPack.exe  -pvrt8888  -ultra_compress 90 D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\p_plus.bmp 
+
 RTPack V1.4 by Seth A. Robinson.  /h for help
 
-3/5 at 14:43:57: Saved out ./interface/font_trajan_big_00.rttex (512 X 512) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
-3/5 at 14:43:57: Compressing ./interface/font_trajan_big.rtfont..
-3/5 at 14:43:58: Compressed to ./interface/font_trajan_big.rtfont.  (64 kb, 6%%)
-3/5 at 14:43:58: Finished creating ./interface/font_trajan_big.rtfont.  223 chars, 20 font state definitions.
-3/5 at 14:43:58: 
+Saved out D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\p_plus.rttex (128 X 128) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>..\..\..\.\shared\win\utils\RTPack.exe  -pvrt8888  -ultra_compress 90 D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\bkgd_stone.png 
+
 RTPack V1.4 by Seth A. Robinson.  /h for help
 
-3/5 at 14:43:58: Saved out ./interface/font_trajan_00.rttex (512 X 256) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
-3/5 at 14:43:58: Compressing ./interface/font_trajan.rtfont..
-3/5 at 14:43:58: Compressed to ./interface/font_trajan.rtfont.  (30 kb, 6%%)
-3/5 at 14:43:58: Finished creating ./interface/font_trajan.rtfont.  223 chars, 20 font state definitions.
-3/5 at 14:48:14: 
+Padding D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\bkgd_stone.png from 480X320 to be 512X512
+Saved out D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\bkgd_stone.rttex (480 X 320) with 1 mipmaps.  (Ultra compress RGB bit format)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>..\..\..\.\shared\win\utils\RTPack.exe  -pvrt8888  -ultra_compress 90 D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\checkbox.png 
+
 RTPack V1.4 by Seth A. Robinson.  /h for help
 
-3/5 at 14:48:15: Saved out ./interface/font_trajan_big_00.rttex (512 X 512) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
-3/5 at 14:48:15: Compressing ./interface/font_trajan_big.rtfont..
-3/5 at 14:48:15: Compressed to ./interface/font_trajan_big.rtfont.  (64 kb, 6%%)
-3/5 at 14:48:15: Finished creating ./interface/font_trajan_big.rtfont.  223 chars, 20 font state definitions.
-3/5 at 14:48:15: 
+Saved out D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\checkbox.rttex (64 X 32) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>..\..\..\.\shared\win\utils\RTPack.exe  -pvrt8888  -ultra_compress 90 D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\explosion.png 
+
 RTPack V1.4 by Seth A. Robinson.  /h for help
 
-3/5 at 14:48:15: Saved out ./interface/font_trajan_00.rttex (512 X 256) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
-3/5 at 14:48:15: Compressing ./interface/font_trajan.rtfont..
-3/5 at 14:48:15: Compressed to ./interface/font_trajan.rtfont.  (30 kb, 6%%)
-3/5 at 14:48:15: Finished creating ./interface/font_trajan.rtfont.  223 chars, 20 font state definitions.
+Padding D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\explosion.png from 224X32 to be 256X32
+Saved out D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\explosion.rttex (224 X 32) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>..\..\..\.\shared\win\utils\RTPack.exe  -pvrt8888  -ultra_compress 90 D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\flask.png 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Saved out D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\flask.rttex (32 X 32) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>..\..\..\.\shared\win\utils\RTPack.exe  -pvrt8888  -ultra_compress 90 D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\font_phonetic_0.png 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Saved out D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\font_phonetic_0.rttex (512 X 256) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>..\..\..\.\shared\win\utils\RTPack.exe  -pvrt8888  -ultra_compress 90 D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\font_times_0.png 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Saved out D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\font_times_0.rttex (512 X 256) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>..\..\..\.\shared\win\utils\RTPack.exe  -pvrt8888  -ultra_compress 90 D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\font_trajan_00.png 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Saved out D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\font_trajan_00.rttex (512 X 256) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>..\..\..\.\shared\win\utils\RTPack.exe  -pvrt8888  -ultra_compress 90 D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\font_trajan_big_00.png 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Saved out D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\font_trajan_big_00.rttex (512 X 512) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>..\..\..\.\shared\win\utils\RTPack.exe  -pvrt8888  -ultra_compress 90 D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_bb.png 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Saved out D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_bb.rttex (16 X 4) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>..\..\..\.\shared\win\utils\RTPack.exe  -pvrt8888  -ultra_compress 90 D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_bl.png 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Saved out D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_bl.rttex (4 X 16) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>..\..\..\.\shared\win\utils\RTPack.exe  -pvrt8888  -ultra_compress 90 D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_br.png 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Saved out D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_br.rttex (4 X 16) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>..\..\..\.\shared\win\utils\RTPack.exe  -pvrt8888  -ultra_compress 90 D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_bt.png 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Saved out D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_bt.rttex (16 X 4) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>..\..\..\.\shared\win\utils\RTPack.exe  -pvrt8888  -ultra_compress 90 D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_c1.png 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Saved out D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_c1.rttex (4 X 4) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>..\..\..\.\shared\win\utils\RTPack.exe  -pvrt8888  -ultra_compress 90 D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_c2.png 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Saved out D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_c2.rttex (4 X 4) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>..\..\..\.\shared\win\utils\RTPack.exe  -pvrt8888  -ultra_compress 90 D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_c3.png 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Saved out D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_c3.rttex (4 X 4) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>..\..\..\.\shared\win\utils\RTPack.exe  -pvrt8888  -ultra_compress 90 D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_c4.png 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Saved out D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_c4.rttex (4 X 4) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>..\..\..\.\shared\win\utils\RTPack.exe  -pvrt8888  -ultra_compress 90 D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_bb.png 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Saved out D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_bb.rttex (4 X 4) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>..\..\..\.\shared\win\utils\RTPack.exe  -pvrt8888  -ultra_compress 90 D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_bl.png 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Saved out D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_bl.rttex (4 X 4) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>..\..\..\.\shared\win\utils\RTPack.exe  -pvrt8888  -ultra_compress 90 D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_br.png 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Saved out D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_br.rttex (4 X 4) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>..\..\..\.\shared\win\utils\RTPack.exe  -pvrt8888  -ultra_compress 90 D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_bt.png 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Saved out D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_bt.rttex (4 X 4) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>..\..\..\.\shared\win\utils\RTPack.exe  -pvrt8888  -ultra_compress 90 D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_c1.png 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Saved out D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_c1.rttex (4 X 4) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>..\..\..\.\shared\win\utils\RTPack.exe  -pvrt8888  -ultra_compress 90 D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_c2.png 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Saved out D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_c2.rttex (4 X 4) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>..\..\..\.\shared\win\utils\RTPack.exe  -pvrt8888  -ultra_compress 90 D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_c3.png 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Saved out D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_c3.rttex (4 X 4) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>..\..\..\.\shared\win\utils\RTPack.exe  -pvrt8888  -ultra_compress 90 D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_c4.png 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Saved out D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_c4.rttex (4 X 4) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>..\..\..\.\shared\win\utils\RTPack.exe  -pvrt8888  -ultra_compress 90 D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\menu_bg.png 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Padding D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\menu_bg.png from 480X320 to be 512X512
+Saved out D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\menu_bg.rttex (480 X 320) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>..\..\..\.\shared\win\utils\RTPack.exe  -pvrt8888  -ultra_compress 90 D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\place_ani.png 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Padding D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\place_ani.png from 85X56 to be 128X64
+Saved out D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\place_ani.rttex (85 X 56) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>..\..\..\.\shared\win\utils\RTPack.exe  -pvrt8888  -ultra_compress 90 D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\proton-128.png 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Saved out D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\proton-128.rttex (128 X 128) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>..\..\..\.\shared\win\utils\RTPack.exe  -pvrt8888  -ultra_compress 90 D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\rtsoft_logo.png 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Padding D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\rtsoft_logo.png from 48X76 to be 64X128
+Saved out D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\rtsoft_logo.rttex (48 X 76) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>..\..\..\.\shared\win\utils\RTPack.exe  -pvrt8888  -ultra_compress 90 D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\scroll_bar_caps.png 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Padding D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\scroll_bar_caps.png from 10X10 to be 16X16
+Saved out D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\scroll_bar_caps.rttex (10 X 10) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>..\..\..\.\shared\win\utils\RTPack.exe  -pvrt8888  -ultra_compress 90 D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\slider_button.png 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Padding D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\slider_button.png from 38X72 to be 64X128
+Saved out D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\slider_button.rttex (38 X 72) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>..\..\..\.\shared\win\utils\RTPack.exe  -pvrt8888  -ultra_compress 90 D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\start2.png 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Padding D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\start2.png from 54X48 to be 64X64
+Saved out D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\start2.rttex (54 X 48) with 1 mipmaps.  (Ultra compress RGB bit format)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>..\..\..\.\shared\win\utils\RTPack.exe  -pvrt8888  -ultra_compress 90 D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\summary_bg.png 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Padding D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\summary_bg.png from 480X320 to be 512X512
+Saved out D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\summary_bg.rttex (480 X 320) with 1 mipmaps.  (Ultra compress RGB bit format)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>..\..\..\.\shared\win\utils\RTPack.exe  -pvrt8888  -ultra_compress 90 D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\summary_continue.png 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Padding D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\summary_continue.png from 72X17 to be 128X32
+Saved out D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\summary_continue.rttex (72 X 17) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>..\..\..\.\shared\win\utils\RTPack.exe  -pvrt8888  -ultra_compress 90 D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\summary_overlay_bottom.png 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Padding D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\summary_overlay_bottom.png from 480X46 to be 512X64
+Saved out D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\summary_overlay_bottom.rttex (480 X 46) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>..\..\..\.\shared\win\utils\RTPack.exe  -pvrt8888  -ultra_compress 90 D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\summary_overlay_top.png 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Padding D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\summary_overlay_top.png from 480X43 to be 512X64
+Saved out D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\summary_overlay_top.rttex (480 X 43) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>..\..\..\.\shared\win\utils\RTPack.exe  -pvrt8888  -ultra_compress 90 D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\cflight.png 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Saved out D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\cflight.rttex (32 X 32) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>..\..\..\.\shared\win\utils\RTPack.exe  -pvrt8888  -ultra_compress 90 D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\circle.png 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Saved out D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\circle.rttex (128 X 128) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>..\..\..\.\shared\win\utils\RTPack.exe  -pvrt8888  -ultra_compress 90 D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\explosion.png 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Saved out D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\explosion.rttex (32 X 32) with 1 mipmaps.  (Ultra compress RGB bit format)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>..\..\..\.\shared\win\utils\RTPack.exe  -pvrt8888  -ultra_compress 90 D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\light16p.png 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Saved out D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\light16p.rttex (16 X 16) with 1 mipmaps.  (Ultra compress RGB bit format)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>..\..\..\.\shared\win\utils\RTPack.exe  -pvrt8888  -ultra_compress 90 D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\pointer.png 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Saved out D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\pointer.rttex (32 X 32) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>..\..\..\.\shared\win\utils\RTPack.exe  -pvrt8888  -ultra_compress 90 D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\sketch.png 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Saved out D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\sketch.rttex (32 X 8) with 1 mipmaps. (uses alpha) (RGBA 32 bit format)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>..\..\..\.\shared\win\utils\RTPack.exe  -pvrt8888  -ultra_compress 90 D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\small.png 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Saved out D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\small.rttex (4 X 4) with 1 mipmaps.  (Ultra compress RGB bit format)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>..\..\..\.\shared\win\utils\RTPack.exe  -pvrt8888  -ultra_compress 90 D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\star.png 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Saved out D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\star.rttex (16 X 16) with 1 mipmaps.  (Ultra compress RGB bit format)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface>cd .. 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>REM Custom things that don't need preprocessing 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>REM Final compression 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>for /R %f in (*.rttex) do ..\..\.\shared\win\utils\RTPack.exe %f 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>..\..\.\shared\win\utils\RTPack.exe D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\bkgd_stone.rttex 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Compressing D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\bkgd_stone.rttex..
+Compressed to D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\bkgd_stone.rttex.  (27 kb, 94%)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>..\..\.\shared\win\utils\RTPack.exe D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\checkbox.rttex 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Compressing D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\checkbox.rttex..
+Compressed to D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\checkbox.rttex.  (0 kb, 8%)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>..\..\.\shared\win\utils\RTPack.exe D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\explosion.rttex 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Compressing D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\explosion.rttex..
+Compressed to D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\explosion.rttex.  (2 kb, 7%)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>..\..\.\shared\win\utils\RTPack.exe D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\flask.rttex 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Compressing D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\flask.rttex..
+Compressed to D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\flask.rttex.  (0 kb, 11%)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>..\..\.\shared\win\utils\RTPack.exe D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\font_phonetic_0.rttex 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Compressing D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\font_phonetic_0.rttex..
+Compressed to D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\font_phonetic_0.rttex.  (3 kb, 1%)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>..\..\.\shared\win\utils\RTPack.exe D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\font_times_0.rttex 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Compressing D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\font_times_0.rttex..
+Compressed to D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\font_times_0.rttex.  (18 kb, 4%)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>..\..\.\shared\win\utils\RTPack.exe D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\font_trajan_00.rttex 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Compressing D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\font_trajan_00.rttex..
+Compressed to D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\font_trajan_00.rttex.  (25 kb, 5%)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>..\..\.\shared\win\utils\RTPack.exe D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\font_trajan_big_00.rttex 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Compressing D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\font_trajan_big_00.rttex..
+Compressed to D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\font_trajan_big_00.rttex.  (55 kb, 5%)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>..\..\.\shared\win\utils\RTPack.exe D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_bb.rttex 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Compressing D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_bb.rttex..
+Compressed to D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_bb.rttex.  (0 kb, 28%)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>..\..\.\shared\win\utils\RTPack.exe D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_bl.rttex 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Compressing D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_bl.rttex..
+Compressed to D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_bl.rttex.  (0 kb, 26%)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>..\..\.\shared\win\utils\RTPack.exe D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_br.rttex 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Compressing D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_br.rttex..
+Compressed to D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_br.rttex.  (0 kb, 26%)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>..\..\.\shared\win\utils\RTPack.exe D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_bt.rttex 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Compressing D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_bt.rttex..
+Compressed to D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_bt.rttex.  (0 kb, 27%)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>..\..\.\shared\win\utils\RTPack.exe D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_c1.rttex 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Compressing D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_c1.rttex..
+Compressed to D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_c1.rttex.  (0 kb, 64%)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>..\..\.\shared\win\utils\RTPack.exe D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_c2.rttex 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Compressing D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_c2.rttex..
+Compressed to D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_c2.rttex.  (0 kb, 64%)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>..\..\.\shared\win\utils\RTPack.exe D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_c3.rttex 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Compressing D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_c3.rttex..
+Compressed to D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_c3.rttex.  (0 kb, 63%)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>..\..\.\shared\win\utils\RTPack.exe D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_c4.rttex 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Compressing D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_c4.rttex..
+Compressed to D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_c4.rttex.  (0 kb, 62%)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>..\..\.\shared\win\utils\RTPack.exe D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_bb.rttex 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Compressing D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_bb.rttex..
+Compressed to D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_bb.rttex.  (0 kb, 44%)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>..\..\.\shared\win\utils\RTPack.exe D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_bl.rttex 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Compressing D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_bl.rttex..
+Compressed to D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_bl.rttex.  (0 kb, 43%)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>..\..\.\shared\win\utils\RTPack.exe D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_br.rttex 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Compressing D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_br.rttex..
+Compressed to D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_br.rttex.  (0 kb, 44%)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>..\..\.\shared\win\utils\RTPack.exe D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_bt.rttex 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Compressing D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_bt.rttex..
+Compressed to D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_bt.rttex.  (0 kb, 44%)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>..\..\.\shared\win\utils\RTPack.exe D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_c1.rttex 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Compressing D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_c1.rttex..
+Compressed to D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_c1.rttex.  (0 kb, 65%)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>..\..\.\shared\win\utils\RTPack.exe D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_c2.rttex 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Compressing D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_c2.rttex..
+Compressed to D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_c2.rttex.  (0 kb, 65%)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>..\..\.\shared\win\utils\RTPack.exe D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_c3.rttex 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Compressing D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_c3.rttex..
+Compressed to D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_c3.rttex.  (0 kb, 64%)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>..\..\.\shared\win\utils\RTPack.exe D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_c4.rttex 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Compressing D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_c4.rttex..
+Compressed to D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_c4.rttex.  (0 kb, 64%)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>..\..\.\shared\win\utils\RTPack.exe D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\menu_bg.rttex 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Compressing D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\menu_bg.rttex..
+Compressed to D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\menu_bg.rttex.  (84 kb, 8%)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>..\..\.\shared\win\utils\RTPack.exe D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\place_ani.rttex 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Compressing D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\place_ani.rttex..
+Compressed to D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\place_ani.rttex.  (1 kb, 4%)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>..\..\.\shared\win\utils\RTPack.exe D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\proton-128.rttex 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Compressing D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\proton-128.rttex..
+Compressed to D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\proton-128.rttex.  (5 kb, 9%)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>..\..\.\shared\win\utils\RTPack.exe D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\p_plus.rttex 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Compressing D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\p_plus.rttex..
+Compressed to D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\p_plus.rttex.  (5 kb, 9%)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>..\..\.\shared\win\utils\RTPack.exe D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\rtsoft_logo.rttex 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Compressing D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\rtsoft_logo.rttex..
+Compressed to D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\rtsoft_logo.rttex.  (3 kb, 11%)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>..\..\.\shared\win\utils\RTPack.exe D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\scroll_bar_caps.rttex 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Compressing D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\scroll_bar_caps.rttex..
+Compressed to D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\scroll_bar_caps.rttex.  (0 kb, 14%)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>..\..\.\shared\win\utils\RTPack.exe D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\slider_button.rttex 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Compressing D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\slider_button.rttex..
+Compressed to D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\slider_button.rttex.  (4 kb, 15%)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>..\..\.\shared\win\utils\RTPack.exe D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\start2.rttex 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Compressing D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\start2.rttex..
+Compressed to D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\start2.rttex.  (2 kb, 91%)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>..\..\.\shared\win\utils\RTPack.exe D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\summary_bg.rttex 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Compressing D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\summary_bg.rttex..
+Compressed to D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\summary_bg.rttex.  (39 kb, 96%)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>..\..\.\shared\win\utils\RTPack.exe D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\summary_continue.rttex 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Compressing D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\summary_continue.rttex..
+Compressed to D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\summary_continue.rttex.  (1 kb, 12%)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>..\..\.\shared\win\utils\RTPack.exe D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\summary_overlay_bottom.rttex 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Compressing D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\summary_overlay_bottom.rttex..
+Compressed to D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\summary_overlay_bottom.rttex.  (43 kb, 34%)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>..\..\.\shared\win\utils\RTPack.exe D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\summary_overlay_top.rttex 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Compressing D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\summary_overlay_top.rttex..
+Compressed to D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\summary_overlay_top.rttex.  (42 kb, 33%)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>..\..\.\shared\win\utils\RTPack.exe D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\cflight.rttex 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Compressing D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\cflight.rttex..
+Compressed to D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\cflight.rttex.  (0 kb, 22%)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>..\..\.\shared\win\utils\RTPack.exe D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\circle.rttex 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Compressing D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\circle.rttex..
+Compressed to D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\circle.rttex.  (4 kb, 6%)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>..\..\.\shared\win\utils\RTPack.exe D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\explosion.rttex 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Compressing D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\explosion.rttex..
+Compressed to D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\explosion.rttex.  (0 kb, 76%)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>..\..\.\shared\win\utils\RTPack.exe D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\light16p.rttex 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Compressing D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\light16p.rttex..
+Compressed to D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\light16p.rttex.  (0 kb, 69%)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>..\..\.\shared\win\utils\RTPack.exe D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\pointer.rttex 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Compressing D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\pointer.rttex..
+Compressed to D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\pointer.rttex.  (0 kb, 7%)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>..\..\.\shared\win\utils\RTPack.exe D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\sketch.rttex 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Compressing D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\sketch.rttex..
+Compressed to D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\sketch.rttex.  (0 kb, 43%)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>..\..\.\shared\win\utils\RTPack.exe D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\small.rttex 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Compressing D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\small.rttex..
+Compressed to D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\small.rttex.  (0 kb, 68%)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>..\..\.\shared\win\utils\RTPack.exe D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\star.rttex 
+
+RTPack V1.4 by Seth A. Robinson.  /h for help
+
+Compressing D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\star.rttex..
+Compressed to D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\star.rttex.  (0 kb, 72%)
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>REM Delete things we don't want copied 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>del interface\font_*.rttex 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>rmdir ..\bin\interface /S /Q 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>rmdir ..\bin\audio /S /Q 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>rmdir ..\bin\game /S /Q 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>REM copy the stuff we care about 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>mkdir ..\bin\interface 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>xcopy interface ..\bin\interface /E /F /Y /EXCLUDE:exclude.txt 
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\bkgd_stone.rttex -> D:\dimalit\Desktop\dq\svn\ClassContainer\bin\interface\bkgd_stone.rttex
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\checkbox.rttex -> D:\dimalit\Desktop\dq\svn\ClassContainer\bin\interface\checkbox.rttex
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\cosmo.jpg -> D:\dimalit\Desktop\dq\svn\ClassContainer\bin\interface\cosmo.jpg
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\explosion.rttex -> D:\dimalit\Desktop\dq\svn\ClassContainer\bin\interface\explosion.rttex
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\flask.rttex -> D:\dimalit\Desktop\dq\svn\ClassContainer\bin\interface\flask.rttex
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\font_phonetic.rtfont -> D:\dimalit\Desktop\dq\svn\ClassContainer\bin\interface\font_phonetic.rtfont
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\font_times.rtfont -> D:\dimalit\Desktop\dq\svn\ClassContainer\bin\interface\font_times.rtfont
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\font_trajan.rtfont -> D:\dimalit\Desktop\dq\svn\ClassContainer\bin\interface\font_trajan.rtfont
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\font_trajan_big.rtfont -> D:\dimalit\Desktop\dq\svn\ClassContainer\bin\interface\font_trajan_big.rtfont
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_bb.rttex -> D:\dimalit\Desktop\dq\svn\ClassContainer\bin\interface\frame_bb.rttex
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_bl.rttex -> D:\dimalit\Desktop\dq\svn\ClassContainer\bin\interface\frame_bl.rttex
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_br.rttex -> D:\dimalit\Desktop\dq\svn\ClassContainer\bin\interface\frame_br.rttex
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_bt.rttex -> D:\dimalit\Desktop\dq\svn\ClassContainer\bin\interface\frame_bt.rttex
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_c1.rttex -> D:\dimalit\Desktop\dq\svn\ClassContainer\bin\interface\frame_c1.rttex
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_c2.rttex -> D:\dimalit\Desktop\dq\svn\ClassContainer\bin\interface\frame_c2.rttex
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_c3.rttex -> D:\dimalit\Desktop\dq\svn\ClassContainer\bin\interface\frame_c3.rttex
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_c4.rttex -> D:\dimalit\Desktop\dq\svn\ClassContainer\bin\interface\frame_c4.rttex
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_bb.rttex -> D:\dimalit\Desktop\dq\svn\ClassContainer\bin\interface\frame_glow_bb.rttex
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_bl.rttex -> D:\dimalit\Desktop\dq\svn\ClassContainer\bin\interface\frame_glow_bl.rttex
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_br.rttex -> D:\dimalit\Desktop\dq\svn\ClassContainer\bin\interface\frame_glow_br.rttex
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_bt.rttex -> D:\dimalit\Desktop\dq\svn\ClassContainer\bin\interface\frame_glow_bt.rttex
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_c1.rttex -> D:\dimalit\Desktop\dq\svn\ClassContainer\bin\interface\frame_glow_c1.rttex
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_c2.rttex -> D:\dimalit\Desktop\dq\svn\ClassContainer\bin\interface\frame_glow_c2.rttex
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_c3.rttex -> D:\dimalit\Desktop\dq\svn\ClassContainer\bin\interface\frame_glow_c3.rttex
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\frame_glow_c4.rttex -> D:\dimalit\Desktop\dq\svn\ClassContainer\bin\interface\frame_glow_c4.rttex
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\menu_bg.rttex -> D:\dimalit\Desktop\dq\svn\ClassContainer\bin\interface\menu_bg.rttex
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\place_ani.rttex -> D:\dimalit\Desktop\dq\svn\ClassContainer\bin\interface\place_ani.rttex
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\proton-128.rttex -> D:\dimalit\Desktop\dq\svn\ClassContainer\bin\interface\proton-128.rttex
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\p_plus.rttex -> D:\dimalit\Desktop\dq\svn\ClassContainer\bin\interface\p_plus.rttex
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\rtsoft_logo.rttex -> D:\dimalit\Desktop\dq\svn\ClassContainer\bin\interface\rtsoft_logo.rttex
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\scroll_bar_caps.rttex -> D:\dimalit\Desktop\dq\svn\ClassContainer\bin\interface\scroll_bar_caps.rttex
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\slider_button.rttex -> D:\dimalit\Desktop\dq\svn\ClassContainer\bin\interface\slider_button.rttex
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\start2.rttex -> D:\dimalit\Desktop\dq\svn\ClassContainer\bin\interface\start2.rttex
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\summary_bg.rttex -> D:\dimalit\Desktop\dq\svn\ClassContainer\bin\interface\summary_bg.rttex
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\summary_continue.rttex -> D:\dimalit\Desktop\dq\svn\ClassContainer\bin\interface\summary_continue.rttex
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\summary_overlay_bottom.rttex -> D:\dimalit\Desktop\dq\svn\ClassContainer\bin\interface\summary_overlay_bottom.rttex
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\summary_overlay_top.rttex -> D:\dimalit\Desktop\dq\svn\ClassContainer\bin\interface\summary_overlay_top.rttex
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\cflight.rttex -> D:\dimalit\Desktop\dq\svn\ClassContainer\bin\interface\particle\cflight.rttex
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\circle.rttex -> D:\dimalit\Desktop\dq\svn\ClassContainer\bin\interface\particle\circle.rttex
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\explosion.rttex -> D:\dimalit\Desktop\dq\svn\ClassContainer\bin\interface\particle\explosion.rttex
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\light16p.rttex -> D:\dimalit\Desktop\dq\svn\ClassContainer\bin\interface\particle\light16p.rttex
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\pointer.rttex -> D:\dimalit\Desktop\dq\svn\ClassContainer\bin\interface\particle\pointer.rttex
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\sketch.rttex -> D:\dimalit\Desktop\dq\svn\ClassContainer\bin\interface\particle\sketch.rttex
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\small.rttex -> D:\dimalit\Desktop\dq\svn\ClassContainer\bin\interface\particle\small.rttex
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\interface\particle\star.rttex -> D:\dimalit\Desktop\dq\svn\ClassContainer\bin\interface\particle\star.rttex
+45 File(s) copied
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>mkdir ..\bin\audio 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>xcopy audio ..\bin\audio /E /F /Y /EXCLUDE:exclude.txt 
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\audio\click.mp3 -> D:\dimalit\Desktop\dq\svn\ClassContainer\bin\audio\click.mp3
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\audio\click.ogg -> D:\dimalit\Desktop\dq\svn\ClassContainer\bin\audio\click.ogg
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\audio\click.wav -> D:\dimalit\Desktop\dq\svn\ClassContainer\bin\audio\click.wav
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\audio\ding.wav -> D:\dimalit\Desktop\dq\svn\ClassContainer\bin\audio\ding.wav
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\audio\enter.wav -> D:\dimalit\Desktop\dq\svn\ClassContainer\bin\audio\enter.wav
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\audio\techno.mp3 -> D:\dimalit\Desktop\dq\svn\ClassContainer\bin\audio\techno.mp3
+D:\dimalit\Desktop\dq\svn\ClassContainer\media\audio\techno.ogg -> D:\dimalit\Desktop\dq\svn\ClassContainer\bin\audio\techno.ogg
+7 File(s) copied
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>mkdir ..\bin\game 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>xcopy game ..\bin\game /E /F /Y /EXCLUDE:game_exclude.txt 
+0 File(s) copied
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>REM Convert everything to lowercase, otherwise the iphone will choke on the files 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>REM for /r %f in (*.*) do ..\media\LowerCase.bat  %f 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>del icon.rttex 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>del default.rttex 
+
+D:\dimalit\Desktop\dq\svn\ClassContainer\media>pause
+Press any key to continue . . . 

@@ -3,7 +3,16 @@
 
 -- declare functions for tests
 -- first of them will be run at the bottom
-local test_explain_rel, tes_basket, test_baloons
+local test_buttons, test_explain_rel, tes_basket, test_baloons
+
+test_buttons = function()
+	dofile("test_buttons.lua")
+	scene.onFinish = function()
+		scene.visible = false
+		root:remove(scene)
+		test_explain_rel()
+	end
+end
 
 test_explain_rel = function()
 	dofile("test_explain_rel.lua")
@@ -33,4 +42,4 @@ test_baloons = function()
 end
 
 -- run it!
-test_explain_rel()
+test_buttons()

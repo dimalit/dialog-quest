@@ -18,12 +18,13 @@ void Text::OnAdd(Entity* e){
 }
 
 // TODO: think about enums in Lua and here (don't want to use Proton's enums!)
-TextBox::TextBox(std::string txt, int width, eAlignment align)
+TextBox::TextBox(std::string txt, int width, eAlignment align, eFont font)
 {
 	GetVar("text")->Set(txt);
 	GetVar("textAlignment")->Set((uint32)align);
 	GetVar("firstLineDecrement")->Set((uint32)50);
 	this->width = width;
+	setFont(font);
 }
 
 TextBox::~TextBox()
@@ -86,6 +87,8 @@ void LuaTextBox::setRightObstacles(const LuaStairsProfile& p){
 
 LuaTextBox::LuaTextBox(std::string txt, int width, eAlignment align)
 	:TextBox(txt, width, align){}
+LuaTextBox::LuaTextBox(std::string txt, int width, eAlignment align, eFont font)
+	:TextBox(txt, width, align, font){}
 
 void LuaTextBox::luabind(lua_State* L){
 
@@ -103,9 +106,11 @@ void LuaTextBox::luabind(lua_State* L){
 		luabind::class_<LuaTextBox, EntityComponent>("TextBox")
 			// TODO how to bind alignment constants to Lua?
 			.def(luabind::constructor<std::string, int, eAlignment>())
+			.def(luabind::constructor<std::string, int, eAlignment, eFont>())
 			.property("width", &LuaTextBox::getWidth, &LuaTextBox::setWidth)
 			.property("height", &LuaTextBox::getHeight)
 			.property("text", &LuaTextBox::getText, &LuaTextBox::setText)
+			.property("font", &LuaTextBox::getFont, &LuaTextBox::setFont)
 			.property("firstLineDecrement", &LuaTextBox::getFirstLineDecrement, &LuaTextBox::setFirstLineDecrement)
 			.property("lastLineEndX", &LuaTextBox::getLastLineEndX)
 			.property("lastLineEndY", &LuaTextBox::getLastLineEndY)

@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="9.00"
 	Name="RTPack"
 	ProjectGUID="{4FE2C6AB-3BFE-4944-8E93-92B7BB197823}"
 	RootNamespace="RTPack"
 	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform
@@ -40,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../shared;../../shared/win/powerVR/OGLES/Include;../../shared\win\powerVR\OGLES\Windows\Include;../../../sharedlib/include;../../shared/util/boost;..\..\shared\util"
+				AdditionalIncludeDirectories="d:\dimalit\Desktop\dq\hge181\src\pngopt\libPNG;../../shared;../../shared/win/powerVR/OGLES/Include;../../shared/win/powerVR/OGLES/Windows/Include;D:\dimalit\Desktop\dq\ClanLib\include;../../shared/util/boost;../../external/include;../../shared/util/zlib"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;BOOST_ALL_NO_LIB;CLANLIB_1"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -63,9 +64,11 @@
 				Name="VCLinkerTool"
 				OutputFile="../../shared/win/utils/$(ProjectName).exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="../../../sharedlib/lib;../../../sharedlib/lib/Clanlib"
+				AdditionalLibraryDirectories="&quot;d:\dimalit\Desktop\dq\ClanLib-deps\lib\Win32&quot;;d:\dimalit\Desktop\dq\ClanLib\lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -85,9 +88,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -118,7 +118,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="../../shared;../../shared/win/powerVR/OGLES/Include;../../shared/win/powerVR/OGLES/Windows/Include;../../../sharedlib/include;../../shared/util/boost"
+				AdditionalIncludeDirectories="d:\dimalit\Desktop\dq\hge181\src\pngopt\libPNG;../../shared;../../shared/win/powerVR/OGLES/Include;../../shared/win/powerVR/OGLES/Windows/Include;D:\dimalit\Desktop\dq\ClanLib\include;../../shared/util/boost;../../external/include;../../shared/util/zlib"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;BOOST_ALL_NO_LIB;CLANLIB_1"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
@@ -139,11 +139,13 @@
 				Name="VCLinkerTool"
 				OutputFile="../../shared/win/utils/$(ProjectName).exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="../../../sharedlib/lib;../../../sharedlib/lib/Clanlib"
+				AdditionalLibraryDirectories="&quot;d:\dimalit\Desktop\dq\ClanLib-deps\lib\Win32&quot;;d:\dimalit\Desktop\dq\ClanLib\lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -163,9 +165,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"

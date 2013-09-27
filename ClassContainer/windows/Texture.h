@@ -19,7 +19,17 @@ public:
 	float getHeight() const {
 		return size->y;
 	}
+
+	string getTexture() const {
+		return path;
+	}
+	void setTexture(const string& new_path){
+		delete tex;
+		path = new_path;
+		tex = new Surface(path);
+	}
 private:
+	string path;
 	Surface* tex;
 	CL_Vec2f *pos, *size;
 	uint32 *m_pVisible;

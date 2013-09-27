@@ -4,7 +4,11 @@
 
 Texture::Texture(std::string path, int w, int h)
 {
-	tex = new Surface(path);
+	this->path = path;
+	if(!path.empty())
+		tex = new Surface(path);
+	else
+		tex = 0;
 	this->size = new CL_Vec2f(w, h);
 }
 
@@ -43,6 +47,7 @@ void LuaTexture::luabind(lua_State* L){
 			// TODO: Also changing the dimensions? File name?
 			.property("width", &Texture::getWidth)
 			.property("height", &Texture::getHeight)
+			.property("texture", &Texture::getTexture, &Texture::setTexture)
 			.def(luabind::self == luabind::other<LuaTexture&>())		// remove operator ==
 	];
 }
