@@ -15,7 +15,6 @@ CompositeItem* root_item(){
 	root->setHotSpotRelativeX(0.0f);
 	root->setHotSpotRelativeY(0.0f);
 		Entity* e = new Entity("root");
-		e->GetVar("visible")->Set(uint32(1));
 		AddFocusIfNeeded(e);
 		root->acquireEntity(e);
 	}

@@ -41,8 +41,22 @@ ScreenItem::~ScreenItem(void)
 
 Entity* ScreenItem::acquireEntity(Entity* e){
 	assert(!parent_item && e);
+	// take with us our properties
+	if(entity!=0 && e!=0){
+		entity->GetShared()->ResetNext();
+		string key;
+		Variant* v = entity->GetShared()->GetNext(key);
+		while(v){
+			e->GetShared()->GetVar(key)->Set(*v);
+			v = entity->GetShared()->GetNext(key);		
+		}
+	}// if
 	delete entity;
 	entity = e;
+
+	// rebind variables!!!
+	debug_draw_box = &entity->GetVarWithDefault("debugDrawBox", uint32(0))->GetUINT32();
+
 	return entity;
 }
 
