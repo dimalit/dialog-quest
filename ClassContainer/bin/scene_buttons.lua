@@ -1,7 +1,9 @@
 Buttons = {
 	margin = 20,
 	num_columns = 2,
-	row_interval = 20
+	row_interval = 20,
+	button_up_frame = "interface/frame",
+	button_down_frame = "interface/frame_glow"
 }
 
 setmetatable(Buttons, {})
@@ -24,11 +26,11 @@ getmetatable(Buttons).__call = function(_,conf)
 	self.title.y = 0
 	self.title.x = self.width / 2	
 	
-	self.description = CompositeItem()
+	self.description = FlowLayout()
 	self:add(self.description)
 	self:link(self.description, 0, nil, self, 0, nil)
 	self:link(self.description, 1, nil, self, 1, nil)
-	self:link(self.description, nil, 0, self.title, nil, 1, 0, Buttons.margin)		
+	self:link(self.description, nil, 0, self.title, nil, 1)		
 
 	self.columns = {}		
 	
@@ -37,7 +39,7 @@ getmetatable(Buttons).__call = function(_,conf)
 		self:add(it)
 		
 		-- align top
-		self:link(it, nil, 0, self.title, nil, 1, 0, Buttons.margin)
+		self:link(it, nil, 0, self.description, nil, 1, 0, Buttons.margin)
 		-- align edges
 		self:link(it, 0, nil, self, 1/Buttons.num_columns*(i-1), nil)
 		self:link(it, 1, nil, self, 1/Buttons.num_columns*i, nil)
@@ -81,12 +83,26 @@ getmetatable(Buttons).__call = function(_,conf)
 		end -- for cols
 	end
 	
-	local check_finish = function()
-		if #left_side.items + #right_side.items == #all_words and
-			 self.onFinish
-		then
-			 self:onFinish()
-		end
+	self.agree_button_label = TextItem("Мне понятно")
+	
+	self.agree_button = TwoStateAnimation(
+		FrameItem(Buttons.button_up_frame, self.agree_button_label.width+10, self.agree_button_label.height+10),
+		FrameItem(Buttons.button_down_frame, self.agree_button_label.width+10, self.agree_button_label.height+10)
+	)	
+	self.agree_button.x = self.width / 2
+	self.agree_button.y = self.height - self.agree_button.height/2
+	self:add(self.agree_button)
+	
+	self.agree_button_label.x, self.agree_button_label.y = self.agree_button.x, self.agree_button.y
+	self:add(self.agree_button_label)
+	
+	self.agree_button.onDragStart = function()
+		self.agree_button:over(true)
+	end
+	
+	self.agree_button.onDragEnd = function()
+		self.agree_button:over(false)
+		if self.onFinish then self:onFinish() end
 	end
 	
 	return self
@@ -97,31 +113,35 @@ class 'ButtonsElement'(CompositeItem)
 ButtonsElement.__init = function(self, button_text, label_text, sound)
 	CompositeItem.__init(self)
 
-	local button = TextItem(button_text)
-	local label = TextItem(label_text)
+	local left_label = TextItem(button_text)
+	local right_label = TextItem(label_text)
+	local button = TwoStateAnimation(	FrameItem(Buttons.button_up_frame, left_label.width+10, left_label.height+10),
+																		FrameItem(Buttons.button_down_frame, left_label.width+10, left_label.height+10))
 	local sound = SoundEffect(sound)
-	self:add(button):add(label)
-	label.rel_hpx, label.rel_hpy = 0, 0
-	button.rel_hpx, button.rel_hpy = 0, 0
+	self:add(button):add(left_label):add(right_label)
 	
+	button.onDragStart = function()
+		button:over(true)
+	end
 	button.onDragEnd = function()
+		button:over(false)
 		sound:play()
 	end
 
 	-- HACK
-	label.x = button.right
-	self.width = label.right
-	self.height = max(button.height, label.height)
-	print(self.width, self.height)
+	button.x, button.y = button.hpx, button.hpy
+	left_label.x, left_label.y = button.x, button.y
+	right_label.y = button.y
+	right_label.x = button.right + right_label.hpx
+	self.width = right_label.right
+	self.height = button.height
 
 	-- BUG: doesn't get called!!!
 	local old_onRequestLayout = self.onRequestLayout
 	self.onRequestLayout = function(_, child)
 		print("YES!")
 		if old_onRequestLayout then old_onRequestLayout(_, child) end
-		label.x = button.right
-		self.width = label.right
-		self.height = max(button.height, label.height)
+		-- TODO: Here must be HACK from above
 	end
 	self:onRequestLayOut(self)
 

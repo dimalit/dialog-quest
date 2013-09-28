@@ -199,6 +199,8 @@ function FlowLayout(w, indent)
   local profile = { left = StairsProfile(), right = StairsProfile() }
   
   self.onRequestLayOut = function(_)
+		if self.width==0 then return self end
+	
 		local dw = self.width-old_width
 		if dw ~= 0 then
 			old_width = self.width				-- prevents recursion		
@@ -254,6 +256,9 @@ function FlowLayout(w, indent)
   self.addItem = function(self, item)
 		self:add(item)
 		table.insert(items, item)
+		-- HACK: this sould be called automatically:
+		-- BUG:
+		self:requestLayOut(item)
 		return self
   end
   
