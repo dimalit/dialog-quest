@@ -25,7 +25,7 @@ getmetatable(Buttons).__call = function(_,conf)
 	self.title.rel_hpy = 0
 	self.title.y = 0
 	self.title.x = self.width / 2	
-	
+
 	self.description = FlowLayout()
 	self:add(self.description)
 	self:link(self.description, 0, nil, self, 0, nil)
@@ -108,10 +108,8 @@ getmetatable(Buttons).__call = function(_,conf)
 	return self
 end
 
-class 'ButtonsElement'(CompositeItem)
-
-ButtonsElement.__init = function(self, button_text, label_text, sound)
-	CompositeItem.__init(self)
+ButtonsElement = function(button_text, label_text, sound)
+	local self = CompositeItem()
 
 	local left_label = TextItem(button_text)
 	local right_label = TextItem(label_text)

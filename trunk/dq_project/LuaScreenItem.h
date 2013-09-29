@@ -94,7 +94,6 @@ public:
 	bool operator == (LuaScreenItem&){return false;}
 	LuaCompositeItem():CompositeItem(), LuaScreenItem(), ScreenItem(){
 		request_layout_is_running = false;
-		children = luabind::newtable(L);
 	}
 	static void luabind(lua_State* L);
 
@@ -108,58 +107,11 @@ public:
 		return this;
 	}
 
-	LuaCompositeItem* add(luabind::object child){
-		children[child] = true;
-
-		LuaScreenItem* it;
-		while(luabind::type(child) != LUA_TUSERDATA && luabind::type(child) != LUA_TNIL){
-			child = child["item"];
-		}
-		it = luabind::object_cast<LuaScreenItem*>(child);
-		if(it==NULL)
-			luaL_error(child.interpreter(), "Can't convert value to ScreenItem!");
-		else
-			CompositeItem::add(it);
-		return this;
-	}
-
-	LuaCompositeItem* remove(luabind::object child){
-		children[child] = luabind::nil;
-
-		LuaScreenItem* it;
-		while(luabind::type(child) != LUA_TUSERDATA && luabind::type(child) != LUA_TNIL){
-			child = child["item"];
-		}
-		it = luabind::object_cast<LuaScreenItem*>(child);
-		if(it==NULL)
-			luaL_error(child.interpreter(), "Can't convert value to ScreenItem!");
-		else
-			CompositeItem::remove(it);
-		return this;
-	}
-
-	virtual void requestLayOut(ScreenItem* child){
-		// Prevent deep recursion
-		if(request_layout_is_running)
-			return;
-		request_layout_is_running = true;
-		if(onRequestLayOut_cb)
-			luabind::call_function<void>(onRequestLayOut_cb, this, child);
-		request_layout_is_running = false;
-	}
-	virtual void requestLayOut(luabind::object child){
-		// Prevent deep recursion
-		if(request_layout_is_running)
-			return;
-		request_layout_is_running = true;
-		if(onRequestLayOut_cb)
-			luabind::call_function<void>(onRequestLayOut_cb, this, child);
-		request_layout_is_running = false;
-	}
+	virtual void requestLayOut(ScreenItem* child);
+	virtual void requestLayOut(luabind::object child);
 private:
 	bool request_layout_is_running;
 	luabind::object onRequestLayOut_cb;
-	luabind::object children;
 	LuaCompositeItem(const LuaCompositeItem&):CompositeItem(){assert(false);}
 	LuaCompositeItem& operator=(const LuaCompositeItem&){assert(false);}
 };

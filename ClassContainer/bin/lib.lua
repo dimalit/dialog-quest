@@ -27,51 +27,73 @@ end
 -------------- classes ----------------
 
 -- arg = base OBJECTS
+-- resulting mt will redirect all access to them
+-- when accessing lubinded function it will also convert 1-st argument appropriately
+-- when writing to inexistant property - will write to ALL base objects!
 local function inherit(...)
-  return {
-    -- find key in parents
-    __index = function(self, key)
-      for i=1, #arg do
-        if arg[i][key]~=nil then
-          -- handle functions!
-					-- NOTE: Pure-Lua classes can handle derived instance as self
-					-- binded classes - cannot
-          if type(arg[i] == "userdata") and
-						 type(arg[i][key]) == "function" and
-						 getmetatable(arg[i]).__luabind_class~=nil
-          then
-            local parent = arg[i];
-						-- NOTE: Need to remember it before returning function
-						-- because parents[i][key] may be changed later!
-						local parent_func = parent[key]
-            return function(...)
-							assert(arg[1] == self, "1st arg must be self")
-							-- but we change it to appropriate parent
-							return parent_func(parent, unpack(arg, 2))
-						end -- func body
-          else
-            return arg[i][key]
-          end -- if func
-        end -- id not nil
-      end -- for parents
-	  -- if not found
-	  return nil
-    end,
+  local mt = {}
+	-- find key in parents
+	mt.__index = function(self, key)
+		for i=1, #arg do
+			if arg[i][key]~=nil then
+				-- handle functions!
+				-- NOTE: Pure-Lua classes can handle derived instance as self
+				-- binded classes - cannot
+				if type(arg[i] == "userdata") and
+					 type(arg[i][key]) == "function" and
+					 getmetatable(arg[i]).__luabind_class~=nil
+				then
+					local parent = arg[i];
+					-- NOTE: Need to remember it before returning function
+					-- because parents[i][key] may be changed later!
+					local parent_func = parent[key]
+					return function(...)
+						assert(arg[1] == self, "1st arg must be self")
+						-- but we change it to appropriate parent
+						return parent_func(parent, unpack(arg, 2))
+					end -- func body
+				else
+					return arg[i][key]
+				end -- if func
+			end -- id not nil
+		end -- for parents
+	-- if not found
+	return nil
+	end
 
-    -- find existing and do assignment
-    __newindex = function(self, key, val)
-      for i=1, #arg do
-        if arg[i][key]~=nil then
-          arg[i][key]=val
-          return
-        end
-      end
-	  -- set to ALL! if not found
-      for i=1, #arg do
-        arg[i][key] = val
-      end
-    end
-  }
+	-- find existing and do assignment
+	mt.__newindex = function(self, key, val)
+		for i=1, #arg do
+			if arg[i][key]~=nil then
+				arg[i][key]=val
+				return
+			end
+		end
+	-- set to ALL! if not found
+		for i=1, #arg do
+			arg[i][key] = val
+		end
+	end
+	
+	-- tag the mt with __luabinded_base
+	-- HACK for now allow multiple inheritance for Item+View
+	-- TODO Implement BlaBlaItem directly in C++
+	for i,s in ipairs(arg) do
+		-- if father
+		if getmetatable(s).__luabind_class ~= nil then
+			--assert(mt.__luabinded_base == nil)	-- disallow multiple inheritance
+			mt.__luabinded_base = s
+			break
+		end -- if
+		-- if grandfather
+		if getmetatable(s).__luabinded_base ~= nil then
+			--assert(mt.__luabinded_base == nil)	-- also disallow both mt fields
+			mt.__luabinded_base = getmetatable(s).__luabinded_base
+			break
+		end -- if
+	end
+	
+	return mt
 end
 
 -------------- geometry ---------------
@@ -112,6 +134,47 @@ function polygon_intersection(p1, p2)
 end
 
 -------- Lua classes -----------
+
+------------- wrappers for native classes -----------------
+
+-- TODO "children" and "parent" must be write protected!
+local old_CompositeItem = CompositeItem
+CompositeItem = function(...)
+	local self = old_CompositeItem(unpack(arg))
+	self.children = {}
+	
+	local old_add = self.add
+	self.add = function(self_or_derived, child)
+		assert(self.children[child] == nil)
+		self.children[child] = true
+		child.parent = self_or_derived
+		-- need to go to luabinded base class
+		while type(child)~="userdata" do
+			child = getmetatable(child).__luabinded_base
+		end
+		assert(child)
+		old_add(self_or_derived, child)
+		
+		return self_or_derived
+	end
+	
+	local old_remove = self.remove
+	self.remove = function(self_or_derived, child)
+		assert(self.children[child])
+		self.children[child] = nil
+		child.parent = nil
+		-- need to go to luabinded base class
+		while type(child)~="userdata" do
+			child = getmetatable(child).__luabinded_base
+		end
+		assert(child)
+		old_remove(self_or_derived, child)
+		
+		return self_or_derived		
+	end	
+	
+	return self
+end
 
 ------------- ..Items ----------------
 
@@ -472,12 +535,11 @@ function MakeLayoutAgent(self)
 	-- no return - we just change self!
 end -- MakeLayoutAgent
 
-local old_CompositeItem = CompositeItem.__init
-CompositeItem.__init = function(...)
-	old_CompositeItem(unpack(arg))
+local old_CompositeItem = CompositeItem
+CompositeItem = function(...)
+	local self = old_CompositeItem(unpack(arg))
 	
 	-- add our own stuff
-	local self = arg[1]
 	local links = {}				-- key=nurse, val=array of link_obj
 	local depends_cnt = {}	-- key=child if it has nurse, used to find independent nurses
 	
@@ -575,6 +637,8 @@ CompositeItem.__init = function(...)
 			if depends_cnt[ch]==nil or depends_cnt[ch]==0 then adjust_dependents(ch) end
 		end -- for
 	end
+	
+	return self
 end -- CompositeItem:__init
 
 -- TODO: spacing is not dynamic - if you change it later on - nothing happens!

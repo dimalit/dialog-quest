@@ -149,9 +149,9 @@ int lua_error_handler(lua_State* L){
 
 	luaL_dostring(L, "print(debug.traceback(\"\", 4))");
 
-	lua_Debug d;
-	lua_getinfo(L, "Sln", &d);
-	std::cout << d.short_src << ":" << d.currentline;
+//	lua_Debug d;
+//	lua_getinfo(L, "Sln", &d);
+//	std::cout << d.short_src << ":" << d.currentline;
 	lua_pushstring(L, "error");
 	return 1;
 }

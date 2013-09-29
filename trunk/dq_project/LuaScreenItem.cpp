@@ -30,37 +30,89 @@ LuaCompositeItem* LuaScreenItem::getParent(){
 	return ret;
 }
 
+//LuaCompositeItem* LuaCompositeItem::add(luabind::object child){
+//	assert(children_lua[child] == false);
+//	children_lua[child] = true;
+//
+//	while(luabind::type(child) != LUA_TUSERDATA && luabind::type(child) != LUA_TNIL){
+//		child = luabind::getmetatable(child)["__luabinded_base"];
+//	}
+//
+//	LuaScreenItem* luabinded_base = luabind::object_cast_nothrow<LuaScreenItem*>(child).get_value_or(NULL);
+//	if(luabinded_base == NULL)
+//		luaL_error(child.interpreter(), "Can't convert value to ScreenItem!");
+//	else
+//		CompositeItem::add(luabinded_base);
+//	return this;
+//}
+//
+//LuaCompositeItem* LuaCompositeItem::remove(luabind::object child){
+//	assert(children_lua[child] == true);
+//	children_lua[child] = false;
+//
+//	while(luabind::type(child) != LUA_TUSERDATA && luabind::type(child) != LUA_TNIL){
+//		child = luabind::getmetatable(child)["__luabinded_base"];
+//	}
+//
+//	LuaScreenItem* luabinded_base = luabind::object_cast_nothrow<LuaScreenItem*>(child).get_value_or(NULL);
+//	if(luabinded_base == NULL)
+//		luaL_error(child.interpreter(), "Can't convert value to ScreenItem!");
+//	else
+//		CompositeItem::remove(luabinded_base);
+//	return this;
+//}
+
+void LuaCompositeItem::requestLayOut(ScreenItem* child){
+	// Prevent deep recursion
+	if(request_layout_is_running)
+		return;
+	request_layout_is_running = true;
+	if(onRequestLayOut_cb)
+		luabind::call_function<void>(onRequestLayOut_cb, this, child);
+	request_layout_is_running = false;
+}
+void LuaCompositeItem::requestLayOut(luabind::object child){
+	// Prevent deep recursion
+	if(request_layout_is_running)
+		return;
+	request_layout_is_running = true;
+	if(onRequestLayOut_cb)
+		luabind::call_function<void>(onRequestLayOut_cb, this, child);
+	request_layout_is_running = false;
+}
+
 ///////////////////// WRAPPERS //////////////////////////
 // used to derive from ScreenItem in Lua
 // FIXME: For now we ignore the possibility to call overridden in Lua functions from C++!
 
-class LuaScreenItemWrapper: public LuaScreenItem, public luabind::wrap_base{
-public:
-	LuaScreenItemWrapper()
-		:LuaScreenItem()
-	{}
-};
-
-class LuaCompositeItemWrapper: public LuaCompositeItem, public luabind::wrap_base{
-public:
-	LuaCompositeItemWrapper()
-		:LuaCompositeItem()
-	{}
-};
-
-class LuaSimpleItemWrapper: public LuaSimpleItem, public luabind::wrap_base{
-public:
-	LuaSimpleItemWrapper()
-		:LuaSimpleItem()
-	{}
-};
+//class LuaScreenItemWrapper: public LuaScreenItem, public luabind::wrap_base{
+//public:
+//	LuaScreenItemWrapper()
+//		:LuaScreenItem()
+//	{}
+//};
+//
+//class LuaCompositeItemWrapper: public LuaCompositeItem, public luabind::wrap_base{
+//public:
+//	LuaCompositeItemWrapper()
+//		:LuaCompositeItem()
+//	{}
+//};
+//
+//class LuaSimpleItemWrapper: public LuaSimpleItem, public luabind::wrap_base{
+//public:
+//	LuaSimpleItemWrapper()
+//		:LuaSimpleItem()
+//	{}
+//};
 //////////////////// END WRAPPERS //////////////////////
 
 void LuaScreenItem::luabind(lua_State* L){
 	luabind::module(L) [
-		luabind::class_<LuaScreenItem, LuaScreenItemWrapper>("ScreenItem")
+		luabind::class_<LuaScreenItem/*, LuaScreenItemWrapper*/>("ScreenItem")
 		.def(luabind::constructor<>())
-		.property("parent", &LuaScreenItem::getParent)
+//TODO: May be delete it completely?
+//		.property("parent", &LuaScreenItem::getParent)
 		.property("gx", &LuaScreenItem::getAbsoluteX, &LuaScreenItem::setAbsoluteX)
 		.property("gy", &LuaScreenItem::getAbsoluteY, &LuaScreenItem::setAbsoluteY)
 		.property("visible", &LuaScreenItem::getVisible, &LuaScreenItem::setVisible)
@@ -103,13 +155,12 @@ void LuaScreenItem::luabind(lua_State* L){
 
 void LuaCompositeItem::luabind(lua_State* L){
 	luabind::module(L) [
-		luabind::class_< LuaCompositeItem, LuaScreenItem, LuaCompositeItemWrapper>("CompositeItem")
+		luabind::class_< LuaCompositeItem, LuaScreenItem/*, LuaCompositeItemWrapper*/>("CompositeItem")
 		.def(luabind::constructor<>())
 		.def("add", (LuaCompositeItem* (LuaCompositeItem::*)(LuaScreenItem*))&LuaCompositeItem::add)
-		.def("add", (LuaCompositeItem* (LuaCompositeItem::*)(luabind::object))&LuaCompositeItem::add)
+//		.def("add", (LuaCompositeItem* (LuaCompositeItem::*)(luabind::object))&LuaCompositeItem::add)
 		.def("remove", (LuaCompositeItem* (LuaCompositeItem::*)(LuaScreenItem*))&LuaCompositeItem::remove)
-		.def("remove", (LuaCompositeItem* (LuaCompositeItem::*)(luabind::object))&LuaCompositeItem::remove)
-		.def_readonly("children", &LuaCompositeItem::children)
+//		.def("remove", (LuaCompositeItem* (LuaCompositeItem::*)(luabind::object))&LuaCompositeItem::remove)
 		.def_readwrite("onRequestLayOut", &LuaCompositeItem::onRequestLayOut_cb)
 		.def("requestLayOut", (void (LuaCompositeItem::*)(ScreenItem*))&LuaCompositeItem::requestLayOut)
 		.def("requestLayOut", (void (LuaCompositeItem::*)(luabind::object))&LuaCompositeItem::requestLayOut)
@@ -123,7 +174,7 @@ void LuaCompositeItem::luabind(lua_State* L){
 void LuaSimpleItem::luabind(lua_State* L){
 
 	luabind::module(L) [
-	luabind::class_<LuaSimpleItem, LuaScreenItem, LuaSimpleItemWrapper>("SimpleItem")
+	luabind::class_<LuaSimpleItem, LuaScreenItem/*, LuaSimpleItemWrapper*/>("SimpleItem")
 		.def(luabind::constructor<>())
 
 		// TODO How to adopt back to lua when assigning NULL?
