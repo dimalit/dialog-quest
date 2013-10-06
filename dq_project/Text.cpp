@@ -1,9 +1,10 @@
 #include "PlatformPrecomp.h"
 #include "Text.h"
 
-Text::Text(std::string txt)
+Text::Text(std::string txt, eFont font)
 {
 	GetVar("text")->Set(txt);
+	setFont(font);
 }
 
 Text::~Text()
@@ -40,14 +41,17 @@ void TextBox::OnAdd(Entity* e){
 }
 
 LuaText::LuaText(std::string text):Text(text){}
+LuaText::LuaText(std::string text, eFont font):Text(text, font){}
 
 void LuaText::luabind(lua_State* L){
 	luabind::module(L) [
 		luabind::class_<LuaText, EntityComponent>("Text")
 			.def(luabind::constructor<std::string>())
+			.def(luabind::constructor<std::string, eFont>())
 			.property("width", &LuaText::getWidth)
 			.property("height", &LuaText::getHeight)
 			.property("text", &LuaText::getText, &LuaText::setText)
+			.property("font", &LuaText::getFont, &LuaText::setFont)
 	];	
 }
 
