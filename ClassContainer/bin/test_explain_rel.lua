@@ -11,7 +11,7 @@ scene.title.text = "Unit 2 шаг1"
 local p1 = FlowLayout(0,50)
 -- default width = 0 and font = 0
 -- for phonetic we use width=0, font=3 => TextBoxItem("[x]", 0, 3) (Phonetic TM)
-p1:addItem(TextBoxItem("Буква «а» в закрытом слоге читается как ", 0, 0)):addItem(TextBoxItem("`1[ABCDEFGHIJKLMNOPQRSTUVWXYZ]`0", 0, 3)):addItem(TextBoxItem(". Такого звука в русском языке нет. Это нечто среднее между русскими «а» и «э». Чтобы произнести этот звук правильно, широко раскрой рот так, будто хочешь сказать «а», и скажи «э». Звук [?] очень короткий, его ни в коем случае нельзя тянуть."))
+p1:addItem(TextBoxItem("Буква «а» в закрытом слоге читается как ", 0, 0)):addItem(PhonemicItem("B")):addItem(TextBoxItem(". Такого звука в русском языке нет. Это нечто среднее между русскими «а» и «э». Чтобы произнести этот звук правильно, широко раскрой рот так, будто хочешь сказать «а», и скажи «э». Звук [?] очень короткий, его ни в коем случае нельзя тянуть."))
 p1:addItem(ImageItem("interface/flask.rttex"))
 scene.content:add(p1)
 --p1:setLocationOrigin(scene.content, 0.5, 0)

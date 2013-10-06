@@ -19,6 +19,7 @@ scene.description
 	:addItem(TextBoxItem("Нажми на каждое слово и послушай, как они произносятся. Повтори их за диктором. Следи, чтобы звук", 0, 0))
 	:addItem(TextBoxItem(" [x] ", 0, 3))
 	:addItem(TextBoxItem("оставался очень коротким.", 0, 0))
+	:addItem(VoiceTextItem("ding"))
 
 scene.columns[1]
 	:add{"man", " - мужчина", "audio/ding.wav"}

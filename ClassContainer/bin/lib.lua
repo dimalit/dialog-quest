@@ -200,7 +200,12 @@ end
 
 TextItem = function(text, font)
   local item = SimpleItem()
-  local txt = Text(text)
+  local txt
+	if font==nil then
+		txt = Text(text)
+	else
+		txt = Text(text, font)
+	end
 	item.view = txt
 
   local self = {}
@@ -221,6 +226,28 @@ TextBoxItem = function(text, w, font)
   self.item = item
   setmetatable(self, inherit(item, txt))
   return self
+end
+
+function PhonemicItem(text)
+	local self = TextItem("["..text.."]", 3)
+	local sound = SoundEffect("audio/"..text..".wav")
+	if sound then
+		self.onDragEnd = function()
+			sound:play()
+		end
+	end
+	return self
+end
+
+function VoiceTextItem(text)
+	local self = TextItem("`1"..text)
+	local sound = SoundEffect("audio/voice_"..text..".ogg")
+	if sound then
+		self.onDragEnd = function()
+			sound:play()
+		end
+	end
+	return self
 end
 
 -- make playing animation item
@@ -421,6 +448,7 @@ end
 ---------- Layouts -------------
 -- NOTE We need Luabind-inheritance from this class
 -- so we must re-use obj and not make new self
+-- NOTE It is not vail anymore
 function MakeLayoutAgent(self)
 
 	if self.rel_x ~= nil then

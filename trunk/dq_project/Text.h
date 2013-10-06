@@ -7,7 +7,7 @@
 class Text: public TextRenderComponent
 {
 public:
-	Text(std::string/*, std::string="font1.fnt"*/);
+	Text(std::string, eFont font=FONT_SMALL);
 	~Text();
 
 	void OnAdd(Entity* e);
@@ -21,6 +21,12 @@ public:
 	}
 	int getHeight(){
 		return GetParent()->GetVar("size2d")->GetVector2().y;
+	}
+	eFont getFont(){
+		return (eFont)GetVar("font")->GetUINT32();
+	}
+	void setFont(eFont f){
+		GetVar("font")->Set(uint32(f));
 	}
 };
 
@@ -92,6 +98,7 @@ private:
 class LuaText: public Text{
 public:
 	LuaText(std::string);
+	LuaText(std::string text, eFont font);
 	static void luabind(lua_State* L);
 
 private:
