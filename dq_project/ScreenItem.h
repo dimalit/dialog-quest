@@ -37,21 +37,21 @@ public:
 	virtual bool isPointIn(float mx, float my);
 
 	// position
-	void move(int dx, int dy){
+	void move(float dx, float dy){
 		if(dx != 0.0f || dy != 0.0f){
 			CL_Vec2f pos = entity->GetVar("pos2d")->GetVector2();
 			entity->GetVar("pos2d")->Set(pos.x+dx, pos.y+dy);
 		}
 	}
 
-	void setX(int x);
-	void setY(int y);
-	int getX() const;
-	int getY() const;
-	int getAbsoluteX() const;
-	int getAbsoluteY() const;
-	void setAbsoluteX(int gx);
-	void setAbsoluteY(int gy);
+	void setX(float x);
+	void setY(float y);
+	float getX() const;
+	float getY() const;
+	float getAbsoluteX() const;
+	float getAbsoluteY() const;
+	void setAbsoluteX(float gx);
+	void setAbsoluteY(float gy);
 
 	// rotation
 	void rotate(float r){entity->GetVar("rotation")->GetFloat() += r * 180.0f / (float)M_PI;}
@@ -81,13 +81,13 @@ public:
 	float getHotSpotRelativeY() const{
 		return entity->GetVar("rotationCenter")->GetVector2().y;
 	}
-	int getWidth()	const {
+	float getWidth()	const {
 		return entity->GetVar("size2d")->GetVector2().x;
 	}
-	int getHeight()	const {
+	float getHeight()	const {
 		return entity->GetVar("size2d")->GetVector2().y;
 	}
-	void setWidth(int w){
+	void setWidth(float w){
 		CL_Vec2f v = entity->GetVar("size2d")->GetVector2();
 		// prevent parent requestLayOut
 		if(v.x != w){
@@ -96,7 +96,7 @@ public:
 		}
 		// note: pos is automatically adjusted in OnResize
 	}
-	void setHeight(int h){
+	void setHeight(float h){
 		// then grow it
 		CL_Vec2f v = entity->GetVar("size2d")->GetVector2();
 		// prevent parent requestLayOut
@@ -105,46 +105,46 @@ public:
 			entity->GetVar("size2d")->Set(v);
 		}
 	}
-	int getHotSpotX()	const {
+	float getHotSpotX()	const {
 		return entity->GetVar("rotationCenter")->GetVector2().x * getWidth();
 	}
-	int getHotSpotY()	const {
+	float getHotSpotY()	const {
 		return entity->GetVar("rotationCenter")->GetVector2().y * getHeight();
 	}
-	int getTop()		const {
-		int res = INT_MAX;//std::numeric_limits<int>::max();//infinity();
+	float getTop()		const {
+		float res = std::numeric_limits<float>::infinity();
 		for(int i=1; i<=4; i++){
-			int rx, ry;
+			float rx, ry;
 			compute_corner(i, rx, ry);
 			if(ry < res)
 				res = ry;
 		}
 		return res;
 	}
-	int getBottom()	const {
-		int res = INT_MIN;//- std::numeric_limits<int>::min();// infinity();
+	float getBottom()	const {
+		float res = - std::numeric_limits<float>::infinity();
 		for(int i=1; i<=4; i++){
-			int rx, ry;
+			float rx, ry;
 			compute_corner(i, rx, ry);
 			if(ry > res)
 				res = ry;
 		}
 		return res;
 	}
-	int getLeft()		const {
-		int res = INT_MAX;//std::numeric_limits<int>::max();//infinity();
+	float getLeft()		const {
+		float res = std::numeric_limits<float>::infinity();
 		for(int i=1; i<=4; i++){
-			int rx, ry;
+			float rx, ry;
 			compute_corner(i, rx, ry);
 			if(rx < res)
 				res = rx;
 		}
 		return res;
 	}
-	int getRight()	const {
-		float res = INT_MIN;//- std::numeric_limits<int>::max();//infinity();
+	float getRight()	const {
+		float res = - std::numeric_limits<float>::infinity();
 		for(int i=1; i<=4; i++){
-			int rx, ry;
+			float rx, ry;
 			compute_corner(i, rx, ry);
 			if(rx > res)
 				res = rx;
@@ -163,7 +163,7 @@ protected:
 public: //!!! temporary
 	Entity* entity;
 protected:
-	void compute_corner(int no, int &rx, int &ry) const {
+	void compute_corner(int no, float &rx, float &ry) const {
 
 		// local params
 		float x = getX(), y = getY();

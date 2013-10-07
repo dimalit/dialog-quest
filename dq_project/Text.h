@@ -16,10 +16,10 @@ public:
 	std::string getText(){return GetVar("text")->GetString();}
 //	void setFont(std::string fnt){load_font(fnt);}
 
-	int getWidth(){
+	float getWidth(){
 		return GetParent()->GetVar("size2d")->GetVector2().x;
 	}
-	int getHeight(){
+	float getHeight(){
 		return GetParent()->GetVar("size2d")->GetVector2().y;
 	}
 	eFont getFont(){
@@ -34,7 +34,7 @@ public:
 class TextBox: public TextBoxRenderComponent
 {
 public:
-	TextBox(std::string txt, int width, eAlignment align, eFont font=FONT_SMALL);
+	TextBox(std::string txt, float width, eAlignment align, eFont font=FONT_SMALL);
 	~TextBox();
 
 	void OnAdd(Entity* e);
@@ -42,10 +42,10 @@ public:
 	void setText(std::string txt){GetVar("text")->Set(txt);}
 	std::string getText(){return GetVar("text")->GetString();}
 
-	int getWidth() const{
+	float getWidth() const{
 		return width;
 	}
-	int getHeight(){
+	float getHeight(){
 		if(GetParent())
 			return GetParent()->GetVar("size2d")->GetVector2().y;
 		else{
@@ -58,11 +58,11 @@ public:
 		if(GetParent())
 			GetParent()->GetVar("size2d")->Set(w, 0);
 	}
-	void setFirstLineDecrement(int val){
+	void setFirstLineDecrement(float val){
 		// TODO It can be less than 0 btw!
-		GetVar("firstLineDecrement")->Set(uint32(val));
+		GetVar("firstLineDecrement")->Set(val);
 	}
-	int getFirstLineDecrement(){
+	float getFirstLineDecrement(){
 		return GetVar("firstLineDecrement")->GetUINT32();
 	}
 	const StairsProfile& getLeftObstacles() const{
@@ -85,14 +85,14 @@ public:
 	void setFont(eFont f){
 		GetVar("font")->Set(uint32(f));
 	}
-	int getLastLineEndX(){
-		return GetVar("lastLineEndX")->GetUINT32();
+	float getLastLineEndX(){
+		return GetVar("lastLineEndX")->GetFloat();
 	}
-	int getLastLineEndY(){
-		return GetVar("lastLineEndY")->GetUINT32();
+	float getLastLineEndY(){
+		return GetVar("lastLineEndY")->GetFloat();
 	}
 private:
-	int width;// used when attached
+	float width;// used when attached
 };
 
 class LuaText: public Text{
@@ -110,8 +110,8 @@ class LuaStairsProfile;
 
 class LuaTextBox: public TextBox{
 public:
-	LuaTextBox(std::string txt, int width, eAlignment align);
-	LuaTextBox(std::string txt, int width, eAlignment align, eFont font);
+	LuaTextBox(std::string txt, float width, eAlignment align);
+	LuaTextBox(std::string txt, float width, eAlignment align, eFont font);
 	static void luabind(lua_State* L);
 
 	const LuaStairsProfile getLeftObstacles() const;

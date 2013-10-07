@@ -61,54 +61,54 @@ Entity* ScreenItem::acquireEntity(Entity* e){
 }
 
 // my hotSpot is also rotation center. Proton's - not.
-void ScreenItem::setX(int x){
+void ScreenItem::setX(float x){
 	CL_Vec2f v = entity->GetVar("pos2d")->GetVector2();
 	if(v.x != x - getHotSpotX()){
 		v.x = x - getHotSpotX();
 		entity->GetVar("pos2d")->Set(v);
 	}
 }
-void ScreenItem::setY(int y){
+void ScreenItem::setY(float y){
 	CL_Vec2f v = entity->GetVar("pos2d")->GetVector2();
 	if(v.y != y - getHotSpotY()){
 		v.y = y - getHotSpotY();
 		entity->GetVar("pos2d")->Set(v);
 	}
 }
-int ScreenItem::getX() const {
-	int x = entity->GetVar("pos2d")->GetVector2().x + getHotSpotX();
+float ScreenItem::getX() const {
+	float x = entity->GetVar("pos2d")->GetVector2().x + getHotSpotX();
 	return  x;
 }
-int ScreenItem::getY() const {
+float ScreenItem::getY() const {
 	float y = entity->GetVar("pos2d")->GetVector2().y + getHotSpotY();
 	return  y;
 }
-int ScreenItem::getAbsoluteX() const {
+float ScreenItem::getAbsoluteX() const {
 	if(parent_item == 0)
 		return getX();
 	else
 		return parent_item->getAbsoluteX() - parent_item->getHotSpotX() + getX();
 }
-int ScreenItem::getAbsoluteY() const {
+float ScreenItem::getAbsoluteY() const {
 	if(parent_item == 0)
 		return getY();
 	else
 		return parent_item->getAbsoluteY() - parent_item->getHotSpotY()  + getY();
 }
 
-void ScreenItem::setAbsoluteX(int gx){
+void ScreenItem::setAbsoluteX(float gx){
 	if(parent_item == 0)
 		setX(gx);
 	else{
-		int parent_gleft = parent_item->getAbsoluteX() - parent_item->getHotSpotX();
+		float parent_gleft = parent_item->getAbsoluteX() - parent_item->getHotSpotX();
 		setX(gx - parent_gleft);
 	}
 }
-void ScreenItem::setAbsoluteY(int gy){
+void ScreenItem::setAbsoluteY(float gy){
 	if(parent_item == 0)
 		setY(gy);
 	else{
-		int parent_gtop = parent_item->getAbsoluteY() - parent_item->getHotSpotY();
+		float parent_gtop = parent_item->getAbsoluteY() - parent_item->getHotSpotY();
 		setY(gy - parent_gtop);
 	}
 }
@@ -128,8 +128,8 @@ void ScreenItem::setParent(CompositeItem* p){
 void ScreenItem::OnSizeChange(Variant* /*NULL*/){
 	// move corner
 	CL_Vec2f new_size = entity->GetVar("size2d")->GetVector2();
-	int dx = getHotSpotRelativeX() * (new_size.x - orig_width);
-	int dy = getHotSpotRelativeY() * (new_size.y - orig_height);
+	float dx = getHotSpotRelativeX() * (new_size.x - orig_width);
+	float dy = getHotSpotRelativeY() * (new_size.y - orig_height);
 
 	orig_width = new_size.x;
 	orig_height = new_size.y;

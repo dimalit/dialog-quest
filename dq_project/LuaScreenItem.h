@@ -18,7 +18,7 @@ private:
 	LuaScreenItem& operator=(const LuaScreenItem&){assert(false);}
 
 	luabind::object getQuad(){
-		int x[4], y[4];
+		float x[4], y[4];
 		for(int i = 0; i<4; i++)
 			compute_corner(i+1, x[i], y[i]);
 		luabind::object res = luabind::newtable(L);
