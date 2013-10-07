@@ -21,6 +21,7 @@
 #include "LuaTimer.h"
 #include "LuaSoundEffect.h"
 #include "Texture.h"
+#include "TextInput.h"
 #include "lua_lib.h"
 
 #include <luabind/class_info.hpp>
@@ -271,6 +272,7 @@ else
 	LuaTimer::luabind(L, "Timer");	// TODO: Why name?
 	LuaSoundEffect::luabind(L);
 	LuaTexture::luabind(L);
+	LuaTextInput::luabind(L);
 
 	//if(luaL_dofile(L, "lib.lua") != 0){
 	//	std::cout << lua_tostring(L,-1) << "\n";

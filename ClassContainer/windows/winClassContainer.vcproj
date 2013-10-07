@@ -5926,6 +5926,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\TextInput.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Texture.cpp"
 				>
 			</File>
@@ -5986,6 +5990,10 @@
 				</File>
 				<File
 					RelativePath="..\..\trunk\dq_project\Text.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TextInput.h"
 					>
 				</File>
 				<File

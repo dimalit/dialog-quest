@@ -80,7 +80,7 @@ Entity * EnterNameMenuCreate(Entity *pParentEnt)
 	float nameWidth = pButtonEntity->GetVar("size2d")->GetVector2().x;
 
 	//create input box
-	pButtonEntity = CreateInputTextEntity(pBG, "name_input_box", vTextAreaPos.x+nameWidth, nameEntryY, GetApp()->GetShared()->GetVarWithDefault("name", string("Player"))->GetString());
+	pButtonEntity = CreateInputTextEntity(pBG, "name_input_box", vTextAreaPos.x+nameWidth, nameEntryY, GetApp()->GetShared()->GetVarWithDefault("name", string("Player"))->GetString(), 500, 300);
 	
 	EntityComponent *pTextRenderComp = pButtonEntity->GetComponentByName("InputTextRender");
 
@@ -91,7 +91,7 @@ Entity * EnterNameMenuCreate(Entity *pParentEnt)
 	pTextRenderComp->GetVar("inputType")->Set(uint32(InputTextRenderComponent::INPUT_TYPE_ASCII_FULL));
 
 	//control how many characters the user can enter
-	pTextRenderComp->GetVar("inputLengthMax")->Set(uint32(18));
+//	pTextRenderComp->GetVar("inputLengthMax")->Set(uint32(18));
 
 	//show *'s, password mode
 	//pTextRenderComp->GetVar("visualStyle")->Set((uint32)InputTextRenderComponent::STYLE_PASSWORD);

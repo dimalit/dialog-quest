@@ -176,6 +176,14 @@ CompositeItem = function(...)
 	return self
 end
 
+-- override root also to be CompositeItem!
+do
+	local old_root = root
+	root = CompositeItem()
+	root.width, root.height = old_root.width, old_root.height
+	old_root:add(root)
+end
+
 ------------- ..Items ----------------
 
 ImageItem = function(path)
@@ -221,6 +229,23 @@ TextBoxItem = function(text, w, font)
   local item = SimpleItem()
   local txt = TextBox(text, w, 0, font)
   item.view = txt
+
+  local self = {}
+  self.item = item
+  setmetatable(self, inherit(item, txt))
+  return self
+end
+
+TextInputItem = function(w, font)
+	if w==nil then w=0 end
+  local item = SimpleItem()
+  local txt
+	if font==nil then
+		txt = TextInput(w)
+	else
+		txt = TextInput(w, font)
+	end
+	item.view = txt
 
   local self = {}
   self.item = item
