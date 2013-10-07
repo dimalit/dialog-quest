@@ -61,7 +61,7 @@ getmetatable(Input).__call = function(_,conf)
 			return col
 		end -- add
 		
-		col.height = 200			-- just to see it
+		col.height = 500			-- just to see it
 		table.insert(self.columns, col)
 	end
 	
@@ -106,9 +106,11 @@ InputElement = function(phonetic_text, answer)
 
 	
 	-- TODO: Think about solving linear equations iteratively to move objects!
+	print("link")
 	--self:link(self, 1, nil, drop, 1, nil)
-	self.width = 200
-	self.height = 20
+	print("after link")
+	self.width = 220
+	self.height = 40
 	
 	return self
 end

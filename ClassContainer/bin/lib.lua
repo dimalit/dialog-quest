@@ -255,7 +255,7 @@ end
 
 function PhonemicItem(text)
 	local self = TextItem("["..text.."]", 3)
-	local sound = SoundEffect("audio/"..text..".wav")
+	local sound = SoundEffect("audio/p_"..text..".wav")
 	if sound then
 		self.onDragEnd = function()
 			sound:play()
@@ -265,8 +265,8 @@ function PhonemicItem(text)
 end
 
 function VoiceTextItem(text)
-	local self = TextItem("`1"..text)
-	local sound = SoundEffect("audio/voice_"..text..".ogg")
+	local self = TextItem(text)
+	local sound = SoundEffect("audio/"..text..".wav")
 	if sound then
 		self.onDragEnd = function()
 			sound:play()
@@ -305,7 +305,7 @@ function FlowLayout(w, indent)
 	if w == nil then w = 0 end
 	if indent==nil then indent = 0 end
   local self = CompositeItem()
-  self.width = w
+	self.width = w
   
 	local old_width = w					-- need it when resizing
   local items     = {}		-- array
@@ -615,80 +615,124 @@ CompositeItem = function(...)
 		self:requestLayOut(self)
 	end
 	
-	local adjust_dependents			-- for recursion
-	adjust_dependents = function(nurse)
-		if links[nurse]==nil then return end
-
-		for _,link in ipairs(links[nurse]) do
-			local patient = link.patient
-			assert(patient.parent==nurse or nurse.parent==patient or patient.parent==nurse.parent)
-				-- both nils or both non-nils!
-			assert(((link.nx==nil) == (link.px==nil)) and ((link.ny==nil) == (link.py==nil)))
-			-- TODO: Bad to create two identical parts for x and y...
-						
-			if link.nx ~= nil then
-			local tx = nurse.left+nurse.width*link.nx + link.dx		-- target
-				if patient.parent==nurse then tx=tx-nurse.left end	-- left=0 if i am parent
-			-- if 0
-			if link.px==0 then
-				assert(nurse.parent~=patient)				-- left edje of parent cannot depend on child
-				if patient.right - tx >= 0 then patient.width = patient.right - tx end
-				patient.x = patient.x + (tx-patient.left)
-			-- if 1
-			elseif link.px==1 then
-				if nurse.parent~=patient then
-					if tx - patient.left >= 0 then patient.width = tx - patient.left end
-					patient.x = patient.x + (tx-patient.right)
-				else
-					if tx >=0 then patient.width = tx end
-				end
-			-- else just move
-			else
-				assert(nurse.parent~=patient)												-- parent pos cannot depend on child
-				local sx = patient.left+patient.width*link.px				-- source			
-				patient.x = patient.x + (tx-sx)
+	--local adjust_dependents			-- for recursion
+	adjust_link = function(nurse, link)
+		local max_delta = 0
+	
+		local patient = link.patient
+		assert(patient.parent==nurse or nurse.parent==patient or patient.parent==nurse.parent)
+			-- both nils or both non-nils!
+		assert(((link.nx==nil) == (link.px==nil)) and ((link.ny==nil) == (link.py==nil)))
+		-- TODO: Bad to create two identical parts for x and y...
+					
+		if link.nx ~= nil then
+		local tx = nurse.left+nurse.width*link.nx + link.dx		-- target
+			if patient.parent==nurse then tx=tx-nurse.left end	-- left=0 if i am parent
+		-- if 0
+		if link.px==0 then
+			assert(nurse.parent~=patient)				-- left edje of parent cannot depend on child
+			if patient.right - tx >= 0 then
+				local delta = (patient.right - tx - patient.width)
+				if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
+				patient.width = patient.width + delta/10
 			end
-			end -- if nx ~= nil
-			
-			if link.ny ~= nil then
-			local ty = nurse.top+nurse.height*link.ny + link.dy		-- target
-				if patient.parent==nurse then ty=ty-nurse.top end	-- left=0 if i am parent
-			-- if 0
-			if link.py==0 then
-				assert(nurse.parent~=patient)				-- left edje of parent cannot depend on child
-				if patient.bottom - ty >= 0 then patient.height = patient.bottom - ty end
-				patient.y = patient.y + (ty-patient.top)
-			-- if 1
-			elseif link.py==1 then
-				if nurse.parent~=patient then
-					if ty - patient.top >= 0 then patient.height = ty - patient.top end
-					patient.y = patient.y + (ty-patient.bottom)
-				else
-					if ty >=0 then patient.height = ty end
+			local delta = (tx-patient.left)
+			if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
+			patient.x = patient.x + delta/10
+		-- if 1
+		elseif link.px==1 then
+			if nurse.parent~=patient then
+				if tx - patient.left >= 0 then
+					local delta = (tx - patient.left - patient.width)
+					if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
+					patient.width = patient.width + delta/10
 				end
-			-- else just move
+				patient.x = patient.x + (tx-patient.right)/10
 			else
-				assert(nurse.parent~=patient)												-- parent pos cannot depend on child
-				local sy = patient.top+patient.height*link.py				-- source			
-				patient.y = patient.y + (ty-sy)
+				if tx >=0 then
+					local delta = (tx-patient.width)
+					if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
+					patient.width = patient.width + delta/10
+				end
 			end
-			end -- if link.ny ~= nil
-			
-			-- recurse!
-			adjust_dependents(patient)
-		end -- for
+		-- else just move
+		else
+			assert(nurse.parent~=patient)												-- parent pos cannot depend on child
+			local sx = patient.left+patient.width*link.px				-- source			
+			local delta = (tx-sx)
+			if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
+			patient.x = patient.x + delta/10
+		end
+		end -- if nx ~= nil
+		
+		if link.ny ~= nil then
+		local ty = nurse.top+nurse.height*link.ny + link.dy		-- target
+			if patient.parent==nurse then ty=ty-nurse.top end	-- left=0 if i am parent
+		-- if 0
+		if link.py==0 then
+			assert(nurse.parent~=patient)				-- left edje of parent cannot depend on child
+			if patient.bottom - ty >= 0 then
+				local delta = (patient.bottom - ty - patient.height)
+				if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
+				patient.height = patient.height + delta/10
+			end
+			local delta = (ty-patient.top)
+			if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
+			patient.y = patient.y + (ty-patient.top)/10
+		-- if 1
+		elseif link.py==1 then
+			if nurse.parent~=patient then
+				if ty - patient.top >= 0 then
+					local delta = (ty - patient.top - patient.height)
+					if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
+					patient.height = patient.height + delta/10
+				end
+				local delta = (ty-patient.bottom)
+				if math.abs(delta) > max_delta then max_delta = math.abs(delta) end				
+				patient.y = patient.y + delta/10
+			else
+				if ty >=0 then
+					local delta = (ty-patient.height)
+					if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
+					patient.height = patient.height + delta/10
+				end
+			end
+		-- else just move
+		else
+			assert(nurse.parent~=patient)												-- parent pos cannot depend on child
+			local sy = patient.top+patient.height*link.py				-- source			
+			local delta = (ty-sy)
+			if math.abs(delta) > max_delta then max_delta = math.abs(delta) end			
+			patient.y = patient.y + delta/10
+		end
+		end -- if link.ny ~= nil
+		
+		-- recurse!
+		--adjust_dependents(patient)
+		
+		return max_delta
 	end -- adjust_dependents
 	
 	self.onRequestLayOut = function()
-		-- adjust those who explicitly depend on me
-		adjust_dependents(self)
-		-- adjust those who just have x,y
-		local children = self.children
-		for ch in pairs(children) do
-			if ch.text~=nil then
-			end
-			if depends_cnt[ch]==nil or depends_cnt[ch]==0 then adjust_dependents(ch) end
-		end -- for
+		local max_delta
+		repeat
+			max_delta = 0
+			for nurse,nurse_links in pairs(links) do
+				for i,link in ipairs(nurse_links) do
+					delta = adjust_link(nurse, link)
+					if delta > max_delta then max_delta = delta end
+				end
+			end -- for nurses
+			print(max_delta)
+		until max_delta < 0.5
+	
+		-- -- adjust those who explicitly depend on me
+		-- adjust_dependents(self)
+		-- -- adjust those who just have x,y
+		-- local children = self.children
+		-- for ch in pairs(children) do
+			-- if depends_cnt[ch]==nil or depends_cnt[ch]==0 then adjust_dependents(ch) end
+		-- end -- for
 	end
 	
 	return self

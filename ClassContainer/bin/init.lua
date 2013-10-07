@@ -1,6 +1,6 @@
-it = TextInputItem(200,0)
-root:add(it)
-it.x, it.y = 100, 20
+-- it = TextInputItem(200,0)
+-- root:add(it)
+-- it.x, it.y = 100, 20
 
 -- all "test_XXX.lua" scripts create global variable "scene"
 -- and add its contents to root
@@ -11,6 +11,15 @@ local test_input, test_basket, test_buttons, test_explain_rel, test_baloons, tes
 
 test_input = function()
 	dofile("test_input.lua")
+	scene.onFinish = function()
+		scene.visible = false
+		root:remove(scene)
+		test_explain_rel()
+	end
+end
+
+test_explain_rel = function()
+	dofile("test_explain_rel.lua")
 	scene.onFinish = function()
 		scene.visible = false
 		root:remove(scene)
@@ -29,15 +38,6 @@ end
 
 test_buttons = function()
 	dofile("test_buttons.lua")
-	scene.onFinish = function()
-		scene.visible = false
-		root:remove(scene)
-		test_explain_rel()
-	end
-end
-
-test_explain_rel = function()
-	dofile("test_explain_rel.lua")
 	scene.onFinish = function()
 		scene.visible = false
 		root:remove(scene)
@@ -64,5 +64,6 @@ test_mosaic = function()
 end
 
 -- run it!
+--test_explain_rel()
 test_input()
 --test_mosaic()

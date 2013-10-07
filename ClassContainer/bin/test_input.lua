@@ -36,4 +36,4 @@ scene.columns[3]
 	:add{"bat", 1}
 	:add{"hat", 7}
 
---scene.debugDrawBox = true	
+scene.columns[1].debugDrawBox = true	
