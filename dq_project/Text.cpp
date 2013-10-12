@@ -52,6 +52,7 @@ void LuaText::luabind(lua_State* L){
 			.property("height", &LuaText::getHeight)
 			.property("text", &LuaText::getText, &LuaText::setText)
 			.property("font", &LuaText::getFont, &LuaText::setFont)
+			.property("scale", &LuaText::getScale, &LuaText::setScale)
 	];	
 }
 
@@ -61,15 +62,15 @@ public:
 	LuaStairsProfile(const StairsProfile& p)
 		:StairsProfile(p){}
 
-	int at(int x1, int w) const{
+	int at(float x1, float w) const{
 		return (*this)(x1, w);
 	}
 
-	void add(int w){
+	void add(float w){
 		(*this) += w;
 	}
 
-	LuaStairsProfile shifted(int dx) const{
+	LuaStairsProfile shifted(float dx) const{
 		return LuaStairsProfile(StairsProfile::shifted(dx));
 	}
 };
@@ -115,6 +116,7 @@ void LuaTextBox::luabind(lua_State* L){
 			.property("height", &LuaTextBox::getHeight)
 			.property("text", &LuaTextBox::getText, &LuaTextBox::setText)
 			.property("font", &LuaTextBox::getFont, &LuaTextBox::setFont)
+			.property("scale", &LuaTextBox::getScale, &LuaTextBox::setScale)
 			.property("firstLineDecrement", &LuaTextBox::getFirstLineDecrement, &LuaTextBox::setFirstLineDecrement)
 			.property("lastLineEndX", &LuaTextBox::getLastLineEndX)
 			.property("lastLineEndY", &LuaTextBox::getLastLineEndY)

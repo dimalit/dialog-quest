@@ -20,6 +20,7 @@ ScreenItem::ScreenItem()
 	entity = new Entity("ScreenItem");
 	setVisible(1);
 
+	setWidth(20.0f); setHeight(20.0f);			// for convergence
 	setHotSpotRelativeX(0.5f);
 	setHotSpotRelativeY(0.5f);
 	setX(0); setY(0);
@@ -113,6 +114,27 @@ void ScreenItem::setAbsoluteY(float gy){
 	}
 }
 
+float ScreenItem::getAbsoluteLeft() const {
+	if(!parent_item)
+		return getLeft();
+	return parent_item->getAbsoluteLeft() + getLeft();
+}
+float ScreenItem::getAbsoluteRight() const {
+	if(!parent_item)
+		return getRight();
+	return parent_item->getAbsoluteLeft() + getRight();
+}
+float ScreenItem::getAbsoluteTop() const {
+	if(!parent_item)
+		return getTop();
+	return parent_item->getAbsoluteTop() + getTop();
+}
+float ScreenItem::getAbsoluteBottom() const {
+	if(!parent_item)
+		return getBottom();
+	return parent_item->getAbsoluteTop() + getBottom();
+}
+
 bool ScreenItem::getReallyVisible() const {
 		bool p = true;
 		if(getParent())
@@ -139,7 +161,7 @@ void ScreenItem::OnSizeChange(Variant* /*NULL*/){
 	entity->GetVar("pos2d")->Set(pos.x-dx, pos.y-dy);
 
 	if(getParent())
-		getParent()->requestLayOut(this);
+		getParent()->requestLayOut();
 }
 
 void ScreenItem::onMove(Variant* /*NULL*/){
@@ -148,9 +170,16 @@ void ScreenItem::onMove(Variant* /*NULL*/){
 }
 
 CompositeItem::CompositeItem():ScreenItem(){
+	need_lay_out = true;
+	need_lay_out_children = true;
 	// we need to render visibility for children
 	entity->OnFilterAdd();
 	entity->GetFunction("FilterOnRender")->sig_function.connect(boost::bind(&CompositeItem::FilterOnRender, this, _1));
+}
+
+void CompositeItem::doLayOutIfNeeded(){
+	lay_out_children();
+	need_lay_out = false;
 }
 
 SimpleItem::SimpleItem()
