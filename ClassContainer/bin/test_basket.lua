@@ -16,4 +16,6 @@ scene:addRightWords{"Alpha", "Beta", "Gamma"}
 scene:addLeftWords{"A", "B", "C", "D"}
 --scene:addDummyWords{"Á", "Ö"}
 
-scene:placeWordsRandomly()
+scene.afterLayOut = function(self)
+	scene:placeWordsRandomly()
+end

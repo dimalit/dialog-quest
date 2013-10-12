@@ -327,11 +327,15 @@ void App::Update()
 void App::Draw()
 {
 	PROFILE_FUNC();
+
+//	std::cout << "begin render" << std::endl;
 	PrepareForGL();
 //	glClearColor(0.6,0.6,0.6,1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	BaseApp::Draw();
+	//root_item()->print_need_lay_out();
+	//std::cout << "end render" << std::endl;
 }
 
 void App::OnEnterBackground()

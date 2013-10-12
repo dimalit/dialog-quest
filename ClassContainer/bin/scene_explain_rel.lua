@@ -6,6 +6,7 @@ setmetatable(Explain, {})
 getmetatable(Explain).__call = function(_,conf)
   if conf == nil then conf = {} end
 	local self = CompositeItem()
+	self.id = "scene"
 	self.width = screen_width - Explain.margin*2
 	self.height = screen_height - Explain.margin*2
 	self.rel_hpx, self.rel_hpy = 0, 0
@@ -22,13 +23,17 @@ getmetatable(Explain).__call = function(_,conf)
 	self.title.x = self.width / 2
 	
 	self.content = CompositeItem()
+	-- HACK: 600 prevents FlowLayout inside to overflow
+	-- should remove it nicely!
+	self.content.width = 600
+	self.content.id = "content"
 --	self.content.rel_hpy = 0
 --	self.content:rel_y(Explain.paragraph_interval)
 	self:add(self.content)
 --	self.content:setLocationOrigin(self.title, 0.5, 1)
 	self:link(self.content, 0, nil, self, 0, nil)
 	self:link(self.content, 1, nil, self, 1, nil)
-	self:link(self.content, nil, 0, self.title, nil, 1, 0, Explain.paragraph_interval)	
+	self:link(self.content, nil, 0, self.title, nil, 1, 0, Explain.paragraph_interval)
 	
 	-- old_request = self.content.onRequestLayOut
 	-- self.content.onRequestLayOut = function(...)	-- resize to fit all

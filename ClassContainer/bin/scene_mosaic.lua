@@ -134,8 +134,6 @@ getmetatable(Mosaic).__call = function(_,conf)
   return self
 end -- Mosaic()
 
-
-
 Mosaic.Task = {}
 setmetatable(Mosaic.Task, {})
 getmetatable(Mosaic.Task).__call = function(_, task)

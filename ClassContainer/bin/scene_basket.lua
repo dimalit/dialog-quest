@@ -99,9 +99,16 @@ getmetatable(Basket).__call = function(_,conf)
 	
 		local total_h = bottom_side.bottom - left_side.top
 		local bot = total_h * Basket.bottom_ratio
-		bottom_side.height = bot
-		left_side.height = total_h - bot
-		right_side.height = total_h - bot
+		-- HACK: if not check this - hangs :(
+		if math.abs(bottom_side.height - bot) >= 0.5 then
+			bottom_side.height = bot
+			left_side.height = total_h - bot
+			right_side.height = total_h - bot
+		end
+		
+		if self.afterLayOut and #left_side.items==0 and #right_side.items==0 then
+			self:afterLayOut()
+		end
 	end
 	
 	local words = {
@@ -223,9 +230,3 @@ WordsPlacement.__init = function(self)
 	
 	return self
 end
-
--- THINK: When comtainer changes size, what will be first: onRequestLayOut or children get their signals?
-
--- THINK: What layout relations between elements we need? (see title/side etc..)
-
--- TODO: Link not element positions but their borders and corners!?

@@ -93,7 +93,6 @@ class LuaCompositeItem: public LuaScreenItem, public CompositeItem{
 public:
 	bool operator == (LuaScreenItem&){return false;}
 	LuaCompositeItem():CompositeItem(), LuaScreenItem(), ScreenItem(){
-		request_layout_is_running = false;
 	}
 	static void luabind(lua_State* L);
 
@@ -106,14 +105,11 @@ public:
 		CompositeItem::remove(child);
 		return this;
 	}
-
-	virtual void requestLayOut(ScreenItem* child);
-	virtual void requestLayOut(luabind::object child);
 private:
-	bool request_layout_is_running;
-	luabind::object onRequestLayOut_cb;
 	LuaCompositeItem(const LuaCompositeItem&):CompositeItem(){assert(false);}
 	LuaCompositeItem& operator=(const LuaCompositeItem&){assert(false);}
+	luabind::object onRequestLayOut_cb;
+	virtual void doLayOutIfNeeded();
 };
 
 class CompositeItem;

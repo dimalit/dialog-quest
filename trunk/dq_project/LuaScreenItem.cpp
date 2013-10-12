@@ -11,12 +11,17 @@
 CompositeItem* root_item(){
 	static LuaCompositeItem* root = 0;
 	if(!root){
-	root = new LuaCompositeItem();
-	root->setHotSpotRelativeX(0.0f);
-	root->setHotSpotRelativeY(0.0f);
+		root = new LuaCompositeItem();
+		root->setHotSpotRelativeX(0.0f);
+		root->setHotSpotRelativeY(0.0f);
 		Entity* e = new Entity("root");
 		AddFocusIfNeeded(e);
 		root->acquireEntity(e);
+
+		// do layout from root before render
+		GetBaseApp()->m_sig_render.connect(
+			boost::bind(std::mem_fun(&CompositeItem::doLayOutIfNeeded), root_item()),			
+			boost::signals::at_front);
 	}
 	return root;
 }
@@ -28,6 +33,38 @@ LuaCompositeItem* LuaScreenItem::getParent(){
 	LuaCompositeItem* ret = dynamic_cast<LuaCompositeItem*>(ScreenItem::getParent());
 	assert(ret || !ScreenItem::getParent());		// should be convertible! (or null)
 	return ret;
+}
+
+void LuaCompositeItem::doLayOutIfNeeded(){
+	//static int level = -1;
+	//level++;
+	//for(int i=0; i<level; i++)
+	//	std::cout << '\t';
+	//std::cout << this << std::endl;
+
+	// recurse even is WE don't need to re-layout
+	lay_out_children();				// recurse (grow children)
+
+	// TODO: even two branches of recursion can lead to bad asymptotic behavior!
+	// separate extending and shrinking containers!
+	if(need_lay_out && onRequestLayOut_cb){			// lay
+		while(need_lay_out){		
+				need_lay_out = false;
+				luabind::call_function<void>(onRequestLayOut_cb, this);			// this maay raise need_lay_out again!			
+		}// while
+
+		lay_out_children();			// recurse (lay fixed children)
+	}//if
+	else
+		need_lay_out = false;				// if no user layout handler
+	
+	assert(!need_lay_out);					// last time children must not grow!
+
+	//if(this == root_item()){
+	//	std::cout << "Root layout status:\n";
+	//	root_item()->print_need_lay_out();
+	//}
+	//level--;
 }
 
 //LuaCompositeItem* LuaCompositeItem::add(luabind::object child){
@@ -61,25 +98,6 @@ LuaCompositeItem* LuaScreenItem::getParent(){
 //		CompositeItem::remove(luabinded_base);
 //	return this;
 //}
-
-void LuaCompositeItem::requestLayOut(ScreenItem* child){
-	// Prevent deep recursion
-	if(request_layout_is_running)
-		return;
-	request_layout_is_running = true;
-	if(onRequestLayOut_cb)
-		luabind::call_function<void>(onRequestLayOut_cb, this, child);
-	request_layout_is_running = false;
-}
-void LuaCompositeItem::requestLayOut(luabind::object child){
-	// Prevent deep recursion
-	if(request_layout_is_running)
-		return;
-	request_layout_is_running = true;
-	if(onRequestLayOut_cb)
-		luabind::call_function<void>(onRequestLayOut_cb, this, child);
-	request_layout_is_running = false;
-}
 
 ///////////////////// WRAPPERS //////////////////////////
 // used to derive from ScreenItem in Lua
@@ -124,6 +142,12 @@ void LuaScreenItem::luabind(lua_State* L){
 		.property("bottom", &LuaScreenItem::getBottom)
 		.property("left", &LuaScreenItem::getLeft)
 		.property("right", &LuaScreenItem::getRight)
+		
+		.property("gtop", &LuaScreenItem::getAbsoluteTop)
+		.property("gbottom", &LuaScreenItem::getAbsoluteBottom)
+		.property("gleft", &LuaScreenItem::getAbsoluteLeft)
+		.property("gright", &LuaScreenItem::getAbsoluteRight)
+
 		.property("hpx", &LuaScreenItem::getHotSpotX)
 		.property("hpy", &LuaScreenItem::getHotSpotY)
 
@@ -162,8 +186,8 @@ void LuaCompositeItem::luabind(lua_State* L){
 		.def("remove", (LuaCompositeItem* (LuaCompositeItem::*)(LuaScreenItem*))&LuaCompositeItem::remove)
 //		.def("remove", (LuaCompositeItem* (LuaCompositeItem::*)(luabind::object))&LuaCompositeItem::remove)
 		.def_readwrite("onRequestLayOut", &LuaCompositeItem::onRequestLayOut_cb)
-		.def("requestLayOut", (void (LuaCompositeItem::*)(ScreenItem*))&LuaCompositeItem::requestLayOut)
-		.def("requestLayOut", (void (LuaCompositeItem::*)(luabind::object))&LuaCompositeItem::requestLayOut)
+		.def("requestLayOut", &LuaCompositeItem::requestLayOut)
+		.def_readwrite("need_lay_out", &LuaCompositeItem::need_lay_out)
 
 		.def(luabind::self == luabind::other<LuaScreenItem&>())				// remove operator ==
 	];

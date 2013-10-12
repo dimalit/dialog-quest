@@ -37,11 +37,11 @@ void TextBoxRenderComponent::OnAdd(Entity *pEnt)
 	m_pTextAlignment = &GetVarWithDefault("textAlignment", (uint32)ALIGNMENT_UPPER_LEFT)->GetUINT32();
 	GetVar("textAlignment")->GetSigOnChanged()->connect(1, boost::bind(&TextBoxRenderComponent::OnTextAlignmentChanged, this, _1));
 
-	m_pFirstLineDecrement = &GetVarWithDefault("firstLineDecrement", Variant(uint32(0)))->GetUINT32();
+	m_pFirstLineDecrement = &GetVarWithDefault("firstLineDecrement", Variant(0.0f))->GetFloat();
 	GetVar("firstLineDecrement")->GetSigOnChanged()->connect(1, boost::bind(&TextBoxRenderComponent::OnTextChanged, this, _1));
 
-	m_pLastLineEndX = &GetVarWithDefault("lastLineEndX", Variant(uint32(0)))->GetUINT32();
-	m_pLastLineEndY = &GetVarWithDefault("lastLineEndY", Variant(uint32(0)))->GetUINT32();
+	m_pLastLineEndX = &GetVarWithDefault("lastLineEndX", Variant(0.0f))->GetFloat();
+	m_pLastLineEndY = &GetVarWithDefault("lastLineEndY", Variant(0.0f))->GetFloat();
 
 	m_pText = &GetVar("text")->GetString(); //local to us
 	GetVar("text")->GetSigOnChanged()->connect(1, boost::bind(&TextBoxRenderComponent::OnTextChanged, this, _1));
@@ -73,17 +73,17 @@ void TextBoxRenderComponent::OnTextChanged(Variant *pDataObject)
 	m_typeTimer = GetTick(eTimingSystem(*m_pTimingSystem));
 	m_lastLineRendered = 0;
 	m_lastCharRendered = 0;
-	int H = GetBaseApp()->GetFont(eFont(*m_pFontID))->GetLineHeight(*m_pFontScale);
+	float H = GetBaseApp()->GetFont(eFont(*m_pFontID))->GetLineHeight(*m_pFontScale);
 	GetVar("totalHeightInPixels")->Set(float(m_lines.size()*H));
 	GetVar("totalLines")->Set(uint32(m_lines.size()));
 	m_pSize2d->y = GetVar("totalHeightInPixels")->GetFloat();
 
-	int last_line_width = m_pEnclosedSize2d->x;
-	int last_line_y = m_pEnclosedSize2d->y - H;
+	float last_line_width = m_pEnclosedSize2d->x;
+	float last_line_y = m_pEnclosedSize2d->y - H;
 	if(m_lines.size() > 1)								  
 		last_line_width = GetBaseApp()->GetFont(eFont(*m_pFontID))->MeasureText(*(m_lines.end()-1), *m_pFontScale).x;
-	GetVar("lastLineEndX")->Set(uint32(last_line_width + left_obstacles(last_line_y, H)));
-	GetVar("lastLineEndY")->Set(uint32(last_line_y));
+	GetVar("lastLineEndX")->Set(float(last_line_width + left_obstacles(last_line_y, H)));
+	GetVar("lastLineEndY")->Set(float(last_line_y));
 
 	if (GetParent())
 	{

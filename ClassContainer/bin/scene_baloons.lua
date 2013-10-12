@@ -200,11 +200,14 @@ Baloons.mover_image = "interface/flask.rttex"
 
 Baloons.Baloon = function(text)
 	local self = CompositeItem()
+	
 	local oimage = ImageItem(Baloons.mover_image)
 		self.width, self.height = oimage.width, oimage.height
 		oimage.rel_hpx, oimage.rel_hpy = 0, 0
+		oimage.x, oimage.y = 0, 0
 	local otext  = TextItem(text)
 		otext.x, otext.y = self.width/2, self.height/2
+		
 	self.oimage = oimage
 	self.otext = otext
 	self:add(oimage):add(otext)

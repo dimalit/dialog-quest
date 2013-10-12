@@ -928,7 +928,7 @@ int RTFont::CountCharsThatFitX( float sizeX, const string &text, float scale /*=
 	return text.size(); //they all fit
 }
 
-StairsProfile StairsProfile::shifted(int dx) const {
+StairsProfile StairsProfile::shifted(float dx) const {
 	StairsProfile ret = *this;
 	for(int i=0; i<ret.vx.size(); i++)
 		ret.vx[i] += dx;
@@ -936,7 +936,7 @@ StairsProfile StairsProfile::shifted(int dx) const {
 }
 
 // ret -1 if left of all
-int StairsProfile::interval_with_x(int x) const {
+int StairsProfile::interval_with_x(float x) const {
 	int i;
 	for(i=vx.size()-1; i>=0; i--){
 		if(vx[i]<=x)
@@ -945,7 +945,7 @@ int StairsProfile::interval_with_x(int x) const {
 	return i;
 }
 
-int StairsProfile::operator()(int x, int w) const {
+int StairsProfile::operator()(float x, float w) const {
 	int i1 = interval_with_x(x);
 	int i2 = interval_with_x(x+w-1);
 	int max = 0;					  
@@ -956,13 +956,13 @@ int StairsProfile::operator()(int x, int w) const {
 	return max;
 }
 
-void StairsProfile::operator+=(int w){
+void StairsProfile::operator+=(float w){
 	if(w==0)return;
 	for(int i=0; i<vy.size(); i++)
 		vy[i] += w;
 }
 
-int StairsProfile::operator()(int x) const {
+int StairsProfile::operator()(float x) const {
 	// find interval with our x
 	int i = interval_with_x(x);
 
@@ -975,7 +975,7 @@ int StairsProfile::operator()(int x) const {
 
 // TODO Test StairsProfile
 // TODO How to write it more convenient and obvious?
-void StairsProfile::setInterval(int x1, int w, int val){
+void StairsProfile::setInterval(float x1, float w, float val){
 	assert(w > 0 && val >= 0);
 	// left - insert next after found
 	int i1 = interval_with_x(x1);
@@ -984,7 +984,7 @@ void StairsProfile::setInterval(int x1, int w, int val){
 
 	// right - back
 	int i2 = interval_with_x(x1+w);		// here will be old value
-	int oldval;
+	float oldval;
 	if(i2==i1+1 && i1>=0)				// use prev if same as left
 		oldval = vy[i1];
 	else if(i1 < 0)

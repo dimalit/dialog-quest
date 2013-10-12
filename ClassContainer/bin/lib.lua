@@ -373,7 +373,7 @@ function FlowLayout(w, indent)
 		table.insert(items, item)
 		-- HACK: this sould be called automatically:
 		-- BUG:
-		self:requestLayOut(item)
+		self:requestLayOut()
 		return self
   end
   
@@ -441,7 +441,7 @@ function FrameItem(name, w, h)
 	self.tex = tex
 	
 	-- will be called on resize
-	self.onRequestLayOut = function(_, child)
+	self.onRequestLayOut = function(_)
 		tex.bl.height = self.height-8
 		tex.br.height = self.height-8
 		tex.bt.width  = self.width-8
@@ -465,7 +465,7 @@ function FrameItem(name, w, h)
 		tex.bb.rel_hpy = 1
 			tex.bb.x, tex.bb.y = self.width/2, self.height	
 	end
-	self:onRequestLayOut(self)
+	self:onRequestLayOut()
   
   return self
 end
@@ -593,13 +593,13 @@ CompositeItem = function(...)
 	local self = old_CompositeItem(unpack(arg))
 	
 	-- add our own stuff
-	local links = {}				-- key=nurse, val=array of link_obj
-	local depends_cnt = {}	-- key=child if it has nurse, used to find independent nurses
+	local links = {}				-- array of link_obj
 	
 	self.link = function(_, patient, px, py, nurse, nx, ny, dx, dy)
 		if dx == nil then dx = 0 end
 		if dy == nil then dy = 0 end
 		link_obj = {
+			nurse = nurse,
 			patient = patient,
 			px = px,
 			py = py,
@@ -608,17 +608,16 @@ CompositeItem = function(...)
 			dx = dx,
 			dy = dy
 		}
-		if links[nurse] == nil then links[nurse]={} end
-		table.insert(links[nurse],link_obj)
-		if depends_cnt[patient]==nil then depends_cnt[patient]=0 end
-		depends_cnt[patient] = depends_cnt[patient] + 1
-		self:requestLayOut(self)
+		table.insert(links,link_obj)
+		self:requestLayOut()
 	end
 	
+	-- TODO: think again about "growing" and "shrinking" containers as in GTK
 	--local adjust_dependents			-- for recursion
-	adjust_link = function(nurse, link)
+	adjust_link = function(link)
 		local max_delta = 0
 	
+		local nurse = link.nurse
 		local patient = link.patient
 		assert(patient.parent==nurse or nurse.parent==patient or patient.parent==nurse.parent)
 			-- both nils or both non-nils!
@@ -627,32 +626,37 @@ CompositeItem = function(...)
 					
 		if link.nx ~= nil then
 		local tx = nurse.left+nurse.width*link.nx + link.dx		-- target
+			-- if nurse.id=="content" then print("nurse tx", nurse.left, nurse.width, link.nx, link.dx) end
+			-- if patient.id=="content" then print("patient tx", nurse.left, nurse.width, link.nx, link.dx) end
 			if patient.parent==nurse then tx=tx-nurse.left end	-- left=0 if i am parent
 		-- if 0
 		if link.px==0 then
 			assert(nurse.parent~=patient)				-- left edje of parent cannot depend on child
-			if patient.right - tx >= 0 then
-				local delta = (patient.right - tx - patient.width)
-				if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
-				patient.width = patient.width + delta/10
-			end
+			-- if patient.right - tx >= 0 then
+				-- local delta = (patient.right - tx - patient.width)
+				-- if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
+				-- patient.width = patient.width + delta/4
+				-- if patient.drop=="drop" then print(debug.traceback("", 1)) end
+			-- end
 			local delta = (tx-patient.left)
 			if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
-			patient.x = patient.x + delta/10
+			patient.x = patient.x + delta/4
 		-- if 1
 		elseif link.px==1 then
 			if nurse.parent~=patient then
 				if tx - patient.left >= 0 then
 					local delta = (tx - patient.left - patient.width)
 					if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
-					patient.width = patient.width + delta/10
+					patient.width = patient.width + delta/4
 				end
-				patient.x = patient.x + (tx-patient.right)/10
+				local delta = (tx-patient.right)
+				if math.abs(delta) > max_delta then max_delta = math.abs(delta) end				
+				patient.x = patient.x + delta/4
 			else
 				if tx >=0 then
 					local delta = (tx-patient.width)
 					if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
-					patient.width = patient.width + delta/10
+					patient.width = patient.width + delta/4
 				end
 			end
 		-- else just move
@@ -661,7 +665,7 @@ CompositeItem = function(...)
 			local sx = patient.left+patient.width*link.px				-- source			
 			local delta = (tx-sx)
 			if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
-			patient.x = patient.x + delta/10
+			patient.x = patient.x + delta/4
 		end
 		end -- if nx ~= nil
 		
@@ -671,30 +675,30 @@ CompositeItem = function(...)
 		-- if 0
 		if link.py==0 then
 			assert(nurse.parent~=patient)				-- left edje of parent cannot depend on child
-			if patient.bottom - ty >= 0 then
-				local delta = (patient.bottom - ty - patient.height)
-				if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
-				patient.height = patient.height + delta/10
-			end
+			-- if patient.bottom - ty >= 0 then
+				-- local delta = (patient.bottom - ty - patient.height)
+				-- if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
+				-- patient.height = patient.height + delta/4
+			-- end
 			local delta = (ty-patient.top)
 			if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
-			patient.y = patient.y + (ty-patient.top)/10
+			patient.y = patient.y + delta/4
 		-- if 1
 		elseif link.py==1 then
 			if nurse.parent~=patient then
 				if ty - patient.top >= 0 then
 					local delta = (ty - patient.top - patient.height)
 					if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
-					patient.height = patient.height + delta/10
+					patient.height = patient.height + delta/4
 				end
 				local delta = (ty-patient.bottom)
 				if math.abs(delta) > max_delta then max_delta = math.abs(delta) end				
-				patient.y = patient.y + delta/10
+				patient.y = patient.y + delta/4
 			else
 				if ty >=0 then
 					local delta = (ty-patient.height)
 					if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
-					patient.height = patient.height + delta/10
+					patient.height = patient.height + delta/4
 				end
 			end
 		-- else just move
@@ -703,7 +707,7 @@ CompositeItem = function(...)
 			local sy = patient.top+patient.height*link.py				-- source			
 			local delta = (ty-sy)
 			if math.abs(delta) > max_delta then max_delta = math.abs(delta) end			
-			patient.y = patient.y + delta/10
+			patient.y = patient.y + delta/4
 		end
 		end -- if link.ny ~= nil
 		
@@ -714,25 +718,24 @@ CompositeItem = function(...)
 	end -- adjust_dependents
 	
 	self.onRequestLayOut = function()
+--		print ("laying out", self.id)
 		local max_delta
+		local cnt = 0
 		repeat
+			cnt = cnt + 1
 			max_delta = 0
-			for nurse,nurse_links in pairs(links) do
-				for i,link in ipairs(nurse_links) do
-					delta = adjust_link(nurse, link)
-					if delta > max_delta then max_delta = delta end
-				end
-			end -- for nurses
-			print(max_delta)
+			for i,link in ipairs(links) do
+				delta = adjust_link(link)
+				if delta > max_delta then max_delta = delta end
+			end
+--			print(max_delta)
+--			if max_delta >= 0.5 then
+--				self.need_lay_out = true
+--			end
 		until max_delta < 0.5
-	
-		-- -- adjust those who explicitly depend on me
-		-- adjust_dependents(self)
-		-- -- adjust those who just have x,y
-		-- local children = self.children
-		-- for ch in pairs(children) do
-			-- if depends_cnt[ch]==nil or depends_cnt[ch]==0 then adjust_dependents(ch) end
-		-- end -- for
+		-- needed if later "manual" lay-outer moves something 
+		self.need_lay_out = false
+--		print("Iterations:", cnt)
 	end
 	
 	return self
@@ -957,7 +960,7 @@ function DropArea(item)
     local overlays = function(ax1, ax2, bx1, bx2)
       return min(bx1, bx2) < max(ax1, ax2) and max(bx1, bx2) > min(ax1, ax2)
     end
-    return overlays(r.left, r.right, item.left, item.right) and overlays(r.top, r.bottom, item.top, item.bottom)
+    return overlays(r.gleft, r.gright, item.gleft, item.gright) and overlays(r.gtop, r.gbottom, item.gtop, item.gbottom)
   end
   local dist = function(dummy, r)
       return dist(item.x, item.y, r.x, r.y)
@@ -967,6 +970,8 @@ function DropArea(item)
     if obj.drop then
       obj.drop.object = nil
     end
+		if obj.parent then obj.parent:remove(obj) end
+		item.parent:add(obj)
     -- move to new x,y
     obj.x = item.x; obj.y = item.y
     -- attach new objects to each other
@@ -1061,7 +1066,7 @@ function Mover(item)
   self.onDrag = empty
 
   item.onDragStart = function(dummy)
-	if self.flying then return end
+		if self.flying then return end
     self.ox=item.x self.oy=item.y
     if self.onDragStart then self:onDragStart() end
   end

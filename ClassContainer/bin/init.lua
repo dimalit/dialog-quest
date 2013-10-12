@@ -64,6 +64,8 @@ test_mosaic = function()
 end
 
 -- run it!
---test_explain_rel()
 test_input()
+--test_explain_rel()
+--test_basket();
+--test_baloons()
 --test_mosaic()

@@ -57,7 +57,6 @@ getmetatable(Buttons).__call = function(_,conf)
 			local top = 0
 			if #it.buttons>1 then	top = it.buttons[#it.buttons-1].bottom end
 			child.y = top + Buttons.row_interval
-			self:requestLayOut(it)
 			return it
 		end -- add
 		

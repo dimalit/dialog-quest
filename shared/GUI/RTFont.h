@@ -15,14 +15,14 @@
 
 class StairsProfile{
 public:
-	int operator()(int x) const;
-	int operator()(int x1, int width) const;
-	void operator+=(int w);
-	void setInterval(int x1, int width, int val);
-	StairsProfile shifted(int dx) const;
+	int operator()(float x) const;
+	int operator()(float x1, float width) const;
+	void operator+=(float w);
+	void setInterval(float x1, float width, float val);
+	StairsProfile shifted(float dx) const;
 private:
-	std::vector<int> vx, vy;
-	int interval_with_x(int x) const;
+	std::vector<float> vx, vy;
+	int interval_with_x(float x) const;
 };
 
 class RenderBatcher;

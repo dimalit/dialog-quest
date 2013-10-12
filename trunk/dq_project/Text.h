@@ -28,6 +28,13 @@ public:
 	void setFont(eFont f){
 		GetVar("font")->Set(uint32(f));
 	}
+	float getScale(){
+		float sx = GetParent()->GetVar("scale2d")->GetVector2().x;
+		return sx;
+	}
+	void setScale(float s){
+		GetParent()->GetVar("scale2d")->Set(s, s);
+	}
 };
 
 // TODO: Not very good from the point of view of code reuse!
@@ -63,7 +70,7 @@ public:
 		GetVar("firstLineDecrement")->Set(val);
 	}
 	float getFirstLineDecrement(){
-		return GetVar("firstLineDecrement")->GetUINT32();
+		return GetVar("firstLineDecrement")->GetFloat();
 	}
 	const StairsProfile& getLeftObstacles() const{
 		return left_obstacles;
@@ -84,6 +91,13 @@ public:
 	}
 	void setFont(eFont f){
 		GetVar("font")->Set(uint32(f));
+	}
+	float getScale(){
+		float sx = GetVar("fontScale")->GetFloat();
+		return sx;
+	}
+	void setScale(float s){
+		GetVar("fontScale")->Set(s);
 	}
 	float getLastLineEndX(){
 		return GetVar("lastLineEndX")->GetFloat();

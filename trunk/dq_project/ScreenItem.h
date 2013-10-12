@@ -151,6 +151,11 @@ public:
 		}
 		return res;
 	}
+	float getAbsoluteLeft() const;
+	float getAbsoluteRight() const;
+	float getAbsoluteTop() const;
+	float getAbsoluteBottom() const;
+
 	bool getDebugDrawBox() const;
 	void setDebugDrawBox(bool v){
 		entity->GetVar("debugDrawBox")->Set(uint32(v));
@@ -229,6 +234,27 @@ public:
 		requestLayOut();
 		return this;
 	}
+	// called by children when they change their size
+	// binded to Lua
+	void requestLayOut(){
+		need_lay_out = true;
+		// mark all parents
+		CompositeItem* i = getParent();
+		while(i){
+			i->need_lay_out_children = true;
+			i = i->getParent();
+		}
+	}
+	virtual void doLayOutIfNeeded();
+	void print_need_lay_out(int shift = 0){
+		for(int i=0; i<shift; i++)
+			std::cout << "\t";
+		std::cout << this << ": " << need_lay_out << std::endl;
+		for(std::set<ScreenItem*>::iterator i = children.begin(); i!=children.end(); ++i){
+			CompositeItem* c = dynamic_cast<CompositeItem*>(*i);
+			if(c)c->print_need_lay_out(shift+1);
+		}
+	}
 private:
 	std::set<ScreenItem*> children;
 	// used to prevent invisible Entities from rendering
@@ -236,12 +262,22 @@ private:
 		if(!entity->GetVarWithDefault("visible", uint32(1))->GetUINT32())
 			pVList->m_variant[Entity::FILTER_INDEX].Set(uint32(Entity::FILTER_REFUSE_ALL));
 	}
-	// called by children when they change their size
-	virtual void requestLayOut(ScreenItem* caller = NULL){}
 	// change MY size!
 	virtual void OnSizeChange(Variant* v){
 		ScreenItem::OnSizeChange(v);
-		requestLayOut(this);
+		requestLayOut();
+	}
+protected:
+	bool need_lay_out;
+	bool need_lay_out_children;
+	void lay_out_children(){
+		if(!need_lay_out_children)
+			return;
+		need_lay_out_children = false;
+		for(std::set<ScreenItem*>::iterator i = children.begin(); i != children.end(); ++i){
+			CompositeItem* c = dynamic_cast<CompositeItem*>(*i);
+			if(c)c->doLayOutIfNeeded();
+		}// for	
 	}
 };
 
