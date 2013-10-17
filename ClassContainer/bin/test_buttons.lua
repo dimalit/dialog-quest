@@ -2,8 +2,7 @@
 Buttons.margin = 20
 Buttons.num_columns=3
 Buttons.row_interval = 10
-Buttons.button_up_frame = "interface/frame"
-Buttons.button_down_frame = "interface/frame_glow"
+button_anim = "btn_rect.anim"
 
 scene = Buttons()
 root:add(scene)
