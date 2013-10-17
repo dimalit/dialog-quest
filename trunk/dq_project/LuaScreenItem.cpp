@@ -14,6 +14,8 @@ CompositeItem* root_item(){
 		root = new LuaCompositeItem();
 		root->setHotSpotRelativeX(0.0f);
 		root->setHotSpotRelativeY(0.0f);
+		root->setX(0.0f); root->setY(0.0f);
+
 		Entity* e = new Entity("root");
 		AddFocusIfNeeded(e);
 		root->acquireEntity(e);

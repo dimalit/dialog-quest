@@ -13,11 +13,38 @@ public:
 //	void Render(float x, float y, float rot);
 	virtual void OnAdd(Entity* e);
 	float getWidth(){
-		return GetVar("frameSize2d")->GetVector2().x;
+		if(GetParent())
+			return GetParent()->GetVar("size2d")->GetVector2().x;
+		else
+			return GetVar("frameSize2d")->GetVector2().x;
 	}
 	float getHeight(){
-		return GetVar("frameSize2d")->GetVector2().y;
+		if(GetParent())
+			return GetParent()->GetVar("size2d")->GetVector2().y;
+		else
+			return GetVar("frameSize2d")->GetVector2().y;
 	}
+	void setScaleX(float sx){
+		assert(getParent());
+		CL_Vec2f scale = GetParent()->GetVar("scale2d")->GetVector2();
+		scale.x = sx;
+		GetParent()->GetVar("scale2d")->Set(scale);
+	}
+	void setScaleY(float sy){
+		assert(getParent());
+		CL_Vec2f scale = GetParent()->GetVar("scale2d")->GetVector2();
+		scale.y = sy;
+		GetParent()->GetVar("scale2d")->Set(scale);
+	}
+	float getScaleX(){
+		assert(getParent());
+		return GetParent()->GetVar("scale2d")->GetVector2().x;
+	}
+	float getScaleY(){
+		assert(getParent());
+		return GetParent()->GetVar("scale2d")->GetVector2().y;
+	}
+
 	void setFile(std::string);
 
 private:

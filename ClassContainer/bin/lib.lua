@@ -55,7 +55,7 @@ local function inherit(...)
 				else
 					return arg[i][key]
 				end -- if func
-			end -- id not nil
+			end -- if not nil
 		end -- for parents
 	-- if not found
 	return nil
@@ -181,6 +181,8 @@ do
 	local old_root = root
 	root = CompositeItem()
 	root.width, root.height = old_root.width, old_root.height
+	root.rel_hpx, root.rel_hpy = 0, 0
+	root.x, root.y = 0, 0
 	old_root:add(root)
 end
 
@@ -188,8 +190,9 @@ end
 
 ImageItem = function(path)
   local item = SimpleItem()
-  local image = Image(path)
+  local image = Image(path)	
   item.view = image
+	
   local self = {}
   self.item = item
   setmetatable(self, inherit(item, image))
@@ -299,6 +302,95 @@ AnimatedItem = function(name)
 --  end
   
   return self
+end
+
+function TextButton(...)
+	if type(arg[1])=="table" then arg = arg[1] end				-- allow call with () too
+	local text = arg[1]
+	local image = arg[2]
+	
+	local self = CompositeItem()	
+		
+	local image_item = nil
+	if image then
+		if string.sub(image, -5) == ".anim" then
+			image_item = AnimatedItem(image)
+			self:add(image_item)
+			image_item:stop()			
+		else
+			image_item = ImageItem(image)
+			image_item.num_frames = 1					-- HACK: better add it to Image?
+			self:add(image_item)			
+		end
+	end
+
+	local text_item = TextItem(text)
+	self:add(text_item)	
+	
+	local padding = 10
+	if arg.padding then padding = arg.padding end
+	
+	local shrink = arg.shrink
+	local scaleFree = arg.scaleFree
+	
+	local old_onRequestLayOut = self.onRequestLayOut
+	self.onRequestLayOut = function(...)
+		if onRequestLayOut then onRequestLayOut(unpack(arg)) end
+	
+		local required_width = text_item.width + padding*2
+		local required_height = text_item.height + padding*2
+		
+		local kx = required_width / (image_item.width  / image_item.scaleX)
+		local ky = required_height/ (image_item.height / image_item.scaleY)
+		
+		if scaleFree then
+			local k = max(kx, ky)
+			kx = k
+			ky = k
+		end
+
+		-- scale up or scale down if enabled
+		if kx>1 or shrink then
+			-- HACK: should eliminate this e-comparison!!!
+			if math.abs(image_item.width - required_width) > 0.01 then
+				image_item.scaleX = kx
+			end
+		else
+			image_item.scaleX = 1
+		end
+		
+		if ky>1 or shrink then
+			-- HACK: should eliminate this e-comparison!!!
+			if math.abs(image_item.height - required_height) > 0.01 then
+				image_item.scaleY = ky
+			end
+		else
+			image_item.scaleY = 1
+		end		
+		
+		-- set my dimension and positions of children
+--		print("was", self.width, self.hpx, self.left)
+		self.width = image_item.width
+--		print("is", self.width, self.hpx, self.left)
+		self.height = image_item.height
+		
+		image_item.rel_hpx, image_item.rel_hpy = 0, 0
+		image_item.x, image_item.y = 0, 0
+		text_item.x, text_item.y = image_item.width/2, image_item.height/2
+	end -- onRequestLayOut
+	
+	self.onDragStart = function()
+		if image_item.num_frames > 1 then
+			image_item.frame = 1
+		end
+	end
+
+	self.onDragEnd = function()
+		image_item.frame = 0
+		if self.onClick then self:onClick() end
+	end
+	
+	return self
 end
 
 function FlowLayout(w, indent)

@@ -14,13 +14,37 @@ public:
 	void OnFrameChange(Variant* val);
 
 	// TODO Make everything const.
-	virtual float getWidth(){
-//		return frame_w;
-		return GetVar("frameSize2d")->GetVector2().x;
+	float getWidth(){
+		if(GetParent())
+			return GetParent()->GetVar("size2d")->GetVector2().x;
+		else
+			return GetVar("frameSize2d")->GetVector2().x;
 	}
-	virtual float getHeight(){
-		//return frame_h;
-		return GetVar("frameSize2d")->GetVector2().y;
+	float getHeight(){
+		if(GetParent())
+			return GetParent()->GetVar("size2d")->GetVector2().y;
+		else
+			return GetVar("frameSize2d")->GetVector2().y;
+	}
+	void setScaleX(float sx){
+		assert(getParent());
+		CL_Vec2f scale = GetParent()->GetVar("scale2d")->GetVector2();
+		scale.x = sx;
+		GetParent()->GetVar("scale2d")->Set(scale);
+	}
+	void setScaleY(float sy){
+		assert(getParent());
+		CL_Vec2f scale = GetParent()->GetVar("scale2d")->GetVector2();
+		scale.y = sy;
+		GetParent()->GetVar("scale2d")->Set(scale);
+	}
+	float getScaleX(){
+		assert(getParent());
+		return GetParent()->GetVar("scale2d")->GetVector2().x;
+	}
+	float getScaleY(){
+		assert(getParent());
+		return GetParent()->GetVar("scale2d")->GetVector2().y;
 	}
 
 	int getNumFrames(){

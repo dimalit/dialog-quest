@@ -29,10 +29,12 @@ public:
 		GetVar("font")->Set(uint32(f));
 	}
 	float getScale(){
+		assert(GetParent());
 		float sx = GetParent()->GetVar("scale2d")->GetVector2().x;
 		return sx;
 	}
 	void setScale(float s){
+		assert(GetParent());
 		GetParent()->GetVar("scale2d")->Set(s, s);
 	}
 };

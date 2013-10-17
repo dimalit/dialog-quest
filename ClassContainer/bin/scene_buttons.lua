@@ -2,8 +2,7 @@ Buttons = {
 	margin = 20,
 	num_columns = 2,
 	row_interval = 20,
-	button_up_frame = "interface/frame",
-	button_down_frame = "interface/frame_glow"
+	button_anim = "btn_rect.anim",
 }
 
 setmetatable(Buttons, {})
@@ -18,6 +17,7 @@ getmetatable(Buttons).__call = function(_,conf)
 
 	self.background = TextureItem("", screen_width, screen_height)
 	self.background.rel_hpx, self.background.rel_hpy = self.x/self.background.width, self.y/self.background.height
+	self.background.x, self.background.y = 0, 0
 	self:add(self.background)	
 	
 	self.title = TextItem("self.title")
@@ -82,25 +82,26 @@ getmetatable(Buttons).__call = function(_,conf)
 		end -- for cols
 	end
 	
-	self.agree_button_label = TextItem("Мне понятно")
+--	self.agree_button_label = TextItem("Мне понятно")
 	
-	self.agree_button = TwoStateAnimation(
-		FrameItem(Buttons.button_up_frame, self.agree_button_label.width+10, self.agree_button_label.height+10),
-		FrameItem(Buttons.button_down_frame, self.agree_button_label.width+10, self.agree_button_label.height+10)
-	)	
-	self.agree_button.x = self.width / 2
-	self.agree_button.y = self.height - self.agree_button.height/2
+	-- self.agree_button = TwoStateAnimation(
+		-- FrameItem(Buttons.button_up_frame, self.agree_button_label.width+10, self.agree_button_label.height+10),
+		-- FrameItem(Buttons.button_down_frame, self.agree_button_label.width+10, self.agree_button_label.height+10)
+	-- )	
+	self.agree_button = TextButton{"Мне понятно", Buttons.button_anim, shrink=true}
+	-- self.agree_button.x = self.width / 2
+	-- self.agree_button.y = self.height - self.agree_button.height/2
 	self:add(self.agree_button)
+	self:link(self.agree_button, 0.5, 1, self, 0.5, 1)
 	
-	self.agree_button_label.x, self.agree_button_label.y = self.agree_button.x, self.agree_button.y
-	self:add(self.agree_button_label)
+--	self.agree_button_label.x, self.agree_button_label.y = self.agree_button.x, self.agree_button.y
+--	self:add(self.agree_button_label)
 	
-	self.agree_button.onDragStart = function()
-		self.agree_button:over(true)
-	end
+	-- self.agree_button.onDragStart = function()
+		-- self.agree_button:over(true)
+	-- end
 	
-	self.agree_button.onDragEnd = function()
-		self.agree_button:over(false)
+	self.agree_button.onClick = function()
 		if self.onFinish then self:onFinish() end
 	end
 	
@@ -110,37 +111,29 @@ end
 ButtonsElement = function(button_text, label_text, sound)
 	local self = CompositeItem()
 
-	local left_label = TextItem(button_text)
+--	local left_label = TextItem(button_text)
 	local right_label = TextItem(label_text)
-	local button = TwoStateAnimation(	FrameItem(Buttons.button_up_frame, left_label.width+10, left_label.height+10),
-																		FrameItem(Buttons.button_down_frame, left_label.width+10, left_label.height+10))
+	local button = TextButton{button_text, Buttons.button_anim,  shrink=true, padding=5, freeScale=true}
+	-- local button = TwoStateAnimation(	FrameItem(Buttons.button_up_frame, left_label.width+10, left_label.height+10),
+																		-- FrameItem(Buttons.button_down_frame, left_label.width+10, left_label.height+10))
 	local sound = SoundEffect(sound)
-	self:add(button):add(left_label):add(right_label)
+--	self:add(button):add(left_label):add(right_label)
+	self:add(button):add(right_label)
 	
-	button.onDragStart = function()
-		button:over(true)
-	end
-	button.onDragEnd = function()
-		button:over(false)
+	button.onClick = function()
 		sound:play()
 	end
 
-	-- HACK
-	button.x, button.y = button.hpx, button.hpy
-	left_label.x, left_label.y = button.x, button.y
-	right_label.y = button.y
-	right_label.x = button.right + right_label.hpx
-	self.width = right_label.right
-	self.height = button.height
-
-	-- BUG: doesn't get called!!!
-	local old_onRequestLayout = self.onRequestLayout
-	self.onRequestLayout = function(_, child)
-		print("YES!")
-		if old_onRequestLayout then old_onRequestLayout(_, child) end
-		-- TODO: Here must be HACK from above
+	local old_onRequestLayOut = self.onRequestLayOut
+	self.onRequestLayOut = function(...)
+		if old_onRequestLayout then old_onRequestLayout(unpack(arg)) end
+		button.x, button.y = button.hpx, button.hpy
+	--	left_label.x, left_label.y = button.x, button.y
+		right_label.y = button.y
+		right_label.x = button.right + right_label.hpx
+		self.width = right_label.right
+		self.height = button.height
 	end
-	self:onRequestLayOut(self)
 
 	return self
 end

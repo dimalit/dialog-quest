@@ -25,6 +25,7 @@ Input = {
 	row_interval = 20,
 	drop_frame = "interface/frame",
 	drop_frame_active = "interface/frame_glow",
+	mover_bk_image = "interface/rect_bk.rttex",
 	bottom_ratio = 0.35	
 }
 
@@ -154,7 +155,7 @@ getmetatable(Input).__call = function(_,conf)
 	-- movers
 	self.addWords = function(_, words)
 		for i,w in ipairs(words) do
-			local item = take(all_drops, Mover(TextItem(w)))
+			local item = take(all_drops, Mover(TextButton{w, Input.mover_bk_image, shrink=true, freeScale=true, padding=5}))
 			self:add(item)
 			local old_handler = item.onDragEnd
 			item.onDragEnd = function(...)
@@ -205,11 +206,11 @@ InputElement = function(phonetic_text, answer)
 
 	-- invent poperties  also
 	
-	self.text = TextItem("["..phonetic_text.."]")
+	self.text = TextItem("["..phonetic_text.."]", 3)
 	self.input = TextInputItem(input_w)
 	self.drop = DropArea(TwoStateAnimation(
-																					FrameItem(Input.drop_frame, drop_w, self.input.height),
-																					FrameItem(Input.drop_frame_active, drop_w, self.input.height)
+																					FrameItem(Input.drop_frame, drop_w, 40),
+																					FrameItem(Input.drop_frame_active, drop_w, 40)
 																					)
 												)
 	self:add(self.text):add(self.input):add(self.drop)

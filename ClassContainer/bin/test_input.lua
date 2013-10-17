@@ -4,6 +4,7 @@ Input.num_columns=2
 Input.row_interval = 10
 Input.drop_frame = "interface/frame"
 Input.drop_frame_active = "interface/frame_glow"
+Input.mover_bk_image = "interface/rect_bk.rttex"
 
 scene = Input()
 root:add(scene)
@@ -25,9 +26,9 @@ scene.description
 	:addItem(VoiceTextItem("ding"))
 
 scene.columns[1]
-	:add{"man", "alpha"}
-	:add{"fat", "beta"}
-	:add{"sad", "gamma"}
+	:add{"MAN", "alpha"}
+	:add{"FAT", "beta"}
+	:add{"SxD", "gamma"}
 	
 scene.columns[2]
 	:add{"m`@a`0p", "delta"}

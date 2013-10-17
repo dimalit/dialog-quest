@@ -12,7 +12,9 @@ p1.id = "p1"
 -- default width = 0 and font = 0
 -- for phonetic we use width=0, font=3 => TextBoxItem("[x]", 0, 3) (Phonetic TM)
 p1:addItem(TextBoxItem("Буква «а» в закрытом слоге читается как ", 0, 0)):addItem(VoiceTextItem("man")):addItem(TextBoxItem(". Такого звука в русском языке нет. Это нечто среднее между русскими «а» и «э». Чтобы произнести этот звук правильно, широко раскрой рот так, будто хочешь сказать «а», и скажи «э». Звук ", 0, 0)):addItem(PhonemicItem("x")):addItem(TextBoxItem(" очень короткий, его ни в коем случае нельзя тянуть."))
-p1:addItem(ImageItem("interface/flask.rttex"))
+local im = ImageItem("interface/flask.rttex")
+im.scaleX = 1.5
+p1:addItem(im)
 scene.content:add(p1)
 --p1:setLocationOrigin(scene.content, 0.5, 0)
 --p1:setWidthOrigin(scene)
