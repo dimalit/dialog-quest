@@ -15,12 +15,14 @@ bool ScreenItem::getDebugDrawBox() const{
 ScreenItem::ScreenItem()
 	:parent_item(NULL)
 {
-	orig_width = orig_height = 0;
+	orig_width = orig_height = 0.0f;
 
 	entity = new Entity("ScreenItem");
 	setVisible(1);
 
 	setWidth(20.0f); setHeight(20.0f);			// for convergence
+	orig_width = orig_height = 20.0f;			// no handler yet!!
+
 	setHotSpotRelativeX(0.5f);
 	setHotSpotRelativeY(0.5f);
 	setX(0); setY(0);
@@ -148,8 +150,13 @@ void ScreenItem::setParent(CompositeItem* p){
 }
 
 void ScreenItem::OnSizeChange(Variant* /*NULL*/){
-	// move corner
 	CL_Vec2f new_size = entity->GetVar("size2d")->GetVector2();
+
+	// skip if the same
+	if(orig_width == new_size.x && orig_height == new_size.y)
+		return;
+
+	// move corner
 	float dx = getHotSpotRelativeX() * (new_size.x - orig_width);
 	float dy = getHotSpotRelativeY() * (new_size.y - orig_height);
 

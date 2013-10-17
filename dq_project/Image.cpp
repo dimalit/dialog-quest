@@ -49,8 +49,10 @@ void LuaImage::luabind(lua_State* L){
 	luabind::module(L) [
 		luabind::class_<LuaImage, EntityComponent>("Image")
 			.def(luabind::constructor<std::string>())
-			.property("width", &Image::getWidth)
-			.property("height", &Image::getHeight)
+			.property("width", &LuaImage::getWidth)
+			.property("height", &LuaImage::getHeight)
+			.property("scaleX", &LuaImage::getScaleX, &LuaImage::setScaleX)
+			.property("scaleY", &LuaImage::getScaleY, &LuaImage::setScaleY)
 			.def(luabind::self == luabind::other<LuaImage&>())		// remove operator ==
 	];
 }

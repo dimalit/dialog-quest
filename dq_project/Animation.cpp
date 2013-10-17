@@ -85,6 +85,8 @@ void LuaAnimation::luabind(lua_State* L){
 			.def(luabind::constructor<luabind::object>())
 			.property("width", &LuaAnimation::getWidth)
 			.property("height", &LuaAnimation::getHeight)
+			.property("scaleX", &LuaAnimation::getScaleX, &LuaAnimation::setScaleX)
+			.property("scaleY", &LuaAnimation::getScaleY, &LuaAnimation::setScaleY)
 			.property("frame", &LuaAnimation::getFrame, &LuaAnimation::setFrame)
 			.property("num_frames", &LuaAnimation::getNumFrames)
 			.property("loop", &LuaAnimation::getLoop, &LuaAnimation::setLoop)
