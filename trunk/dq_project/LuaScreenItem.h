@@ -13,8 +13,9 @@ public:
 	static void luabind(lua_State* L);
 	LuaCompositeItem* getParent();
 
-private:
+// HACK: For some reason its needed by luabind - so I left it in public
 	LuaScreenItem(const LuaScreenItem&){assert(false);}
+private:
 	LuaScreenItem& operator=(const LuaScreenItem&){assert(false);}
 
 	luabind::object getQuad(){
@@ -110,25 +111,4 @@ private:
 	LuaCompositeItem& operator=(const LuaCompositeItem&){assert(false);}
 	luabind::object onRequestLayOut_cb;
 	virtual void doLayOutIfNeeded();
-};
-
-class CompositeItem;
-
-// needs to be public!
-// error C2243: 'type cast' : conversion from 'LuaSimpleItem *' to 'ScreenItem *' exists, but is inaccessible
-class LuaSimpleItem: public LuaScreenItem, public SimpleItem
-{
-public:
-	// need to be public for luabind
-	bool operator == (LuaScreenItem&){return false;}
-	LuaSimpleItem():SimpleItem(), LuaScreenItem(), ScreenItem(){}
-	~LuaSimpleItem(){
-	}
-	static void luabind(lua_State* L);
-
-protected:
-	virtual void destroy(){
-		LuaScreenItem::destroy();
-		this->setView(NULL);			// remove render component
-	}
 };

@@ -261,19 +261,19 @@ else
 	lua_gc(L, LUA_GCSTOP, 0);			// !!!
 
 	Lualib::luabind(L);
-//	Layers::luabind(L);
-	LuaImage::luabind(L);
-	LuaAnimation::luabind(L);
-	LuaText::luabind(L);
-	LuaTextBox::luabind(L);
+
 	LuaScreenItem::luabind(L);
-	LuaSimpleItem::luabind(L);
 	LuaCompositeItem::luabind(L);
+
+	LuaImageItem::luabind(L);
+	LuaAnimatedItem::luabind(L);
+	LuaTextItem::luabind(L);
+	LuaTextBoxItem::luabind(L);
+	LuaTextureItem::luabind(L);
+	LuaTextInputItem::luabind(L);
+
 	LuaTimer::luabind(L, "Timer");	// TODO: Why name?
 	LuaSoundEffect::luabind(L);
-	LuaTexture::luabind(L);
-	LuaTextInput::luabind(L);
-
 	//if(luaL_dofile(L, "lib.lua") != 0){
 	//	std::cout << lua_tostring(L,-1) << "\n";
 	//	return false;

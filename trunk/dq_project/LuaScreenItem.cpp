@@ -196,16 +196,3 @@ void LuaCompositeItem::luabind(lua_State* L){
 
 	luabind::globals(L)["root"] = dynamic_cast<LuaCompositeItem*>(root_item());
 }
-
-void LuaSimpleItem::luabind(lua_State* L){
-
-	luabind::module(L) [
-	luabind::class_<LuaSimpleItem, LuaScreenItem/*, LuaSimpleItemWrapper*/>("SimpleItem")
-		.def(luabind::constructor<>())
-
-		// TODO How to adopt back to lua when assigning NULL?
-		.property("view", &LuaSimpleItem::getView, &LuaSimpleItem::setView, luabind::detail::null_type(), luabind::adopt(_2))
-		.def(luabind::self == luabind::other<LuaScreenItem&>())				// remove operator ==
-
-	];
-}

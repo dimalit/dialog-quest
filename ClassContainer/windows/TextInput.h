@@ -1,51 +1,40 @@
 #pragma once
 
+#include "LuaScreenItem.h"
+
 #include "Entity/InputTextRenderComponent.h"
+
 #include <luabind/luabind.hpp>
 
-class TextInput: public InputTextRenderComponent{
+class TextInputItem: virtual public ScreenItem{
 public:
-	TextInput(int width, eFont font=FONT_SMALL);
-	~TextInput();
-
-	void OnAdd(Entity* e);
+	TextInputItem(int width, eFont font=FONT_SMALL);
+	~TextInputItem();
 
 	void setText(std::string txt){
-		GetVar("text")->Set(txt);
+		component->GetVar("text")->Set(txt);
 	}
-	std::string getText(){return GetVar("text")->GetString();}
+	std::string getText(){return component->GetVar("text")->GetString();}
 
-	float getWidth(){
-		return GetParent()->GetVar("size2d")->GetVector2().x;
-	}
-	float getHeight(){
-		return GetParent()->GetVar("size2d")->GetVector2().y;
-	}
-	void setWidth(float w){
-		width = w;
-		int h = getHeight();
-		GetParent()->GetVar("size2d")->Set(width, h);	
-	}
 	eFont getFont(){
-		return (eFont)GetVar("font")->GetUINT32();
+		return (eFont)component->GetVar("font")->GetUINT32();
 	}
 	void setFont(eFont f){
-		GetVar("font")->Set(uint32(f));
+		component->GetVar("font")->Set(uint32(f));
 		float h = GetBaseApp()->GetFont(f)->GetLineHeight(1.0f);
-		if(GetParent())
-			GetParent()->GetVar("size2d")->Set(getWidth(), h+6);
+		entity->GetVar("size2d")->Set(getWidth(), h+6);
 	}
 private:
-	float width;
+	InputTextRenderComponent* component;
 };
 
-class LuaTextInput: public TextInput{
+class LuaTextInputItem: public TextInputItem, public LuaScreenItem{
 public:
-	LuaTextInput(float w);
-	LuaTextInput(float w, eFont font);
+	LuaTextInputItem(float w);
+	LuaTextInputItem(float w, eFont font);
 	static void luabind(lua_State* L);
 
 private:
-	LuaTextInput(const LuaTextInput&):TextInput(0){assert(false);}
-	LuaTextInput& operator=(const LuaTextInput&){assert(false);}
+	LuaTextInputItem(const LuaTextInputItem&):TextInputItem(0){assert(false);}
+	LuaTextInputItem& operator=(const LuaTextInputItem&){assert(false);}
 };

@@ -24,7 +24,7 @@
 //#define C_BORDERLESS_WINDOW_MODE_FOR_SCREENSHOT_EASE 
 
 //My system, or the PVR GLES emulator or something often has issues with WM_CHAR missing messages.  So I work around it with this:
-#define C_DONT_USE_WM_CHAR
+//#define C_DONT_USE_WM_CHAR
 
 //If this is uncommented, the app won't suspend/resume when losing focus in windows, but always runs.
 //(You should probably add it up as a preprocessor compiler define if you need it, instead of uncommenting it here)

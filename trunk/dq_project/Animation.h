@@ -1,50 +1,37 @@
 #pragma once
+#include "ScreenItem.h"
 #include "Entity/OverlayRenderComponent.h"
 #include "Entity/InterpolateComponent.h"
 #include <luabind/luabind.hpp>
 
-class Animation: public OverlayRenderComponent
+class AnimatedItem: virtual public ScreenItem
 {
 public:
-	Animation(std::string tex, int frames_x, int frames_y, float tex_x, float tex_y, float nframes, float fps);
-	~Animation();
+	AnimatedItem(std::string tex, int frames_x, int frames_y, float tex_x, float tex_y, int nframes, float fps);
+	~AnimatedItem();
 
-	virtual void OnAdd(Entity* e);
-	virtual void OnRemove();
 	void OnFrameChange(Variant* val);
 
 	// TODO Make everything const.
-	float getWidth(){
-		if(GetParent())
-			return GetParent()->GetVar("size2d")->GetVector2().x;
-		else
-			return GetVar("frameSize2d")->GetVector2().x;
-	}
-	float getHeight(){
-		if(GetParent())
-			return GetParent()->GetVar("size2d")->GetVector2().y;
-		else
-			return GetVar("frameSize2d")->GetVector2().y;
-	}
 	void setScaleX(float sx){
 		assert(getParent());
-		CL_Vec2f scale = GetParent()->GetVar("scale2d")->GetVector2();
+		CL_Vec2f scale = entity->GetVar("scale2d")->GetVector2();
 		scale.x = sx;
-		GetParent()->GetVar("scale2d")->Set(scale);
+		entity->GetVar("scale2d")->Set(scale);
 	}
 	void setScaleY(float sy){
 		assert(getParent());
-		CL_Vec2f scale = GetParent()->GetVar("scale2d")->GetVector2();
+		CL_Vec2f scale = entity->GetVar("scale2d")->GetVector2();
 		scale.y = sy;
-		GetParent()->GetVar("scale2d")->Set(scale);
+		entity->GetVar("scale2d")->Set(scale);
 	}
 	float getScaleX(){
 		assert(getParent());
-		return GetParent()->GetVar("scale2d")->GetVector2().x;
+		return entity->GetVar("scale2d")->GetVector2().x;
 	}
 	float getScaleY(){
 		assert(getParent());
-		return GetParent()->GetVar("scale2d")->GetVector2().y;
+		return entity->GetVar("scale2d")->GetVector2().y;
 	}
 
 	int getNumFrames(){
@@ -60,10 +47,10 @@ public:
 	}
 	// TODO Implement pause? In ic?
 	void setFrame(float n){
-		GetVar("frame")->Set(n);
+		component->GetVar("frame")->Set(n);
 	}
 	float getFrame(){
-		return GetVar("frame")->GetFloat();
+		return component->GetVar("frame")->GetFloat();
 	}
 	bool getLoop(){
 		return mode_loop;
@@ -82,12 +69,11 @@ public:
 protected:
 	virtual void onFinish(){}
 private:
-	std::string tex_file;
-	int frames_x, frames_y;
+	OverlayRenderComponent* component;
 	int nframes;
+	float fps;
 
 	InterpolateComponent* ic;
-	float fps;
 	bool mode_loop, mode_reverse;
 
 private:
@@ -109,10 +95,10 @@ private:
 	}
 };
 
-class LuaAnimation: public Animation{
+class LuaAnimatedItem: public AnimatedItem, public LuaScreenItem{
 public:
-	LuaAnimation(luabind::object conf);
-	~LuaAnimation();
+	LuaAnimatedItem(luabind::object conf);
+	~LuaAnimatedItem();
 	static void luabind(lua_State* L);
 
 private:

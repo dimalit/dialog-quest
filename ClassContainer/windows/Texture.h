@@ -1,24 +1,18 @@
 #pragma once
 
+#include "LuaScreenItem.h"
+
 #include "Entity/Component.h"
 #include "Entity/Entity.h"
 #include "Renderer/Surface.h"
+
 #include <luabind/luabind.hpp>
 
-class Texture: public EntityComponent
+class TextureItem: virtual public ScreenItem
 {
 public:
-	Texture(std::string path, int w, int h);
-	~Texture();
-	virtual void OnAdd(Entity* e);
-
-	float getWidth() const {
-		return size->x;
-	}
-
-	float getHeight() const {
-		return size->y;
-	}
+	TextureItem(std::string path, int w, int h);
+	~TextureItem();
 
 	string getTexture() const {
 		return path;
@@ -29,6 +23,8 @@ public:
 		tex = new Surface(path);
 	}
 private:
+	EntityComponent* component;
+
 	string path;
 	Surface* tex;
 	CL_Vec2f *pos, *size;
@@ -37,13 +33,13 @@ private:
 	void OnRender(VariantList *args);
 };
 
-class LuaTexture: public Texture{
+class LuaTextureItem: public TextureItem, public LuaScreenItem{
 public:
-	LuaTexture(std::string path, int w, int h);
+	LuaTextureItem(std::string path, int w, int h);
 	static void luabind(lua_State* L);
-	bool operator==(Texture& rhs){return false;}
+	bool operator==(TextureItem& rhs){return false;}
 
 private:
-	LuaTexture(const LuaTexture&):Texture("",0,0){assert(false);}
-	LuaTexture& operator=(const LuaTexture&){assert(false);}
+	LuaTextureItem(const LuaTextureItem&):TextureItem("",0,0){assert(false);}
+	LuaTextureItem& operator=(const LuaTextureItem&){assert(false);}
 };

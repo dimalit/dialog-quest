@@ -529,7 +529,7 @@ bool isOrdinaryChar(char c, bool bStrict)
 {
 	if (!bStrict)
 	{
-		if (c >= 32 && c <= 126)
+		if (c >= 32 || c < 0)	/// for russian!
 		{
 			return true;
 		}

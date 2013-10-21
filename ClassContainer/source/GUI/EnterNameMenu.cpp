@@ -80,7 +80,7 @@ Entity * EnterNameMenuCreate(Entity *pParentEnt)
 	float nameWidth = pButtonEntity->GetVar("size2d")->GetVector2().x;
 
 	//create input box
-	pButtonEntity = CreateInputTextEntity(pBG, "name_input_box", vTextAreaPos.x+nameWidth, nameEntryY, GetApp()->GetShared()->GetVarWithDefault("name", string("Player"))->GetString(), 500, 300);
+	pButtonEntity = CreateInputTextEntity(pBG, "name_input_box", vTextAreaPos.x+nameWidth, nameEntryY, GetApp()->GetShared()->GetVarWithDefault("name", string("Player"))->GetString());
 	
 	EntityComponent *pTextRenderComp = pButtonEntity->GetComponentByName("InputTextRender");
 

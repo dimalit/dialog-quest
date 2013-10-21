@@ -10,6 +10,7 @@
 local test_input, test_basket, test_buttons, test_explain_rel, test_baloons, test_mosaic
 
 test_input = function()
+	SoundEffect("audio/enter.wav"):play()
 	dofile("test_input.lua")
 	scene.onFinish = function()
 		scene.visible = false
@@ -19,6 +20,7 @@ test_input = function()
 end
 
 test_explain_rel = function()
+	SoundEffect("audio/enter.wav"):play()
 	dofile("test_explain_rel.lua")
 	scene.onFinish = function()
 		scene.visible = false
@@ -28,6 +30,7 @@ test_explain_rel = function()
 end
 
 test_basket = function()
+	SoundEffect("audio/enter.wav"):play()
 	dofile("test_basket.lua")
 	scene.onFinish = function()
 		scene.visible = false
@@ -37,6 +40,7 @@ test_basket = function()
 end
 
 test_buttons = function()
+	SoundEffect("audio/enter.wav"):play()
 	dofile("test_buttons.lua")
 	scene.onFinish = function()
 		scene.visible = false
@@ -46,6 +50,7 @@ test_buttons = function()
 end
 
 test_baloons = function()
+	SoundEffect("audio/enter.wav"):play()
 	dofile("test_baloons.lua")
 	scene.onFinish = function()
 		scene.visible = false
@@ -55,6 +60,7 @@ test_baloons = function()
 end
 
 test_mosaic = function()
+	SoundEffect("audio/enter.wav"):play()
 	dofile("test_mosaic.lua")
 	scene.onFinish = function()
 		scene.visible = false

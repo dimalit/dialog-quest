@@ -1,58 +1,47 @@
 #include "PlatformPrecomp.h"
 #include "Text.h"
 
-Text::Text(std::string txt, eFont font)
+TextItem::TextItem(std::string txt, eFont font)
 {
-	GetVar("text")->Set(txt);
+	component = new TextRenderComponent();
+	entity->AddComponent(component);
+
+	component->GetVar("text")->Set(txt);
 	setFont(font);
 }
 
-Text::~Text()
+TextItem::~TextItem()
 {
-}
-
-void Text::OnAdd(Entity* e){
-	TextRenderComponent::OnAdd(e);
-	// HACK: components need all parameters AFTER attach...
-	std::string t = GetVar("text")->GetString();
-	GetVar("text")->Set(t);
 }
 
 // TODO: think about enums in Lua and here (don't want to use Proton's enums!)
-TextBox::TextBox(std::string txt, float width, eAlignment align, eFont font)
+TextBoxItem::TextBoxItem(std::string txt, float width, eAlignment align, eFont font)
 {
-	GetVar("text")->Set(txt);
-	GetVar("textAlignment")->Set((uint32)align);
-	GetVar("firstLineDecrement")->Set(50.0f);
-	this->width = width;
+	component = new TextBoxRenderComponent();
+	entity->AddComponent(component);
+
+	entity->GetVar("size2d")->Set(width, 0);
+	component->GetVar("text")->Set(txt);
+	component->GetVar("textAlignment")->Set((uint32)align);
+	component->GetVar("firstLineDecrement")->Set(50.0f);
 	setFont(font);
 }
 
-TextBox::~TextBox()
+TextBoxItem::~TextBoxItem()
 {
 }
 
-void TextBox::OnAdd(Entity* e){
-	TextBoxRenderComponent::OnAdd(e);
-	// TODO MUST first set size then text. Very bad!
-	e->GetVar("size2d")->Set(width, 0);
-	std::string t = GetVar("text")->GetString();
-	GetVar("text")->Set(t);
-}
+LuaTextItem::LuaTextItem(std::string text):TextItem(text){}
+LuaTextItem::LuaTextItem(std::string text, eFont font):TextItem(text, font){}
 
-LuaText::LuaText(std::string text):Text(text){}
-LuaText::LuaText(std::string text, eFont font):Text(text, font){}
-
-void LuaText::luabind(lua_State* L){
+void LuaTextItem::luabind(lua_State* L){
 	luabind::module(L) [
-		luabind::class_<LuaText, EntityComponent>("Text")
+		luabind::class_<LuaTextItem, LuaScreenItem>("TextItem")
 			.def(luabind::constructor<std::string>())
 			.def(luabind::constructor<std::string, eFont>())
-			.property("width", &LuaText::getWidth)
-			.property("height", &LuaText::getHeight)
-			.property("text", &LuaText::getText, &LuaText::setText)
-			.property("font", &LuaText::getFont, &LuaText::setFont)
-			.property("scale", &LuaText::getScale, &LuaText::setScale)
+			.property("text", &LuaTextItem::getText, &LuaTextItem::setText)
+			.property("font", &LuaTextItem::getFont, &LuaTextItem::setFont)
+			.property("scale", &LuaTextItem::getScale, &LuaTextItem::setScale)
 	];	
 }
 
@@ -75,27 +64,25 @@ public:
 	}
 };
 
-const LuaStairsProfile LuaTextBox::getLeftObstacles() const{
-	return LuaStairsProfile(left_obstacles);
+const LuaStairsProfile LuaTextBoxItem::getLeftObstacles() const{
+	return LuaStairsProfile(TextBoxItem::getLeftObstacles());
 }
-const LuaStairsProfile LuaTextBox::getRightObstacles() const{
-	return LuaStairsProfile(right_obstacles);
+const LuaStairsProfile LuaTextBoxItem::getRightObstacles() const{
+	return LuaStairsProfile(TextBoxItem::getRightObstacles());
 }
-void LuaTextBox::setLeftObstacles(const LuaStairsProfile& p){
-	left_obstacles = p;
-	GetVar("text")->GetSigOnChanged()->operator()(NULL);
+void LuaTextBoxItem::setLeftObstacles(const LuaStairsProfile& p){
+	TextBoxItem::setLeftObstacles(p);
 }
-void LuaTextBox::setRightObstacles(const LuaStairsProfile& p){
-	right_obstacles = p;
-	GetVar("text")->GetSigOnChanged()->operator()(NULL);
+void LuaTextBoxItem::setRightObstacles(const LuaStairsProfile& p){
+	TextBoxItem::setRightObstacles(p);
 }
 
-LuaTextBox::LuaTextBox(std::string txt, float width, eAlignment align)
-	:TextBox(txt, width, align){}
-LuaTextBox::LuaTextBox(std::string txt, float width, eAlignment align, eFont font)
-	:TextBox(txt, width, align, font){}
+LuaTextBoxItem::LuaTextBoxItem(std::string txt, float width, eAlignment align)
+	:TextBoxItem(txt, width, align){}
+LuaTextBoxItem::LuaTextBoxItem(std::string txt, float width, eAlignment align, eFont font)
+	:TextBoxItem(txt, width, align, font){}
 
-void LuaTextBox::luabind(lua_State* L){
+void LuaTextBoxItem::luabind(lua_State* L){
 
 	// bind also StairsProfile
 	luabind::module(L) [
@@ -108,23 +95,21 @@ void LuaTextBox::luabind(lua_State* L){
 	];
 
 	luabind::module(L) [
-		luabind::class_<LuaTextBox, EntityComponent>("TextBox")
+		luabind::class_<LuaTextBoxItem, LuaScreenItem>("TextBoxItem")
 			// TODO how to bind alignment constants to Lua?
 			.def(luabind::constructor<std::string, float, eAlignment>())
 			.def(luabind::constructor<std::string, float, eAlignment, eFont>())
-			.property("width", &LuaTextBox::getWidth, &LuaTextBox::setWidth)
-			.property("height", &LuaTextBox::getHeight)
-			.property("text", &LuaTextBox::getText, &LuaTextBox::setText)
-			.property("font", &LuaTextBox::getFont, &LuaTextBox::setFont)
-			.property("scale", &LuaTextBox::getScale, &LuaTextBox::setScale)
-			.property("firstLineDecrement", &LuaTextBox::getFirstLineDecrement, &LuaTextBox::setFirstLineDecrement)
-			.property("lastLineEndX", &LuaTextBox::getLastLineEndX)
-			.property("lastLineEndY", &LuaTextBox::getLastLineEndY)
-			.property("leftObstacles", &LuaTextBox::getLeftObstacles, &LuaTextBox::setLeftObstacles)
-			.property("rightObstacles", &LuaTextBox::getRightObstacles, &LuaTextBox::setRightObstacles)
-			//.def("getLeftObstacle", &LuaTextBox::getLeftObstacle)
-			//.def("getRightObstacle", &LuaTextBox::getRightObstacle)
-			//.def("setLeftObstacle", &LuaTextBox::setLeftObstacle)
-			//.def("setRightObstacle", &LuaTextBox::setRightObstacle)
+			.property("text", &LuaTextBoxItem::getText, &LuaTextBoxItem::setText)
+			.property("font", &LuaTextBoxItem::getFont, &LuaTextBoxItem::setFont)
+			.property("scale", &LuaTextBoxItem::getScale, &LuaTextBoxItem::setScale)
+			.property("firstLineDecrement", &LuaTextBoxItem::getFirstLineDecrement, &LuaTextBoxItem::setFirstLineDecrement)
+			.property("lastLineEndX", &LuaTextBoxItem::getLastLineEndX)
+			.property("lastLineEndY", &LuaTextBoxItem::getLastLineEndY)
+			.property("leftObstacles", &LuaTextBoxItem::getLeftObstacles, &LuaTextBoxItem::setLeftObstacles)
+			.property("rightObstacles", &LuaTextBoxItem::getRightObstacles, &LuaTextBoxItem::setRightObstacles)
+			//.def("getLeftObstacle", &LuaTextBoxItem::getLeftObstacle)
+			//.def("getRightObstacle", &LuaTextBoxItem::getRightObstacle)
+			//.def("setLeftObstacle", &LuaTextBoxItem::setLeftObstacle)
+			//.def("setRightObstacle", &LuaTextBoxItem::setRightObstacle)
 	];
 }

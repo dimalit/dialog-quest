@@ -2,52 +2,48 @@
 #include "Texture.h"
 #include <luabind/operator.hpp>
 
-Texture::Texture(std::string path, int w, int h)
+TextureItem::TextureItem(std::string path, int w, int h)
 {
 	this->path = path;
 	if(!path.empty())
 		tex = new Surface(path);
 	else
 		tex = 0;
-	this->size = new CL_Vec2f(w, h);
+
+	entity->GetVar("size2d")->Set(w, h);
+
+	component = new EntityComponent();
+	entity->AddComponent(component);
+
+	pos = &entity->GetVar("pos2d")->GetVector2();
+	size = &entity->GetVar("size2d")->GetVector2();
+	m_pVisible = &entity->GetVarWithDefault("visible", uint32(1))->GetUINT32();
+
+	entity->GetFunction("OnRender")->sig_function.connect(1, boost::bind(&TextureItem::OnRender, this, _1));	
 }
 
-Texture::~Texture(void)
+TextureItem::~TextureItem(void)
 {
 	delete tex;
 }
 
-void Texture::OnAdd(Entity *e){
-	EntityComponent::OnAdd(e);
-
-	pos = &GetParent()->GetVar("pos2d")->GetVector2();
-	GetParent()->GetVar("size2d")->Set(*size);
-	delete size;
-	size = &GetParent()->GetVar("size2d")->GetVector2();
-	m_pVisible = &GetParent()->GetVarWithDefault("visible", uint32(1))->GetUINT32();
-
-	GetParent()->GetFunction("OnRender")->sig_function.connect(1, boost::bind(&Texture::OnRender, this, _1));	
-}
-
-void Texture::OnRender(VariantList *args){
+void TextureItem::OnRender(VariantList *args){
 	if(!tex || !*m_pVisible)
 		return;
 	CL_Vec2f abs_pos = args->m_variant[0].GetVector2() + *(this->pos);
 	tex->BlitRepeated(rtRectf(abs_pos.x, abs_pos.y, abs_pos.x+size->x, abs_pos.y+size->y));
 }
 
-LuaTexture::LuaTexture(std::string path, int w, int h):Texture(path, w, h){
+LuaTextureItem::LuaTextureItem(std::string path, int w, int h):TextureItem(path, w, h){
 	return;
 }
 
-void LuaTexture::luabind(lua_State* L){
+void LuaTextureItem::luabind(lua_State* L){
 	luabind::module(L) [
-		luabind::class_<LuaTexture, EntityComponent>("Texture")
+		luabind::class_<LuaTextureItem, LuaScreenItem>("TextureItem")
 			.def(luabind::constructor<std::string, int, int>())
 			// TODO: Also changing the dimensions? File name?
-			.property("width", &Texture::getWidth)
-			.property("height", &Texture::getHeight)
-			.property("texture", &Texture::getTexture, &Texture::setTexture)
-			.def(luabind::self == luabind::other<LuaTexture&>())		// remove operator ==
+			.property("texture", &TextureItem::getTexture, &TextureItem::setTexture)
+			.def(luabind::self == luabind::other<LuaTextureItem&>())		// remove operator ==
 	];
 }

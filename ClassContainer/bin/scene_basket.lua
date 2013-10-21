@@ -82,7 +82,7 @@ getmetatable(Basket).__call = function(_,conf)
 	self:link(self.vert_bar, 0.5, 0, left_side, 1, 0)
 	self:link(self.vert_bar, 0.5, 1, left_side, 1, 1)
 	
-	self.horz_bar = TextureItem("interface/frame_glow_bt.rttex", 200, 4)
+	self.horz_bar = TextureItem("interface/frame_glow_bb.rttex", 200, 4)
 	self:add(self.horz_bar)
 	self.horz_bar.name="horz"
 	-- self.horz_bar.rel_hpy = 1

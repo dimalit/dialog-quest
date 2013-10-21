@@ -80,6 +80,22 @@ private:
 	float *m_pFirstLineDecrement;			// start not from x=0
 	const float *m_pLastLineEndX, *m_pLastLineEndY;
 
+public:
+	const StairsProfile& getLeftObstacles() const{
+		return left_obstacles;
+	}
+	const StairsProfile& getRightObstacles() const{
+		return right_obstacles;
+	}
+	void setLeftObstacles(const StairsProfile& p){
+		left_obstacles = p;
+		GetVar("text")->GetSigOnChanged()->operator()(NULL);
+	}
+	void setRightObstacles(const StairsProfile& p){
+		right_obstacles = p;
+		GetVar("text")->GetSigOnChanged()->operator()(NULL);
+	}
+
 protected:									// for TextBox class
 	StairsProfile left_obstacles, right_obstacles;
 };

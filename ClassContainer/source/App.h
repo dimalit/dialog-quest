@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include "Image.h"
 #include "BaseApp.h"
 #include <lua.hpp>
 #include <luabind/luabind.hpp>

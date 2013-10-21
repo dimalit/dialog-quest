@@ -188,74 +188,6 @@ end
 
 ------------- ..Items ----------------
 
-ImageItem = function(path)
-  local item = SimpleItem()
-  local image = Image(path)	
-  item.view = image
-	
-  local self = {}
-  self.item = item
-  setmetatable(self, inherit(item, image))
-  return self
-end
-
-TextureItem = function(path, width, height)
-  local item = SimpleItem()
-  local texture = Texture(path, width, height)
-  item.view = texture
-  local self = {}
-  self.item = item
-  setmetatable(self, inherit(item, texture))
-  return self
-end
-
-TextItem = function(text, font)
-  local item = SimpleItem()
-  local txt
-	if font==nil then
-		txt = Text(text)
-	else
-		txt = Text(text, font)
-	end
-	item.view = txt
-
-  local self = {}
-  self.item = item
-  setmetatable(self, inherit(item, txt))
-  return self
-end
-
-TextBoxItem = function(text, w, font)
-  if w == nil then w = 0 end
-	if font == nil then font = 0 end
-  
-  local item = SimpleItem()
-  local txt = TextBox(text, w, 0, font)
-  item.view = txt
-
-  local self = {}
-  self.item = item
-  setmetatable(self, inherit(item, txt))
-  return self
-end
-
-TextInputItem = function(w, font)
-	if w==nil then w=0 end
-  local item = SimpleItem()
-  local txt
-	if font==nil then
-		txt = TextInput(w)
-	else
-		txt = TextInput(w, font)
-	end
-	item.view = txt
-
-  local self = {}
-  self.item = item
-  setmetatable(self, inherit(item, txt))
-  return self
-end
-
 function PhonemicItem(text)
 	local self = TextItem("["..text.."]", 3)
 	local sound = SoundEffect("audio/p_"..text..".wav")
@@ -276,32 +208,6 @@ function VoiceTextItem(text)
 		end
 	end
 	return self
-end
-
--- make playing animation item
-AnimatedItem = function(name)
-  local item = SimpleItem()
-  local anim = Animation(load_config(name))
-  item.view = anim
- 
-  local self = {}
-  self.item = item
-  setmetatable(self, inherit(item, anim))
-
-  -- moved this after self.view=anim because of Components
-  anim.loop = true
-  anim:play()
- 
-  -- methods are not inherited :(
-  -- TODO find why methods do not inherit
-  self.play = function()
-    self.view:play()
-  end
---  self.pause = function()
---    self.view:pause()
---  end
-  
-  return self
 end
 
 function TextButton(...)

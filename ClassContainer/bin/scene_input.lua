@@ -215,7 +215,7 @@ InputElement = function(phonetic_text, answer)
 												)
 	self:add(self.text):add(self.input):add(self.drop)
 
-	self.text_padder = SimpleItem()
+	self.text_padder = ScreenItem()
 	self.text_padder.width = self.text.width
 	self:add(self.text_padder)
 	self:link(self.text_padder, 0, 0.5, self.text, 0, 0.5)
