@@ -165,7 +165,6 @@ protected:
 	// utilitary
 	void takeCharFocus();
 	void giveCharFocus();
-public: //!!! temporary
 	Entity* entity;
 protected:
 	void compute_corner(int no, float &rx, float &ry) const {
@@ -281,12 +280,12 @@ protected:
 	}
 };
 
-class SimpleItem: virtual public ScreenItem
+class _SimpleItem: virtual public ScreenItem
 {
 //!!!protected: for a while:
 public:
-	SimpleItem();
-	~SimpleItem();
+	_SimpleItem();
+	~_SimpleItem();
 
 	// aggregates
 	void setView(EntityComponent* r){
@@ -319,8 +318,8 @@ protected:
 
 private:
 	// no value semantic!
-	SimpleItem& operator=(const SimpleItem&){assert(false);}
-	SimpleItem(const SimpleItem&){assert(false);}
+	_SimpleItem& operator=(const _SimpleItem&){assert(false);}
+	_SimpleItem(const _SimpleItem&){assert(false);}
 };
 
 extern CompositeItem* root_item();

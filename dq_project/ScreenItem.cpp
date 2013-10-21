@@ -189,14 +189,14 @@ void CompositeItem::doLayOutIfNeeded(){
 	need_lay_out = false;
 }
 
-SimpleItem::SimpleItem()
+_SimpleItem::_SimpleItem()
 	:ScreenItem()
 {
 	view = 0;
 //	this->visible = true;
 }
 
-SimpleItem::~SimpleItem(void)
+_SimpleItem::~_SimpleItem(void)
 {
 }
 

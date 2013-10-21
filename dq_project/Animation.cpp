@@ -1,35 +1,30 @@
 #include "PlatformPrecomp.h"
+
+#include "LuaScreenItem.h"
+
 #include "Animation.h"
 
-Animation::Animation(std::string tex, int frames_x, int frames_y, float tex_x, float tex_y, float nframes, float fps)
-:tex_file(tex), frames_x(frames_x), frames_y(frames_y), nframes(nframes), fps(fps)
+AnimatedItem::AnimatedItem(std::string tex, int frames_x, int frames_y, float tex_x, float tex_y, int nframes, float fps)
+	:nframes(nframes), fps(fps)
 {	
 	mode_loop = 0;
 	mode_reverse = 0;
-}
 
-Animation::~Animation()
-{
-}
+	component = new OverlayRenderComponent();
+	entity->AddComponent(component);
 
-void Animation::OnAdd(Entity* e){
-	OverlayRenderComponent::OnAdd(e);
-	// HACK components need all parameters AFTER attach...
-	GetVar("fileName")->Set(tex_file);
+	component->GetVar("fileName")->Set(tex);
 
 	VariantList params((uint32)frames_x, (uint32)frames_y);
-	GetFunction("SetupAnim")->sig_function(&params);
-
-//	GetParent()->GetVar("size2d")->Set(frame_box.x, frame_box.y);
-//	GetParent()->GetVar("pos2d")->Set(frame_box.x/2, frame_box.y/2);
+	component->GetFunction("SetupAnim")->sig_function(&params);
 
 	// this will be our "phase": 0..nframes
-	GetVar("frame")->Set(0.0f);
-	GetVar("frame")->GetSigOnChanged()->connect(1, boost::bind(&Animation::OnFrameChange, this, _1));
+	component->GetVar("frame")->Set(0.0f);
+	component->GetVar("frame")->GetSigOnChanged()->connect(1, boost::bind(&AnimatedItem::OnFrameChange, this, _1));
 
 	ic = new InterpolateComponent();
-	e->AddComponent(ic);
-	ic->GetVar("component_name")->Set(this->GetName());
+	entity->AddComponent(ic);
+	ic->GetVar("component_name")->Set(component->GetName());
 	ic->GetVar("var_name")->Set("frame");
 	ic->GetVar("interpolation")->Set(uint32(INTERPOLATE_LINEAR));
 	ic->GetVar("target")->Set((float)nframes);
@@ -38,15 +33,15 @@ void Animation::OnAdd(Entity* e){
 	update_ic_target();
 }
 
-void Animation::OnRemove(){
-	GetParent()->RemoveComponentByAddress(ic);
+AnimatedItem::~AnimatedItem()
+{
 }
 
 // compute frameX and frameY for renderer
-void Animation::OnFrameChange(Variant* val){
+void AnimatedItem::OnFrameChange(Variant* val){
 
 	// do not use final value
-	int frame = GetVar("frame")->GetFloat();
+	int frame = component->GetVar("frame")->GetFloat();
 	bool finished = 0;
 	if(frame==nframes){
 		finished = 1;
@@ -56,43 +51,42 @@ void Animation::OnFrameChange(Variant* val){
 //	if(GetVar("frame")->GetFloat() == 0.0f)
 //		finished = 1;
 
-	GetVar("frameY")->Set((uint32)(frame / frames_x));
-	GetVar("frameX")->Set((uint32)(frame % frames_x));
+	int frames_x =  component->GetVar("totalFramesX")->GetUINT32();
+	component->GetVar("frameY")->Set((uint32)(frame / frames_x));
+	component->GetVar("frameX")->Set((uint32)(frame % frames_x));
 
 	if(finished)
 		onFinish();
 }
 
-LuaAnimation::LuaAnimation(luabind::object conf):
-	Animation(
+LuaAnimatedItem::LuaAnimatedItem(luabind::object conf):
+	AnimatedItem(
 		luabind::object_cast<std::string>(conf["file"]),
-		luabind::object_cast<float>(conf["frames_x"]),
-		luabind::object_cast<float>(conf["frames_y"]),
+		luabind::object_cast<int>(conf["frames_x"]),
+		luabind::object_cast<int>(conf["frames_y"]),
 		luabind::object_cast<float>(conf["tex_x"]),
 		luabind::object_cast<float>(conf["tex_y"]),
-		luabind::object_cast<float>(conf["nframes"]),
+		luabind::object_cast<int>(conf["nframes"]),
 		luabind::object_cast<float>(conf["fps"])
 	)
 {
 }
 
-LuaAnimation::~LuaAnimation(){
+LuaAnimatedItem::~LuaAnimatedItem(){
 }
 
-void LuaAnimation::luabind(lua_State* L){
+void LuaAnimatedItem::luabind(lua_State* L){
 	luabind::module(L) [
-		luabind::class_<LuaAnimation, EntityComponent>("Animation")
+		luabind::class_<LuaAnimatedItem, LuaScreenItem>("AnimatedItem")
 			.def(luabind::constructor<luabind::object>())
-			.property("width", &LuaAnimation::getWidth)
-			.property("height", &LuaAnimation::getHeight)
-			.property("scaleX", &LuaAnimation::getScaleX, &LuaAnimation::setScaleX)
-			.property("scaleY", &LuaAnimation::getScaleY, &LuaAnimation::setScaleY)
-			.property("frame", &LuaAnimation::getFrame, &LuaAnimation::setFrame)
-			.property("num_frames", &LuaAnimation::getNumFrames)
-			.property("loop", &LuaAnimation::getLoop, &LuaAnimation::setLoop)
-			.property("reverse", &LuaAnimation::getReverse, &LuaAnimation::setReverse)
-			.def("play", &LuaAnimation::play)
-			.def("stop", &LuaAnimation::stop)
-			.def_readwrite("onFinish", &LuaAnimation::onFinish_cb)
+			.property("scaleX", &LuaAnimatedItem::getScaleX, &LuaAnimatedItem::setScaleX)
+			.property("scaleY", &LuaAnimatedItem::getScaleY, &LuaAnimatedItem::setScaleY)
+			.property("frame", &LuaAnimatedItem::getFrame, &LuaAnimatedItem::setFrame)
+			.property("num_frames", &LuaAnimatedItem::getNumFrames)
+			.property("loop", &LuaAnimatedItem::getLoop, &LuaAnimatedItem::setLoop)
+			.property("reverse", &LuaAnimatedItem::getReverse, &LuaAnimatedItem::setReverse)
+			.def("play", &LuaAnimatedItem::play)
+			.def("stop", &LuaAnimatedItem::stop)
+			.def_readwrite("onFinish", &LuaAnimatedItem::onFinish_cb)
 	];
 }

@@ -1,133 +1,110 @@
 #pragma once
 
+#include "LuaScreenItem.h"
+
 #include "Entity/TextRenderComponent.h"
 #include "Entity/TextBoxRenderComponent.h"
+
 #include <luabind/luabind.hpp>
 
-class Text: public TextRenderComponent
+class TextItem: virtual public ScreenItem
 {
 public:
-	Text(std::string, eFont font=FONT_SMALL);
-	~Text();
+	TextItem(std::string, eFont font=FONT_SMALL);
+	~TextItem();
 
-	void OnAdd(Entity* e);
-
-	void setText(std::string txt){GetVar("text")->Set(txt);}
-	std::string getText(){return GetVar("text")->GetString();}
+	void setText(std::string txt){component->GetVar("text")->Set(txt);}
+	std::string getText(){return component->GetVar("text")->GetString();}
 //	void setFont(std::string fnt){load_font(fnt);}
 
-	float getWidth(){
-		return GetParent()->GetVar("size2d")->GetVector2().x;
-	}
-	float getHeight(){
-		return GetParent()->GetVar("size2d")->GetVector2().y;
-	}
 	eFont getFont(){
-		return (eFont)GetVar("font")->GetUINT32();
+		return (eFont)component->GetVar("font")->GetUINT32();
 	}
 	void setFont(eFont f){
-		GetVar("font")->Set(uint32(f));
+		component->GetVar("font")->Set(uint32(f));
 	}
 	float getScale(){
-		assert(GetParent());
-		float sx = GetParent()->GetVar("scale2d")->GetVector2().x;
+		assert(entity);
+		float sx = entity->GetVar("scale2d")->GetVector2().x;
 		return sx;
 	}
 	void setScale(float s){
-		assert(GetParent());
-		GetParent()->GetVar("scale2d")->Set(s, s);
+		assert(entity);
+		entity->GetVar("scale2d")->Set(s, s);
 	}
+private:
+	TextRenderComponent* component;
 };
 
 // TODO: Not very good from the point of view of code reuse!
-class TextBox: public TextBoxRenderComponent
+class TextBoxItem: virtual public ScreenItem
 {
 public:
-	TextBox(std::string txt, float width, eAlignment align, eFont font=FONT_SMALL);
-	~TextBox();
+	TextBoxItem(std::string txt, float width, eAlignment align, eFont font=FONT_SMALL);
+	~TextBoxItem();
 
-	void OnAdd(Entity* e);
+	void setText(std::string txt){component->GetVar("text")->Set(txt);}
+	std::string getText(){return component->GetVar("text")->GetString();}
 
-	void setText(std::string txt){GetVar("text")->Set(txt);}
-	std::string getText(){return GetVar("text")->GetString();}
-
-	float getWidth() const{
-		return width;
-	}
-	float getHeight(){
-		if(GetParent())
-			return GetParent()->GetVar("size2d")->GetVector2().y;
-		else{
-			assert(0);
-			return -1;
-		}//else
-	}
-	void setWidth(int w){
-		width = w;								 
-		if(GetParent())
-			GetParent()->GetVar("size2d")->Set(w, 0);
-	}
 	void setFirstLineDecrement(float val){
 		// TODO It can be less than 0 btw!
-		GetVar("firstLineDecrement")->Set(val);
+		component->GetVar("firstLineDecrement")->Set(val);
 	}
 	float getFirstLineDecrement(){
-		return GetVar("firstLineDecrement")->GetFloat();
+		return component->GetVar("firstLineDecrement")->GetFloat();
 	}
 	const StairsProfile& getLeftObstacles() const{
-		return left_obstacles;
+		return component->getLeftObstacles();
 	}
 	const StairsProfile& getRightObstacles() const{
-		return right_obstacles;
+		return component->getRightObstacles();
 	}
 	void setLeftObstacles(const StairsProfile& p){
-		left_obstacles = p;
-		GetVar("text")->GetSigOnChanged()->operator()(NULL);
+		component->setLeftObstacles(p);
 	}
 	void setRightObstacles(const StairsProfile& p){
-		right_obstacles = p;
-		GetVar("text")->GetSigOnChanged()->operator()(NULL);
+		component->setRightObstacles(p);
 	}
 	eFont getFont(){
-		return (eFont)GetVar("font")->GetUINT32();
+		return (eFont)component->GetVar("font")->GetUINT32();
 	}
 	void setFont(eFont f){
-		GetVar("font")->Set(uint32(f));
+		component->GetVar("font")->Set(uint32(f));
 	}
 	float getScale(){
-		float sx = GetVar("fontScale")->GetFloat();
+		float sx = component->GetVar("fontScale")->GetFloat();
 		return sx;
 	}
 	void setScale(float s){
-		GetVar("fontScale")->Set(s);
+		component->GetVar("fontScale")->Set(s);
 	}
 	float getLastLineEndX(){
-		return GetVar("lastLineEndX")->GetFloat();
+		return component->GetVar("lastLineEndX")->GetFloat();
 	}
 	float getLastLineEndY(){
-		return GetVar("lastLineEndY")->GetFloat();
+		return component->GetVar("lastLineEndY")->GetFloat();
 	}
 private:
-	float width;// used when attached
+	TextBoxRenderComponent* component;
 };
 
-class LuaText: public Text{
+class LuaTextItem: public TextItem, public LuaScreenItem{
 public:
-	LuaText(std::string);
-	LuaText(std::string text, eFont font);
+	LuaTextItem(std::string);
+	LuaTextItem(std::string text, eFont font);
 	static void luabind(lua_State* L);
 
 private:
-	LuaText(const LuaText&):Text(""){assert(false);}
-	LuaText& operator=(const LuaText&){assert(false);}
+	LuaTextItem(const LuaTextItem&):TextItem(""){assert(false);}
+	LuaTextItem& operator=(const LuaTextItem&){assert(false);}
 };
 
 class LuaStairsProfile;
 
-class LuaTextBox: public TextBox{
+class LuaTextBoxItem: public TextBoxItem, public LuaScreenItem{
 public:
-	LuaTextBox(std::string txt, float width, eAlignment align);
-	LuaTextBox(std::string txt, float width, eAlignment align, eFont font);
+	LuaTextBoxItem(std::string txt, float width, eAlignment align);
+	LuaTextBoxItem(std::string txt, float width, eAlignment align, eFont font);
 	static void luabind(lua_State* L);
 
 	const LuaStairsProfile getLeftObstacles() const;
@@ -135,6 +112,6 @@ public:
 	void setLeftObstacles(const LuaStairsProfile& p);
 	void setRightObstacles(const LuaStairsProfile& p);
 private:
-	LuaTextBox(const LuaText&):TextBox("", 0, ALIGNMENT_UPPER_LEFT){assert(false);}
-	LuaTextBox& operator=(const LuaText&){assert(false);}
+	LuaTextBoxItem(const LuaTextItem&):TextBoxItem("", 0, ALIGNMENT_UPPER_LEFT){assert(false);}
+	LuaTextBoxItem& operator=(const LuaTextBoxItem&){assert(false);}
 };
