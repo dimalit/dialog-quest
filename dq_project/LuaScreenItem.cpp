@@ -174,6 +174,7 @@ void LuaScreenItem::luabind(lua_State* L){
 
 		.def("destroy", &LuaScreenItem::destroy)
 		.property("debugDrawBox", &LuaScreenItem::getDebugDrawBox, &LuaScreenItem::setDebugDrawBox)
+		.property("debugDrawColor", &LuaScreenItem::getDebugDrawColor, &LuaScreenItem::setDebugDrawColor)
 
 		.def(luabind::self == luabind::other<LuaScreenItem&>())				// remove operator ==
 	];

@@ -5,7 +5,9 @@
 
 void draw_item_rect(ScreenItem* item, VariantList*){
 	if(item->getDebugDrawBox())
-		DrawRect(item->getAbsoluteX() - item->getHotSpotX(), item->getAbsoluteY() - item->getHotSpotY(), item->getWidth(), item->getHeight());
+		DrawRect(item->getAbsoluteX() - item->getHotSpotX(), item->getAbsoluteY() - item->getHotSpotY(),
+		item->getWidth(), item->getHeight(),
+		item->getDebugDrawColor());
 }
 
 bool ScreenItem::getDebugDrawBox() const{
@@ -28,6 +30,7 @@ ScreenItem::ScreenItem()
 	setX(0); setY(0);
 
 	debug_draw_box = &entity->GetVarWithDefault("debugDrawBox", uint32(0))->GetUINT32();
+	debug_draw_color = &entity->GetVarWithDefault("debugDrawColor", uint32(0xffffffff))->GetUINT32();
 
 	entity->GetVar("size2d")->GetSigOnChanged()->connect(1, boost::bind(&ScreenItem::OnSizeChange, this, _1));
 	entity->GetVar("pos2d")->GetSigOnChanged()->connect(1, boost::bind(&ScreenItem::onMove, this, _1));

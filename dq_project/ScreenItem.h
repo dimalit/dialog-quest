@@ -160,6 +160,13 @@ public:
 	void setDebugDrawBox(bool v){
 		entity->GetVar("debugDrawBox")->Set(uint32(v));
 	}
+	uint32 getDebugDrawColor() const{
+		return entity->GetVar("debugDrawColor")->GetUINT32();
+	}
+	void setDebugDrawColor(uint32 c){
+		entity->GetVar("debugDrawColor")->Set(uint32(c));
+	}
+
 protected:
 	void setParent(CompositeItem* p);
 	// utilitary
@@ -200,6 +207,7 @@ protected:
 	virtual void onMove(Variant* /*NULL*/);
 private:
 	uint32* debug_draw_box;
+	uint32* debug_draw_color;
 	float orig_width, orig_height;
 	CompositeItem* parent_item;
 };

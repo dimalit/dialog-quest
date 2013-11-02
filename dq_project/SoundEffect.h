@@ -11,4 +11,5 @@ public:
 	float getLength();
 private:
 	std::string filename;
+	AudioHandle handle;
 };
