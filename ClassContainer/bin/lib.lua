@@ -220,7 +220,7 @@ function TextButton(...)
 	local image_item = nil
 	if image then
 		if string.sub(image, -5) == ".anim" then
-			image_item = AnimatedItem(image)
+			image_item = AnimatedItem(load_config(image))
 			self:add(image_item)
 			image_item:stop()			
 		else
@@ -230,7 +230,7 @@ function TextButton(...)
 		end
 	end
 
-	local text_item = TextItem(text)
+	local text_item = TextBoxItem(text, 200)
 	self:add(text_item)	
 	
 	local padding = 10
@@ -239,50 +239,69 @@ function TextButton(...)
 	local shrink = arg.shrink
 	local scaleFree = arg.scaleFree
 	
+	-- link dimensions
+	image_item.rel_hpx, image_item.rel_hpy = 0, 0
+	image_item.x, image_item.y = 0, 0
+	self:link(text_item, 0, 0, self, 0, 0, padding, padding)
+	-- self:link(text_item, 1, nil, self, 1, nil, -padding)
+	self:link(self, nil, 1, text_item, nil, 1, 0, padding)
+	self:link(image_item, 0, 0, self, 0, 0)	
+	
 	local old_onRequestLayOut = self.onRequestLayOut
 	self.onRequestLayOut = function(...)
-		if onRequestLayOut then onRequestLayOut(unpack(arg)) end
+		if old_onRequestLayOut then old_onRequestLayOut(unpack(arg)) end
+		
+		-- adjust self h from text
+		self.height = text_item.bottom + padding
+		
+		-- adjust text w from self
+		-- TODO Hangs here!
+--		text_item.width = self.width - padding*2
+		
+		-- adjust image from self
+		local required_width = self.width
+		local required_height = self.height
+		
+		image_item.scaleX = required_width / (image_item.width  / image_item.scaleX)
+		image_item.scaleY = required_height / (image_item.height  / image_item.scaleY)
+		return
 	
-		local required_width = text_item.width + padding*2
-		local required_height = text_item.height + padding*2
+		-- local required_width = text_item.width + padding*2
+		-- local required_height = text_item.height + padding*2
 		
-		local kx = required_width / (image_item.width  / image_item.scaleX)
-		local ky = required_height/ (image_item.height / image_item.scaleY)
+		-- local kx = required_width / (image_item.width  / image_item.scaleX)
+		-- local ky = required_height/ (image_item.height / image_item.scaleY)
 		
-		if scaleFree then
-			local k = max(kx, ky)
-			kx = k
-			ky = k
-		end
-
-		-- scale up or scale down if enabled
-		if kx>1 or shrink then
-			-- HACK: should eliminate this e-comparison!!!
-			if math.abs(image_item.width - required_width) > 0.01 then
-				image_item.scaleX = kx
-			end
-		else
-			image_item.scaleX = 1
-		end
+		-- if scaleFree then
+			-- local k = max(kx, ky)
+			-- kx = k
+			-- ky = k
+		-- end
 		
-		if ky>1 or shrink then
-			-- HACK: should eliminate this e-comparison!!!
-			if math.abs(image_item.height - required_height) > 0.01 then
-				image_item.scaleY = ky
-			end
-		else
-			image_item.scaleY = 1
-		end		
+		-- -- scale up or scale down if enabled
+		-- if kx>1 or shrink then
+			-- -- HACK: should eliminate this e-comparison!!!
+			-- if math.abs(image_item.width - required_width) > 0.01 then
+				-- image_item.scaleX = kx
+			-- end
+		-- else
+			-- image_item.scaleX = 1
+		-- end
 		
-		-- set my dimension and positions of children
---		print("was", self.width, self.hpx, self.left)
-		self.width = image_item.width
---		print("is", self.width, self.hpx, self.left)
-		self.height = image_item.height
+		-- if ky>1 or shrink then
+			-- -- HACK: should eliminate this e-comparison!!!
+			-- if math.abs(image_item.height - required_height) > 0.01 then
+				-- image_item.scaleY = ky
+			-- end
+		-- else
+			-- image_item.scaleY = 1
+		-- end		
 		
-		image_item.rel_hpx, image_item.rel_hpy = 0, 0
-		image_item.x, image_item.y = 0, 0
-		text_item.x, text_item.y = image_item.width/2, image_item.height/2
+		-- -- set my dimension and positions of children
+		-- self.width = image_item.width
+		-- self.height = image_item.height
+		
+		-- text_item.x, text_item.y = image_item.width/2, image_item.height/2
 	end -- onRequestLayOut
 	
 	self.onDragStart = function()
@@ -614,9 +633,12 @@ CompositeItem = function(...)
 	--local adjust_dependents			-- for recursion
 	adjust_link = function(link)
 		local max_delta = 0
-	
+
+--		print_table(link)
+		
 		local nurse = link.nurse
 		local patient = link.patient
+	
 		assert(patient.parent==nurse or nurse.parent==patient or patient.parent==nurse.parent)
 			-- both nils or both non-nils!
 		assert(((link.nx==nil) == (link.px==nil)) and ((link.ny==nil) == (link.py==nil)))
@@ -645,7 +667,9 @@ CompositeItem = function(...)
 				if tx - patient.left >= 0 then
 					local delta = (tx - patient.left - patient.width)
 					if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
+--print("return", max_delta)			
 					patient.width = patient.width + delta/4
+--print("return", max_delta)								
 				end
 				local delta = (tx-patient.right)
 				if math.abs(delta) > max_delta then max_delta = math.abs(delta) end				
@@ -708,12 +732,9 @@ CompositeItem = function(...)
 			patient.y = patient.y + delta/4
 		end
 		end -- if link.ny ~= nil
-		
-		-- recurse!
-		--adjust_dependents(patient)
-		
+
 		return max_delta
-	end -- adjust_dependents
+	end -- adjust_link
 	
 	self.onRequestLayOut = function()
 --		print ("laying out", self.id)

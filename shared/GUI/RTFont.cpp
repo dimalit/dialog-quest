@@ -265,6 +265,10 @@ void RTFont::MeasureText( rtRectf *pRectOut, const char *pText, int len, float s
 
 void RTFont::DrawScaled( float x, float y, const string &text, float scale /*= 1.0f*/, unsigned int color/*=MAKE_RGBA(255,255,255,255)*/, FontStateStack *pState, RenderBatcher *pBatcher )
 {
+	// !!! round coords to nearest
+	x = floor(x+0.5f);
+	y = floor(y+0.5f);
+
 	if (!pBatcher) pBatcher = &g_globalBatcher;
 	SetupOrtho();
 	//assert(IsLoaded() && "No font loaded");

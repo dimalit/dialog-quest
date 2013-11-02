@@ -238,6 +238,11 @@ else
 		LogMsg("Can't load font 3");
 		return false;
 	}
+	if (!GetFont(FONT_TIMES_14)->Load("interface/font_times_14.rtfont"))
+	{
+		LogMsg("Can't load font 3");
+		return false;
+	}
 	//GetFont(FONT_SMALL)->SetSmoothing(false); //if we wanted to disable bilinear filtering on the font
 
 	GetBaseApp()->SetFPSLimit(25);

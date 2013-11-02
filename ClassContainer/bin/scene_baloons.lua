@@ -165,7 +165,7 @@ getmetatable(Baloons).__call = function()
 				self:remove(obj)				
 			
 			-- explode
-				local explosion = AnimatedItem("explosion.anim")
+				local explosion = AnimatedItem(load_config("explosion.anim"))
 				explosion.x, explosion.y = x, y
 				self:add(explosion)
 				explosion.onFinish = function() explosion:stop() explosion.visible=false end

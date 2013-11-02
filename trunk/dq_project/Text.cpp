@@ -22,8 +22,9 @@ TextBoxItem::TextBoxItem(std::string txt, float width, eAlignment align, eFont f
 
 	entity->GetVar("size2d")->Set(width, 0);
 	component->GetVar("text")->Set(txt);
+	CL_Vec2f h = entity->GetVar("size2d")->GetVector2();
 	component->GetVar("textAlignment")->Set((uint32)align);
-	component->GetVar("firstLineDecrement")->Set(50.0f);
+	component->GetVar("firstLineDecrement")->Set(0.0f);
 	setFont(font);
 }
 
@@ -37,6 +38,13 @@ LuaTextItem::LuaTextItem(std::string text, eFont font):TextItem(text, font){}
 void LuaTextItem::luabind(lua_State* L){
 	luabind::module(L) [
 		luabind::class_<LuaTextItem, LuaScreenItem>("TextItem")
+			.enum_("eFont")
+			[
+				luabind::value("FONT_SMALL", FONT_SMALL),
+				luabind::value("FONT_LARGE", FONT_LARGE),
+				luabind::value("FONT_PHONETIC", FONT_PHONETIC),
+				luabind::value("FONT_TIMES_14", FONT_TIMES_14)				
+			]
 			.def(luabind::constructor<std::string>())
 			.def(luabind::constructor<std::string, eFont>())
 			.property("text", &LuaTextItem::getText, &LuaTextItem::setText)
@@ -77,10 +85,12 @@ void LuaTextBoxItem::setRightObstacles(const LuaStairsProfile& p){
 	TextBoxItem::setRightObstacles(p);
 }
 
-LuaTextBoxItem::LuaTextBoxItem(std::string txt, float width, eAlignment align)
-	:TextBoxItem(txt, width, align){}
-LuaTextBoxItem::LuaTextBoxItem(std::string txt, float width, eAlignment align, eFont font)
-	:TextBoxItem(txt, width, align, font){}
+LuaTextBoxItem::LuaTextBoxItem(std::string txt)
+	:TextBoxItem(txt, 0, ALIGNMENT_UPPER_LEFT){}
+LuaTextBoxItem::LuaTextBoxItem(std::string txt, float width)
+	:TextBoxItem(txt, width, ALIGNMENT_UPPER_LEFT){}
+LuaTextBoxItem::LuaTextBoxItem(std::string txt, float width, eFont font)
+	:TextBoxItem(txt, width, ALIGNMENT_UPPER_LEFT, font){}
 
 void LuaTextBoxItem::luabind(lua_State* L){
 
@@ -96,9 +106,16 @@ void LuaTextBoxItem::luabind(lua_State* L){
 
 	luabind::module(L) [
 		luabind::class_<LuaTextBoxItem, LuaScreenItem>("TextBoxItem")
-			// TODO how to bind alignment constants to Lua?
-			.def(luabind::constructor<std::string, float, eAlignment>())
-			.def(luabind::constructor<std::string, float, eAlignment, eFont>())
+			.enum_("eFont")
+			[
+				luabind::value("FONT_SMALL", FONT_SMALL),
+				luabind::value("FONT_LARGE", FONT_LARGE),
+				luabind::value("FONT_PHONETIC", FONT_PHONETIC),
+				luabind::value("FONT_TIMES_14", FONT_TIMES_14)
+			]
+			.def(luabind::constructor<std::string>())
+			.def(luabind::constructor<std::string, float>())
+			.def(luabind::constructor<std::string, float, eFont>())
 			.property("text", &LuaTextBoxItem::getText, &LuaTextBoxItem::setText)
 			.property("font", &LuaTextBoxItem::getFont, &LuaTextBoxItem::setFont)
 			.property("scale", &LuaTextBoxItem::getScale, &LuaTextBoxItem::setScale)

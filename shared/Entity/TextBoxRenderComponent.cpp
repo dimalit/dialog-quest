@@ -40,6 +40,9 @@ void TextBoxRenderComponent::OnAdd(Entity *pEnt)
 	m_pFirstLineDecrement = &GetVarWithDefault("firstLineDecrement", Variant(0.0f))->GetFloat();
 	GetVar("firstLineDecrement")->GetSigOnChanged()->connect(1, boost::bind(&TextBoxRenderComponent::OnTextChanged, this, _1));
 
+	// re-wrap when width is changed
+	GetParent()->GetVar("size2d")->GetSigOnChanged()->connect(1, boost::bind(&TextBoxRenderComponent::OnTextChanged, this, _1));
+
 	m_pLastLineEndX = &GetVarWithDefault("lastLineEndX", Variant(0.0f))->GetFloat();
 	m_pLastLineEndY = &GetVarWithDefault("lastLineEndY", Variant(0.0f))->GetFloat();
 
@@ -74,9 +77,19 @@ void TextBoxRenderComponent::OnTextChanged(Variant *pDataObject)
 	m_lastLineRendered = 0;
 	m_lastCharRendered = 0;
 	float H = GetBaseApp()->GetFont(eFont(*m_pFontID))->GetLineHeight(*m_pFontScale);
-	GetVar("totalHeightInPixels")->Set(float(m_lines.size()*H));
+	if(m_lines.size()==0)
+		GetVar("totalHeightInPixels")->Set(H);
+	else
+		GetVar("totalHeightInPixels")->Set(float(m_lines.size()*H));
 	GetVar("totalLines")->Set(uint32(m_lines.size()));
-	m_pSize2d->y = GetVar("totalHeightInPixels")->GetFloat();
+
+	CL_Vec2f size = GetParent()->GetVar("size2d")->GetVector2();
+	float  y = GetVar("totalHeightInPixels")->GetFloat();
+	// TODO this or OnSizeChanged?!!
+	if(size.y != y){
+		size.y = y;
+		GetParent()->GetVar("size2d")->Set(size);
+	}
 
 	float last_line_width = m_pEnclosedSize2d->x;
 	float last_line_y = m_pEnclosedSize2d->y - H;

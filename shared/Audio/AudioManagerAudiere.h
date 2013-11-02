@@ -38,6 +38,7 @@ public:
 		m_pSound		= NULL;
 		m_bIsLooping	= false;
 		m_bIsMusic		= false;
+		m_ChannelCount = m_SampleRate = 0;
 
 	}
 
@@ -50,6 +51,8 @@ public:
 	}
 
 	OutputStreamPtr m_pSound;
+	int m_ChannelCount;
+	int m_SampleRate;
 	//FMOD::Sound *m_pSound;
 	std::string m_fileName;
 	bool   m_bIsLooping;
@@ -87,6 +90,7 @@ public:
 	virtual uint32 GetPos( AudioHandle soundID );
 	virtual void SetPos( AudioHandle soundID, uint32 posMS );
 	virtual void SetMusicVol(float vol);
+	virtual float GetLength(AudioHandle soundID);
 	SoundObject * GetSoundObjectByPointer(void *p);
 
 private:

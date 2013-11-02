@@ -1,6 +1,9 @@
--- it = TextInputItem(200,0)
+-- it = TextButton("`bHello", "btn_rect.anim")
+-- it.debugDrawBox = true
 -- root:add(it)
--- it.x, it.y = 100, 20
+-- it.rel_hpx, it.rel_hpy = 0, 0
+-- it.x, it.y = 0, 20
+-- it.width = 200
 
 -- all "test_XXX.lua" scripts create global variable "scene"
 -- and add its contents to root
@@ -9,8 +12,26 @@
 -- first of them will be run at the bottom
 local test_input, test_basket, test_buttons, test_explain_rel, test_baloons, test_mosaic
 
+test_1_1 = function()
+	local se = SoundEffect("audio/enter.wav")
+	se:play()
+	se.onFinish = function()
+		SoundEffect("audio/enter.wav"):play()
+	end
+	dofile("s_1_1.lua")
+	scene.onFinish = function()
+		scene.visible = false
+		root:remove(scene)
+		test_input()
+	end
+end
+
 test_input = function()
-	SoundEffect("audio/enter.wav"):play()
+	local se = SoundEffect("audio/enter.wav")
+	se:play()
+	se.onFinish = function()
+		SoundEffect("audio/enter.wav"):play()
+	end
 	dofile("test_input.lua")
 	scene.onFinish = function()
 		scene.visible = false
@@ -71,7 +92,7 @@ end
 
 -- run it!
 --test_buttons()
-test_input()
+test_1_1()
 --test_explain_rel()
 --test_basket();
 --test_baloons()

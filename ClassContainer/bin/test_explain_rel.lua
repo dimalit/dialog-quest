@@ -11,7 +11,7 @@ local p1 = FlowLayout(0,50)
 p1.id = "p1"
 -- default width = 0 and font = 0
 -- for phonetic we use width=0, font=3 => TextBoxItem("[x]", 0, 3) (Phonetic TM)
-p1:addItem(TextBoxItem("Буква «а» в закрытом слоге читается как ", 0, 0)):addItem(VoiceTextItem("man")):addItem(TextBoxItem(". Такого звука в русском языке нет. Это нечто среднее между русскими «а» и «э». Чтобы произнести этот звук правильно, широко раскрой рот так, будто хочешь сказать «а», и скажи «э». Звук ", 0, 0)):addItem(PhonemicItem("x")):addItem(TextBoxItem(" очень короткий, его ни в коем случае нельзя тянуть."))
+p1:addItem(TextBoxItem("Буква «а» в закрытом слоге читается как ", 0)):addItem(VoiceTextItem("ding")):addItem(TextBoxItem(". Такого звука в русском языке нет. Это нечто среднее между русскими «а» и «э». Чтобы произнести этот звук правильно, широко раскрой рот так, будто хочешь сказать «а», и скажи «э». Звук ", 0)):addItem(PhonemicItem("x")):addItem(TextBoxItem(" очень короткий, его ни в коем случае нельзя тянуть.", 0))
 local im = ImageItem("interface/flask.rttex")
 im.scaleX = 1.5
 p1:addItem(im)
@@ -24,7 +24,7 @@ scene.content:link(p1, 1, nil, scene.content, 1, nil, -2, -2)
 scene.content:link(p1, nil, 0, scene.content, nil, 0, -3, -3)
 
 p2 = FlowLayout()
-p2:addItem(TextBoxItem("Буква «а» в закрытом слоге читаетс как [?]. Такого звука в русском зыке нет. Это нечто среднее между русскими «а» и «э». Чтобы произнести этот звук правильно, широко раскрой рот так, будто хочешь сказать «а», и скажи «э». Звук [?] очень короткий, его ни в коем случае нельз тнуть."))
+p2:addItem(TextBoxItem("Буква «а» в закрытом слоге читаетс как [?]. Такого звука в русском зыке нет. Это нечто среднее между русскими «а» и «э». Чтобы произнести этот звук правильно, широко раскрой рот так, будто хочешь сказать «а», и скажи «э». Звук [?] очень короткий, его ни в коем случае нельз тнуть.", 0))
 p2:addObstacle(ImageItem("interface/flask.rttex"), 16, 16, "right")
 scene.content:add(p2)
 --p2:setLocationOrigin(p1, 0.5, 1)

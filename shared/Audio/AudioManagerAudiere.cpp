@@ -150,11 +150,15 @@ void AudioManagerAudiere::Preload( string fName, bool bLooping /*= false*/, bool
 		pObject->m_fileName = fName;
 
 
-		if (bForceStreaming){
-			pObject->m_pSound  = OpenSound(m_pDevice, (basePath+fName).c_str(), true);
-		}else{
-			pObject->m_pSound  = OpenSound(m_pDevice, (basePath+fName).c_str());
-		}
+		SampleSource* src = OpenSampleSource((basePath+fName).c_str());
+			assert(src);
+
+		// get parameters
+		SampleFormat fmt;
+		src->getFormat(pObject->m_ChannelCount, pObject->m_SampleRate, fmt);
+
+		// create sound
+		pObject->m_pSound  = OpenSound(m_pDevice, src, bForceStreaming);
 
 		if (!pObject->m_pSound)
 		{
@@ -284,6 +288,11 @@ bool AudioManagerAudiere::IsPlaying( AudioHandle soundID )
 	return false;
 }
 
+float AudioManagerAudiere::GetLength(AudioHandle soundID){
+	SoundObject *pObject = GetSoundObjectByPointer((void*)soundID);
+		assert(pObject);
+	return (float)pObject->m_pSound->getLength() / pObject->m_SampleRate;
+}
 
 void AudioManagerAudiere::SetMusicEnabled( bool bNew ){
 	if (bNew != m_bMusicEnabled){

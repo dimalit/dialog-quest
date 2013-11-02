@@ -7,7 +7,7 @@ button_anim = "btn_rect.anim"
 scene = Buttons()
 root:add(scene)
 
-scene.background.texture = "interface/menu_bg.rttex"
+scene.background.texture = "interface/128.rttex"
 
 scene.title.text = "Buttons"
 -- TextBoxItem(text, width, font)

@@ -47,7 +47,8 @@ getmetatable(Explain).__call = function(_,conf)
 		-- self.content.width, self.content.height = w, h
 	-- end
 	
-	self.agree_button = Button(TwoStateAnimation(Animation(load_config("Start.anim"))))
+	self.agree_button = TextButton{"", "Start.anim"}
+--	Button(TwoStateAnimation(Animation(load_config("Start.anim"))))
 	self.agree_button.rel_hpy = 1
 	self.agree_button.x = self.width / 2
 	self.agree_button.y = self.height

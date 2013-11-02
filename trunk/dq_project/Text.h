@@ -103,8 +103,9 @@ class LuaStairsProfile;
 
 class LuaTextBoxItem: public TextBoxItem, public LuaScreenItem{
 public:
-	LuaTextBoxItem(std::string txt, float width, eAlignment align);
-	LuaTextBoxItem(std::string txt, float width, eAlignment align, eFont font);
+	LuaTextBoxItem::LuaTextBoxItem(std::string txt);
+	LuaTextBoxItem(std::string txt, float width);
+	LuaTextBoxItem(std::string txt, float width, eFont font);
 	static void luabind(lua_State* L);
 
 	const LuaStairsProfile getLeftObstacles() const;
