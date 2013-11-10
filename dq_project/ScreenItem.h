@@ -18,7 +18,7 @@ public:
 	Entity* acquireEntity(Entity* e);
 
 	// ctor/dtor
-	ScreenItem();
+	ScreenItem(bool soft=true);
 	virtual ~ScreenItem();
 
 	// parent/child relations
@@ -31,6 +31,9 @@ public:
 		entity->GetVar("visible")->Set(uint32(v));
 	}
 	bool getReallyVisible() const;
+
+	bool isSoft() const {return i_am_soft;}
+	bool isRigid() const {return !i_am_soft;}
 
 	// geometry
 	// polymorphic
@@ -173,6 +176,7 @@ protected:
 	void takeCharFocus();
 	void giveCharFocus();
 	Entity* entity;
+	bool i_am_soft;
 protected:
 	void compute_corner(int no, float &rx, float &ry) const {
 
@@ -215,7 +219,7 @@ private:
 class CompositeItem: virtual public ScreenItem{
 	friend class ScreenItem;
 public:
-	CompositeItem();
+	CompositeItem(bool soft=false);
 	virtual ~CompositeItem(){
 		std::set<ScreenItem*>::iterator it;
 		for(it=children.begin(); it != children.end(); it++){
@@ -243,25 +247,24 @@ public:
 	}
 	// called by children when they change their size
 	// binded to Lua
-	void requestLayOut(){
-		need_lay_out = true;
-		// mark all parents
-		CompositeItem* i = getParent();
-		while(i){
-			i->need_lay_out_children = true;
-			i = i->getParent();
-		}
+	void requestLayOut();
+
+	void _specialEntryForRenderSignal(){
+		doLayOutIfNeeded();
 	}
+
+protected:
+	// called by children if they want to get doLayOutIfNeeded
+	// not binded to Lua
+	void requestLayOutChildren();
+
 	virtual void doLayOutIfNeeded();
-	void print_need_lay_out(int shift = 0){
-		for(int i=0; i<shift; i++)
-			std::cout << "\t";
-		std::cout << this << ": " << need_lay_out << std::endl;
-		for(std::set<ScreenItem*>::iterator i = children.begin(); i!=children.end(); ++i){
-			CompositeItem* c = dynamic_cast<CompositeItem*>(*i);
-			if(c)c->print_need_lay_out(shift+1);
-		}
-	}
+	void lay_out_children();
+
+	bool need_lay_out;
+	bool need_lay_out_children;
+	bool moving_children_now;			// don't need to schedule to next frame!
+
 private:
 	std::set<ScreenItem*> children;
 	// used to prevent invisible Entities from rendering
@@ -274,60 +277,6 @@ private:
 		ScreenItem::OnSizeChange(v);
 		requestLayOut();
 	}
-protected:
-	bool need_lay_out;
-	bool need_lay_out_children;
-	void lay_out_children(){
-		if(!need_lay_out_children)
-			return;
-		need_lay_out_children = false;
-		for(std::set<ScreenItem*>::iterator i = children.begin(); i != children.end(); ++i){
-			CompositeItem* c = dynamic_cast<CompositeItem*>(*i);
-			if(c)c->doLayOutIfNeeded();
-		}// for	
-	}
-};
-
-class _SimpleItem: virtual public ScreenItem
-{
-//!!!protected: for a while:
-public:
-	_SimpleItem();
-	~_SimpleItem();
-
-	// aggregates
-	void setView(EntityComponent* r){
-		// remove old
-		if(view)
-			entity->RemoveComponentByAddress(view);
-		// set new
-		view = r;
-		// connect component
-		float w = getWidth();
-		float h = getHeight();
-		if(view){
-			entity->AddComponent(view);
-		}
-		// accomodate its size
-		OnSizeChange(NULL);
-
-		// prepare Entity
-//		entity->GetVar("pos2d")->Set(x, y);
-//		entity->GetVar("rotation")->Set(rot /(float) M_PI * 180.0f);
-//		entity->GetVar("rotationCenter")->Set(hpx / (float)getWidth(), hpy / (float)getHeight());
-
-	}
-	EntityComponent* getView(){
-		return view;
-	}
-
-protected:
-	EntityComponent* view;
-
-private:
-	// no value semantic!
-	_SimpleItem& operator=(const _SimpleItem&){assert(false);}
-	_SimpleItem(const _SimpleItem&){assert(false);}
 };
 
 extern CompositeItem* root_item();

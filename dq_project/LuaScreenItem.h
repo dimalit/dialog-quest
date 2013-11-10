@@ -9,7 +9,8 @@ class LuaCompositeItem;
 class LuaScreenItem: virtual public ScreenItem{
 public:
 	bool operator == (LuaScreenItem&){return false;}
-	LuaScreenItem();
+	bool operator < (LuaScreenItem& rhs){return this < &rhs;}		// for storing in map
+	LuaScreenItem(bool soft=true);
 	static void luabind(lua_State* L);
 	LuaCompositeItem* getParent();
 
@@ -93,7 +94,7 @@ protected:
 class LuaCompositeItem: public LuaScreenItem, public CompositeItem{
 public:
 	bool operator == (LuaScreenItem&){return false;}
-	LuaCompositeItem():CompositeItem(), LuaScreenItem(), ScreenItem(){
+	LuaCompositeItem(bool soft=false):CompositeItem(soft), LuaScreenItem(soft), ScreenItem(soft){
 	}
 	static void luabind(lua_State* L);
 
@@ -111,4 +112,13 @@ private:
 	LuaCompositeItem& operator=(const LuaCompositeItem&){assert(false);}
 	luabind::object onRequestLayOut_cb;
 	virtual void doLayOutIfNeeded();
+};
+
+class LuaRigidCompositeItem: public LuaCompositeItem{
+public:
+	LuaRigidCompositeItem():LuaCompositeItem(false){}
+};
+class LuaSoftCompositeItem: public LuaCompositeItem{
+public:
+	LuaSoftCompositeItem():LuaCompositeItem(true){}
 };

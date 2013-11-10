@@ -38,7 +38,7 @@ public:
 		return nframes;
 	}
 	void play(){
-		assert(GetVar("frame")->GetFloat() == 0.0f);
+		assert(component->GetVar("frame")->GetFloat() == 0.0f);
 		int dur = 1000 * getNumFrames() / fps;
 		ic->GetVar("duration_ms")->Set((uint32)dur);
 	}
