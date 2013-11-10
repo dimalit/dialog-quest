@@ -22,7 +22,11 @@
 #include "LuaSoundEffect.h"
 #include "Texture.h"
 #include "TextInput.h"
+
+#include "LuaCassowary.h"
 #include "lua_lib.h"
+
+
 
 #include <luabind/class_info.hpp>
 #include <stdio.h>
@@ -277,12 +281,11 @@ else
 	LuaTextureItem::luabind(L);
 	LuaTextInputItem::luabind(L);
 
+	LuaCassowary::luabind(L);
+
 	LuaTimer::luabind(L, "Timer");	// TODO: Why name?
 	LuaSoundEffect::luabind(L);
-	//if(luaL_dofile(L, "lib.lua") != 0){
-	//	std::cout << lua_tostring(L,-1) << "\n";
-	//	return false;
-	//}
+
 	lua_pushcfunction(L, lua_error_handler);		// don't move it below: order matters
     if(luaL_loadfile(L, "lib.lua")!=0){
 		std::cout << lua_tostring(L,-1) << "\n";

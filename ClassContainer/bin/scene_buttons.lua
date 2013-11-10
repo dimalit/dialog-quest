@@ -1,7 +1,7 @@
 Buttons = {
 	margin = 20,
 	num_columns = 2,
-	row_interval = 30,
+	row_interval = 10,
 	button_anim = "btn_rect.anim",
 }
 
@@ -10,6 +10,7 @@ getmetatable(Buttons).__call = function(_,conf)
 	if conf == nil then conf = {} end
 	
 	local self = CompositeItem()
+	self.id = "scene"
 	self.width = screen_width - Buttons.margin*2
 	self.height = screen_height - Buttons.margin*2
 	self.rel_hpx, self.rel_hpy = 0, 0
@@ -21,12 +22,14 @@ getmetatable(Buttons).__call = function(_,conf)
 	self:add(self.background)	
 	
 	self.title = TextItem("self.title")
+	self.title.id = "title"
 	self:add(self.title)
 	self.title.rel_hpy = 0
 	self.title.y = 0
 	self.title.x = self.width / 2	
 
 	self.description = FlowLayout()
+	self.description.id = "desc"
 	self:add(self.description)
 	self:link(self.description, 0, nil, self, 0, nil)
 	self:link(self.description, 1, nil, self, 1, nil)
@@ -36,6 +39,7 @@ getmetatable(Buttons).__call = function(_,conf)
 	
 	for i=1,Buttons.num_columns do
 		local it = CompositeItem()
+		it.id = "col_"..i
 		self:add(it)
 		it.debugDrawColor = 0xff0000ff
 		
@@ -57,12 +61,12 @@ getmetatable(Buttons).__call = function(_,conf)
 			child.rel_hpx, child.rel_hpy = 0, 0
 			local top = 0
 			if #it.buttons>1 then	top = it.buttons[#it.buttons-1].top end
-			child.y = top + Buttons.row_interval
-			-- if #it.buttons==1 then	-- just me
-				-- it:link(child, nil, 0, it, nil, 0, 0, Buttons.row_interval)		-- link to parent
-			-- else
-				-- it:link(child, nil, 0, it.buttons[#it.buttons-1], nil, 1, 0, Buttons.row_interval)		-- link to prev
-			-- end
+			--child.y = top + Buttons.row_interval
+			if #it.buttons==1 then	-- just me
+				it:link(child, nil, 0, it, nil, 0, 0, 0)		-- link to parent
+			else
+				it:link(child, nil, 0, it.buttons[#it.buttons-1], nil, 1, 0, Buttons.row_interval)		-- link to prev
+			end
 			it:link(child, 0, nil, it, 0, nil);
 			it:link(child, 1, nil, it, 1, nil);
 			return it
@@ -101,11 +105,14 @@ getmetatable(Buttons).__call = function(_,conf)
 		-- FrameItem(Buttons.button_up_frame, self.agree_button_label.width+10, self.agree_button_label.height+10),
 		-- FrameItem(Buttons.button_down_frame, self.agree_button_label.width+10, self.agree_button_label.height+10)
 	-- )	
---	self.agree_button = TextButton{"Мне понятно", Buttons.button_anim, shrink=true}
-	-- self.agree_button.x = self.width / 2
-	-- self.agree_button.y = self.height - self.agree_button.height/2
---	self:add(self.agree_button)
---	self:link(self.agree_button, 0.5, 1, self, 0.5, 1)
+	self.agree_button = TextButton{"Мне понятно", Buttons.button_anim, shrink=true}
+	self.agree_button.width, self.agree_button.height = 200, 25
+		--self.agree_button.x = self.width / 2
+	 --self.agree_button.y = self.height - self.agree_button.height/2
+	self:add(self.agree_button)
+	-- print("link button start")
+	self:link(self.agree_button, 0.5, 1, self, 0.5, 1)
+	-- print("link button end")
 	
 --	self.agree_button_label.x, self.agree_button_label.y = self.agree_button.x, self.agree_button.y
 --	self:add(self.agree_button_label)
@@ -123,53 +130,64 @@ end
 ButtonsElement = function(button_text, label_text, sound)
 	local self = CompositeItem()
 	self.debugDrawColor = 0x00ffffff
+	self.id = "ButtonsElement"
 
 --	local left_label = TextItem(button_text)
-	local right_label = TextBoxItem(label_text, 200)
-	local button = TextButton{button_text, Buttons.button_anim,  shrink=true, padding=5, freeScale=true}
-	-- local button = TwoStateAnimation(	FrameItem(Buttons.button_up_frame, left_label.width+10, left_label.height+10),
-																		-- FrameItem(Buttons.button_down_frame, left_label.width+10, left_label.height+10))
-	--local button = FrameItem("interface/frame", 20, 20)--TextItem("BUTTON")
+	local right_label	= nil
+	local button			= nil
 	local sound = SoundEffect(sound)
---	self:add(button):add(left_label):add(right_label)
 
 	local button_present = button_text~=nil and button_text~=""
 	local label_present   = label_text~=nil and label_text~=""
 
 	-- place both
 	if button_present and label_present then
+		button = TextButton{button_text, Buttons.button_anim,  shrink=true, padding=5, freeScale=true}	
+		right_label = TextBoxItem(label_text, 200)
+		right_label.id="right_label"	
+		
 		self:add(button)
 		self:add(right_label)
 		
 		self:link(button, 0, 0, self, 0, 0)
 		self:link(self, nil, 1, button, nil, 1)
+		self:link(button, 1, nil, self, 0.5, nil)	-- button - half width
 		self:link(right_label, 0, nil, button, 1, nil, 5,0)
 		self:link(right_label, nil, 0.5, self, nil, 0.5)		
 		-- TODO: This should work!
 --		self:link(right_label, 1, nil, self, 1, nil)		
 	-- place only button
 	elseif button_present then
+			button = TextButton{button_text, Buttons.button_anim,  shrink=true, padding=5, freeScale=true}		
+	
 			self:add(button)
 			self:link(button, 0, 0, self, 0, 0)
 			self:link(self, nil, 1, button, nil, 1)
 			self:link(button, 1, nil, self, 1, nil)
 	-- place only label
 	elseif label_present then
+		right_label = TextBoxItem(label_text, 200)
+		right_label.id="right_label"		
+	
 		self:add(right_label)
 		self:link(right_label, 0, 0, self, 0, 0)
-		self:link(self, nil, 1, right_label, nil, 1)
 		self:link(right_label, 1, nil, self, 1, nil)		
+		self:link(self, nil, 1, right_label, nil, 1)
 	else
 		error("Create either button or label!")
 	end
 	
-	button.onClick = function()
-		sound:play()
+	if button_present then
+		button.onClick = function()
+			sound:play()
+		end
 	end
 
 	local old_onRequestLayOut = self.onRequestLayOut
 	self.onRequestLayOut = function(...)
+--		print("ButtonElement begin")
 		if old_onRequestLayOut then old_onRequestLayOut(unpack(arg)) end
+--		print("ButtonElement end")
 --		print(self.left, self.top, self.width, self.height)
 		-- button.x, button.y = button.hpx, button.hpy
 	-- --	left_label.x, left_label.y = button.x, button.y

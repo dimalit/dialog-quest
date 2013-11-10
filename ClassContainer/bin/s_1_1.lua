@@ -1,7 +1,7 @@
 -- set global scene parameters --
 Buttons.margin = 20
-Buttons.num_columns=2
-Buttons.row_interval = 60
+Buttons.num_columns=3
+Buttons.row_interval = 10
 button_anim = "btn_rect.anim"
 
 scene = Buttons()
@@ -18,20 +18,22 @@ scene.description
 	:addItem(TextBoxItem("`b Послушайте диалог-знакомство. Проговаривайте за дикторами каждую фразу, подражая интонации. ", 0, 0))
 	
 
- scene.columns[1]
+scene.columns[1]
 	:add{"`b -Hello", "", "audio/ding.wav"}
 	:add{"`b -	Pleased to meet you, Anna.", "", "audio/ding.wav"}
 	:add{"`b -	Nice to meet you too.", "", "audio/ding.wav"}
+	scene.columns[1].id = "col1"
 
 scene.columns[2]
-	:add{"", "`b [хелоу]", "audio/ding.wav"}
-	:add{"", "`b [пли:зд ту ми:ч ю, анна]", "audio/ding.wav"}
-	:add{"", "`b [найс ту ми:ч ю, ту:]", "audio/ding.wav"}
+	:add{"", " [хелоу]", "audio/ding.wav"}
+	:add{"", " [пли:зд ту ми:ч ю, анна]", "audio/ding.wav"}
+	:add{"", " [найс ту ми:ч ю, ту:]", "audio/ding.wav"}
+	scene.columns[2].id = "col2"
+	
+scene.columns[3]
+	:add{"", "- здравствуй", "audio/ding.wav"}
+	:add{"", "- Приятно познакомиться, Анна.", "audio/ding.wav"}
+	:add{"", "- Мне тоже приятно познакомиться.", "audio/ding.wav"}
 
--- scene.columns[3]
-	-- :add{"", "`b- здравствуй", "audio/ding.wav"}
-	-- :add{"", "`b- Приятно познакомиться, Анна.", "audio/ding.wav"}
-	-- :add{"", "`b- Мне тоже приятно познакомиться.", "audio/ding.wav"}
 
-
---scene.debugDrawBox = true	
+scene.debugDrawBox = true	

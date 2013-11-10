@@ -1,10 +1,3 @@
--- it = TextButton("`bHello", "btn_rect.anim")
--- it.debugDrawBox = true
--- root:add(it)
--- it.rel_hpx, it.rel_hpy = 0, 0
--- it.x, it.y = 0, 20
--- it.width = 200
-
 -- all "test_XXX.lua" scripts create global variable "scene"
 -- and add its contents to root
 
@@ -91,6 +84,7 @@ test_mosaic = function()
 end
 
 -- run it!
+--test_input()
 --test_buttons()
 test_1_1()
 --test_explain_rel()

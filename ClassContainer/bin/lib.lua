@@ -216,6 +216,7 @@ function TextButton(...)
 	local image = arg[2]
 	
 	local self = CompositeItem()	
+	self.id="TextButton"
 		
 	local image_item = nil
 	if image then
@@ -229,9 +230,15 @@ function TextButton(...)
 			self:add(image_item)			
 		end
 	end
+	image_item.id = "image_item"
 
 	local text_item = TextBoxItem(text, 200)
-	self:add(text_item)	
+	text_item.id = "text_item"
+	self:add(text_item)
+	text_item.rel_hpx, text_item.rel_hpy = 0, 0
+	
+	image_item.debugDrawColor = 0xff0000ff	
+	text_item.debugDrawColor = 0x00ff00ff	
 	
 	local padding = 10
 	if arg.padding then padding = arg.padding end
@@ -243,17 +250,17 @@ function TextButton(...)
 	image_item.rel_hpx, image_item.rel_hpy = 0, 0
 	image_item.x, image_item.y = 0, 0
 	self:link(text_item, 0, 0, self, 0, 0, padding, padding)
-	-- self:link(text_item, 1, nil, self, 1, nil, -padding)
+	--self:link(text_item, 1, nil, self, 1, nil, -padding)
 	self:link(self, nil, 1, text_item, nil, 1, 0, padding)
 	self:link(image_item, 0, 0, self, 0, 0)	
-	
+
+	--  set self width as initial. BAD
+	--self.width = 80--text_item.width + padding*2
+
 	local old_onRequestLayOut = self.onRequestLayOut
 	self.onRequestLayOut = function(...)
 		if old_onRequestLayOut then old_onRequestLayOut(unpack(arg)) end
-		
-		-- adjust self h from text
-		self.height = text_item.bottom + padding
-		
+
 		-- adjust text w from self
 		-- TODO Hangs here!
 --		text_item.width = self.width - padding*2
@@ -262,8 +269,16 @@ function TextButton(...)
 		local required_width = self.width
 		local required_height = self.height
 		
-		image_item.scaleX = required_width / (image_item.width  / image_item.scaleX)
-		image_item.scaleY = required_height / (image_item.height  / image_item.scaleY)
+		-- HACK: should eliminate this e-comparison!!!		
+		if math.abs(image_item.width - required_width) > 0.01 then		
+			image_item.scaleX = required_width / (image_item.width  / image_item.scaleX)
+		end
+		if math.abs(image_item.height - required_height) > 0.01 then		
+			image_item.scaleY = required_height / (image_item.height  / image_item.scaleY)
+		end
+		
+		-- print(self.width, self.height, text_item.x, text_item.y, text_item.width, text_item.height)
+		-- print(self.width, self.height, image_item.x, image_item.y, image_item.width, image_item.height)
 		return
 	
 		-- local required_width = text_item.width + padding*2
@@ -608,11 +623,155 @@ end -- MakeLayoutAgent
 local old_CompositeItem = CompositeItem
 CompositeItem = function(...)
 	local self = old_CompositeItem(unpack(arg))
+	local solver = Cassowary()
 	
 	-- add our own stuff
 	local links = {}				-- array of link_obj
+
+	-- move patient to needed point right now, before any solving
+	local adjust_link = function(patient, px, py, nurse, nx, ny, dx, dy)
+		local max_delta = 0
+
+		assert(patient.parent==nurse or nurse.parent==patient or patient.parent==nurse.parent)
+			-- both nils or both non-nils!
+		assert(((nx==nil) == (px==nil)) and ((ny==nil) == (py==nil)))
+		-- TODO: Bad to create two identical parts for x and y...
+					
+		if nx ~= nil then
+		local tx = nurse.left+nurse.width*nx + dx		-- target
+			-- if nurse.id=="content" then print("nurse tx", nurse.left, nurse.width, nx, dx) end
+			-- if patient.id=="content" then print("patient tx", nurse.left, nurse.width, nx, dx) end
+			if patient.parent==nurse then tx=tx-nurse.left end	-- left=0 if i am parent
+		-- if 0
+		if px==0 then
+			assert(nurse.parent~=patient)				-- left edje of parent cannot depend on child
+			-- if patient.right - tx >= 0 then
+				-- local delta = (patient.right - tx - patient.width)
+				-- if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
+				-- patient.width = patient.width + delta
+				-- if patient.drop=="drop" then print(debug.traceback("", 1)) end
+			-- end
+			local delta = (tx-patient.left)
+			if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
+			patient.x = patient.x + delta
+		-- if 1
+		elseif px==1 then
+			if nurse.parent~=patient then
+				if tx - patient.left >= 0 then
+					local delta = (tx - patient.left - patient.width)
+					if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
+--print("return", max_delta)			
+					patient.width = patient.width + delta
+--print("return", max_delta)								
+				end
+				local delta = (tx-patient.right)
+				if math.abs(delta) > max_delta then max_delta = math.abs(delta) end				
+				patient.x = patient.x + delta
+			else
+				if tx >=0 then
+					local delta = (tx-patient.width)
+					if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
+					patient.width = patient.width + delta
+				end
+			end
+		-- else just move
+		else
+			assert(nurse.parent~=patient)												-- parent pos cannot depend on child
+			local sx = patient.left+patient.width*px				-- source			
+			local delta = (tx-sx)
+			if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
+			patient.x = patient.x + delta
+		end
+		end -- if nx ~= nil
+		
+		if ny ~= nil then
+		local ty = nurse.top+nurse.height*ny + dy		-- target
+			if patient.parent==nurse then ty=ty-nurse.top end	-- left=0 if i am parent
+		-- if 0
+		if py==0 then
+			assert(nurse.parent~=patient)				-- left edje of parent cannot depend on child
+			-- if patient.bottom - ty >= 0 then
+				-- local delta = (patient.bottom - ty - patient.height)
+				-- if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
+				-- patient.height = patient.height + delta
+			-- end
+			local delta = (ty-patient.top)
+			if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
+			patient.y = patient.y + delta
+		-- if 1
+		elseif py==1 then
+			if nurse.parent~=patient then
+				if ty - patient.top >= 0 then
+					local delta = (ty - patient.top - patient.height)
+					if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
+					patient.height = patient.height + delta
+				end
+				local delta = (ty-patient.bottom)
+				if math.abs(delta) > max_delta then max_delta = math.abs(delta) end				
+				patient.y = patient.y + delta
+			else
+				if ty >=0 then
+					local delta = (ty-patient.height)
+					if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
+					patient.height = patient.height + delta
+				end
+			end
+		-- else just move
+		else
+			assert(nurse.parent~=patient)												-- parent pos cannot depend on child
+			local sy = patient.top+patient.height*py				-- source			
+			local delta = (ty-sy)
+			if math.abs(delta) > max_delta then max_delta = math.abs(delta) end			
+			patient.y = patient.y + delta
+		end
+		end -- if ny ~= nil
+
+		return max_delta
+	end -- adjust_link
 	
 	self.link = function(_, patient, px, py, nurse, nx, ny, dx, dy)
+		if dx == nil then dx = 0 end
+		if dy == nil then dy = 0 end
+		
+		-- move anchor to top-left for all
+		patient.rel_hpx, patient.rel_hpy = 0, 0
+		nurse.rel_hpx, nurse.rel_hpy = 0, 0
+	
+		adjust_link(patient, px, py, nurse, nx, ny, dx, dy)
+	
+		-- nurse is parent
+		if nurse == patient.parent then
+		  -- TODO remove other solver functions and do nicer: nurse x*0
+			if px ~= nil then
+				solver:addEquation({patient, "x", 1, "width", px}, {nurse, "x", 0, "width", nx}, dx)
+			end
+			if py ~= nil then
+				solver:addEquation({patient, "y", 1, "height", py}, {nurse, "y", 0, "height", ny}, dy)
+			end
+		-- patient is parent
+		elseif patient == nurse.parent then
+			assert(px ~= 0 and py ~= 0)			-- cannot link top-left of parent to child!
+			if px ~= nil then
+				solver:addEquation({patient, "x", 0, "width", px}, {nurse, "x", 1, "width", nx}, dx)
+			end
+			if py ~= nil then
+				solver:addEquation({patient, "y", 0, "height", py}, {nurse, "y", 1, "height", ny}, dy)
+			end
+		-- both inside container
+		else
+			if px ~= nil then
+				solver:addEquation({patient, "x", 1, "width", px}, {nurse, "x", 1, "width", nx}, dx)
+			end
+			if py ~= nil then
+				solver:addEquation({patient, "y", 1, "height", py}, {nurse, "y", 1, "height", ny}, dy)
+			end
+		end -- if
+		
+		self:requestLayOut()
+		return self
+	end -- link()
+	
+	self.old_link = function(_, patient, px, py, nurse, nx, ny, dx, dy)
 		if dx == nil then dx = 0 end
 		if dy == nil then dy = 0 end
 		link_obj = {
@@ -630,113 +789,14 @@ CompositeItem = function(...)
 	end
 	
 	-- TODO: think again about "growing" and "shrinking" containers as in GTK
-	--local adjust_dependents			-- for recursion
-	adjust_link = function(link)
-		local max_delta = 0
-
---		print_table(link)
-		
-		local nurse = link.nurse
-		local patient = link.patient
-	
-		assert(patient.parent==nurse or nurse.parent==patient or patient.parent==nurse.parent)
-			-- both nils or both non-nils!
-		assert(((link.nx==nil) == (link.px==nil)) and ((link.ny==nil) == (link.py==nil)))
-		-- TODO: Bad to create two identical parts for x and y...
-					
-		if link.nx ~= nil then
-		local tx = nurse.left+nurse.width*link.nx + link.dx		-- target
-			-- if nurse.id=="content" then print("nurse tx", nurse.left, nurse.width, link.nx, link.dx) end
-			-- if patient.id=="content" then print("patient tx", nurse.left, nurse.width, link.nx, link.dx) end
-			if patient.parent==nurse then tx=tx-nurse.left end	-- left=0 if i am parent
-		-- if 0
-		if link.px==0 then
-			assert(nurse.parent~=patient)				-- left edje of parent cannot depend on child
-			-- if patient.right - tx >= 0 then
-				-- local delta = (patient.right - tx - patient.width)
-				-- if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
-				-- patient.width = patient.width + delta/4
-				-- if patient.drop=="drop" then print(debug.traceback("", 1)) end
-			-- end
-			local delta = (tx-patient.left)
-			if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
-			patient.x = patient.x + delta/4
-		-- if 1
-		elseif link.px==1 then
-			if nurse.parent~=patient then
-				if tx - patient.left >= 0 then
-					local delta = (tx - patient.left - patient.width)
-					if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
---print("return", max_delta)			
-					patient.width = patient.width + delta/4
---print("return", max_delta)								
-				end
-				local delta = (tx-patient.right)
-				if math.abs(delta) > max_delta then max_delta = math.abs(delta) end				
-				patient.x = patient.x + delta/4
-			else
-				if tx >=0 then
-					local delta = (tx-patient.width)
-					if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
-					patient.width = patient.width + delta/4
-				end
-			end
-		-- else just move
-		else
-			assert(nurse.parent~=patient)												-- parent pos cannot depend on child
-			local sx = patient.left+patient.width*link.px				-- source			
-			local delta = (tx-sx)
-			if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
-			patient.x = patient.x + delta/4
-		end
-		end -- if nx ~= nil
-		
-		if link.ny ~= nil then
-		local ty = nurse.top+nurse.height*link.ny + link.dy		-- target
-			if patient.parent==nurse then ty=ty-nurse.top end	-- left=0 if i am parent
-		-- if 0
-		if link.py==0 then
-			assert(nurse.parent~=patient)				-- left edje of parent cannot depend on child
-			-- if patient.bottom - ty >= 0 then
-				-- local delta = (patient.bottom - ty - patient.height)
-				-- if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
-				-- patient.height = patient.height + delta/4
-			-- end
-			local delta = (ty-patient.top)
-			if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
-			patient.y = patient.y + delta/4
-		-- if 1
-		elseif link.py==1 then
-			if nurse.parent~=patient then
-				if ty - patient.top >= 0 then
-					local delta = (ty - patient.top - patient.height)
-					if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
-					patient.height = patient.height + delta/4
-				end
-				local delta = (ty-patient.bottom)
-				if math.abs(delta) > max_delta then max_delta = math.abs(delta) end				
-				patient.y = patient.y + delta/4
-			else
-				if ty >=0 then
-					local delta = (ty-patient.height)
-					if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
-					patient.height = patient.height + delta/4
-				end
-			end
-		-- else just move
-		else
-			assert(nurse.parent~=patient)												-- parent pos cannot depend on child
-			local sy = patient.top+patient.height*link.py				-- source			
-			local delta = (ty-sy)
-			if math.abs(delta) > max_delta then max_delta = math.abs(delta) end			
-			patient.y = patient.y + delta/4
-		end
-		end -- if link.ny ~= nil
-
-		return max_delta
-	end -- adjust_link
 	
 	self.onRequestLayOut = function()
+		solver:solve()								-- updates vars in, solve and updates out
+-- when solving and changing width, item man change its height
+-- will solve again with no difference otherwise
+--!!!		self.need_lay_out = false			-- will be raised again by child
+--		print("set to false")
+		do return end	-- our overloaded child should use editVar/editPoint!
 --		print ("laying out", self.id)
 		local max_delta
 		local cnt = 0
@@ -759,6 +819,17 @@ CompositeItem = function(...)
 	
 	return self
 end -- CompositeItem:__init
+
+-- override root again!
+do
+	local old_root = root
+	root = CompositeItem()
+	root.width, root.height = old_root.width, old_root.height
+	root.rel_hpx, root.rel_hpy = 0, 0
+	root.x, root.y = 0, 0
+	old_root:add(root)
+	root.id = "root"
+end
 
 -- TODO: spacing is not dynamic - if you change it later on - nothing happens!
 -- height can be nil which means automatic

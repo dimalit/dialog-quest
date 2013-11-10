@@ -15,6 +15,8 @@ CompositeItem* root_item(){
 		root->setHotSpotRelativeX(0.0f);
 		root->setHotSpotRelativeY(0.0f);
 		root->setX(0.0f); root->setY(0.0f);
+		root->setWidth(GetScreenSizeX());
+		root->setHeight(GetScreenSizeY());
 
 		Entity* e = new Entity("root");
 		AddFocusIfNeeded(e);
@@ -22,13 +24,13 @@ CompositeItem* root_item(){
 
 		// do layout from root before render
 		GetBaseApp()->m_sig_render.connect(
-			boost::bind(std::mem_fun(&CompositeItem::doLayOutIfNeeded), root_item()),			
+			boost::bind(std::mem_fun(&CompositeItem::_specialEntryForRenderSignal), root_item()),			
 			boost::signals::at_front);
 	}
 	return root;
 }
 
-LuaScreenItem::LuaScreenItem():ScreenItem(){
+LuaScreenItem::LuaScreenItem(bool soft):ScreenItem(soft){
 }
 
 LuaCompositeItem* LuaScreenItem::getParent(){
@@ -38,35 +40,29 @@ LuaCompositeItem* LuaScreenItem::getParent(){
 }
 
 void LuaCompositeItem::doLayOutIfNeeded(){
-	//static int level = -1;
-	//level++;
-	//for(int i=0; i<level; i++)
-	//	std::cout << '\t';
-	//std::cout << this << std::endl;
+	moving_children_now = true;			// if child wants to re-layout I will do it now (see below)
+	
+	if(need_lay_out_children)
+		lay_out_children();
 
-	// recurse even is WE don't need to re-layout
-	lay_out_children();				// recurse (grow children)
-
-	// TODO: even two branches of recursion can lead to bad asymptotic behavior!
-	// separate extending and shrinking containers!
-	if(need_lay_out && onRequestLayOut_cb){			// lay
+	int counter = 0;
+	while(need_lay_out && onRequestLayOut_cb){
+		moving_children_now = true;
 		while(need_lay_out){		
 				need_lay_out = false;
-				luabind::call_function<void>(onRequestLayOut_cb, this);			// this maay raise need_lay_out again!			
+				luabind::call_function<void>(onRequestLayOut_cb, this);			// this may raise need_lay_out again!
 		}// while
 
-		lay_out_children();			// recurse (lay fixed children)
+		if(need_lay_out_children)
+			lay_out_children();			// recurse (lay fixed children)
+		counter++;
 	}//if
-	else
-		need_lay_out = false;				// if no user layout handler
 	
-	assert(!need_lay_out);					// last time children must not grow!
+	moving_children_now = false;
 
-	//if(this == root_item()){
-	//	std::cout << "Root layout status:\n";
-	//	root_item()->print_need_lay_out();
-	//}
-	//level--;
+	assert(counter <= 3);
+
+	need_lay_out = false;				// if no user layout handler
 }
 
 //LuaCompositeItem* LuaCompositeItem::add(luabind::object child){
@@ -177,6 +173,7 @@ void LuaScreenItem::luabind(lua_State* L){
 		.property("debugDrawColor", &LuaScreenItem::getDebugDrawColor, &LuaScreenItem::setDebugDrawColor)
 
 		.def(luabind::self == luabind::other<LuaScreenItem&>())				// remove operator ==
+		.def(luabind::self < luabind::other<LuaScreenItem&>())				// for use in map
 	];
 }
 
@@ -193,6 +190,18 @@ void LuaCompositeItem::luabind(lua_State* L){
 		.def_readwrite("need_lay_out", &LuaCompositeItem::need_lay_out)
 
 		.def(luabind::self == luabind::other<LuaScreenItem&>())				// remove operator ==
+
+		,			// comma!
+
+		luabind::class_< LuaRigidCompositeItem, LuaCompositeItem >("RigidCompositeItem")
+		.def("rigid", &LuaRigidCompositeItem::isRigid)
+		.def("soft", &LuaRigidCompositeItem::isSoft)
+
+		,
+
+		luabind::class_< LuaSoftCompositeItem, LuaCompositeItem >("RigidCompositeItem")
+		.def("rigid", &LuaRigidCompositeItem::isRigid)
+		.def("soft", &LuaRigidCompositeItem::isSoft)
 	];
 
 	luabind::globals(L)["root"] = dynamic_cast<LuaCompositeItem*>(root_item());

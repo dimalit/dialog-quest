@@ -232,7 +232,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libcmtd.lib opengl32.lib  audiere.lib zdll.lib wsock32.lib lua51_static_d.lib luabind_static_d.lib shinyDebug.lib"
+				AdditionalDependencies="libcmtd.lib opengl32.lib audiere.lib zdll.lib wsock32.lib lua51_static_d.lib luabind_static_d.lib shinyDebug.lib CCCd.lib"
 				OutputFile="../bin/winRTSimpleApp.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(BOOST_ROOT)\lib&quot;;..\..\external\lib;..\..\shared\win\lib;..\..\shared\win\fmod\api\lib;..\..\shared\win\audiere\lib"
@@ -314,7 +314,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="opengl32.lib audiere.lib zdll.lib wsock32.lib lua51_static.lib luabind_static.lib shiny.lib"
+				AdditionalDependencies="opengl32.lib audiere.lib zdll.lib wsock32.lib lua51_static.lib luabind_static.lib shiny.lib CCC.lib"
 				OutputFile="../bin/winRTSimpleApp.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(BOOST_ROOT)\lib&quot;;..\..\external\lib;..\..\shared\win\lib;..\..\shared\win\fmod\api\lib;..\..\shared\win\audiere\lib"
@@ -5902,6 +5902,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\LuaCassowary.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\trunk\dq_project\LuaScreenItem.cpp"
 				>
 			</File>
@@ -5962,6 +5966,10 @@
 				</File>
 				<File
 					RelativePath="..\..\trunk\dq_project\lua_lib.h"
+					>
+				</File>
+				<File
+					RelativePath=".\LuaCassowary.h"
 					>
 				</File>
 				<File

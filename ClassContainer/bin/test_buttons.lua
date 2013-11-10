@@ -1,7 +1,7 @@
 -- set global scene parameters --
 Buttons.margin = 20
 Buttons.num_columns=3
-Buttons.row_interval = 10
+Buttons.row_interval = 40
 button_anim = "btn_rect.anim"
 
 scene = Buttons()
