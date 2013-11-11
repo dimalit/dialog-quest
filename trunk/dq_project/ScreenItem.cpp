@@ -153,6 +153,8 @@ void ScreenItem::setParent(CompositeItem* p){
 }
 
 void ScreenItem::OnSizeChange(Variant* /*NULL*/){
+	static int cnt = 0;
+//	cout << ++cnt << endl;
 	CL_Vec2f new_size = entity->GetVar("size2d")->GetVector2();
 
 	// skip if the same

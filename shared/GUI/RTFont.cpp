@@ -651,18 +651,19 @@ string RTFont::GetNextLine(int w, char **pCur, float scale, CL_Vec2f &vEnclosing
 				
 		MeasureText(&r, (*pCur), text.length(), scale);
 		
-		if (r.GetWidth() > w)
+		// !! don't wrap in the middle of the word!
+		if (r.GetWidth() > w && lastWrapPoint != 0)
 		{
-			if (lastWrapPoint == 0)		
-			{
-				//roughly break here, maybe the word was too long to wrap
-				text.erase(text.length()-1, 1);
-			} else
-			{
+			//if (lastWrapPoint == 0)		
+			//{
+			//	//roughly break here, maybe the word was too long to wrap
+			//	text.erase(text.length()-1, 1);
+			//} else
+			//{
 				//break at the last space we had marked
 				text.erase(lastWrapPoint, text.length()-lastWrapPoint);
 				(*pCur) += 1; //also get rid of the floating space
-			}
+			//}
 			
 			(*pCur) += text.length();
 			return text;

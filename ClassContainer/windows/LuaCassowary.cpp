@@ -3,6 +3,7 @@
 
 #include <map>
 #include <iostream>
+#include <strstream>
 
 using namespace std;
 
@@ -15,26 +16,50 @@ LuaCassowary::~LuaCassowary(void){
 }
 
 void LuaCassowary::solve(){
+	bool log = true;//((unsigned)this&0xffff) == 0x8dc0;
+	ostrstream ostr;	
+	ostream& cout = log ? ::cout : ostr;
 
-	bool logging = ((unsigned)this&0xffff) == 0xf8a0;
 	cout << "**********" << this << "**********" << endl;
 
 	// 0 if there were changes in rules - apply computed solution
 	if(need_resolve){
-		solver.Solve();
-		//for(std::map<obj_key, ClVariable>::iterator it = cl_vars.begin(); it != cl_vars.end(); ++it){
-		//	const luabind::object& obj = it->first.first;
-		//	const string& key = it->first.second;
-		//	obj[key] = it->second->Value();
-		//	cout << "Pre-Solving " << it->second  << endl;
+		// 1 Read final values of Stay vars and honor them
+		//for(std::map<obj_key, ClConstraint*>::iterator it = cl_stays.begin(); it != cl_stays.end(); ++it){
+		//	const luabind::object&	obj = it->first.first;
+		//	const string&			key = it->first.second;
+		//	ClVariable				var = cl_vars[it->first];
+		//	double					val = luabind::object_cast<double>(obj[key]);
+
+		//	cout << "Stay " << var << " = " << val << endl;
+		//	var.SetValue(val);
+
+		//	ClConstraint* pcn = new ClStayConstraint(var, ClsWeak());
+		//	solver.AddConstraint(pcn);
+		//		assert(it->second==NULL);
+		//	it->second = pcn;
 		//}// for
 
+		// 2 solve
+		solver.Solve();
+
+		// 3 apply
+		for(std::map<obj_key, ClVariable>::iterator it = cl_vars.begin(); it != cl_vars.end(); ++it){
+			const luabind::object& obj = it->first.first;
+			const string& key = it->first.second;
+			obj[key] = it->second->Value();
+			cout << "Pre-Solving " << it->second  << endl;
+		}// for
+
+		// 4 exit
 		need_resolve = false;
-		//return;
+		return;
 	}// if
 
 	// store iterators to changed vars here
 	std::vector<std::map<obj_key, ClVariable>::iterator> changed;
+
+	//cout << "Before:\n"; solver.PrintOn(cout);
 
 	// 1 Read vars that changed
 	for(std::map<obj_key, ClVariable>::iterator it = cl_vars.begin(); it != cl_vars.end(); ++it){
@@ -72,8 +97,11 @@ void LuaCassowary::solve(){
 
 		solver.SuggestValue(it->second, luabind::object_cast<double>(obj[key]));
 	}
+
 	solver.Resolve();
 	solver.EndEdit();
+
+	//cout << "After:\n"; solver.PrintOn(cout);
 
 	// TODO Should create special storage for independent vars!!
 	// 3 update lua vars
@@ -96,6 +124,7 @@ std::string make_var_name(const luabind::object& obj, const string& key){
 }
 
 void LuaCassowary::addStay(luabind::object obj, std::string key, double x){
+	assert(false);
 	double val = luabind::object_cast<double>(obj[key]);
 
 	ClVariable cl_var(make_var_name(obj, key), val);
@@ -118,6 +147,7 @@ void LuaCassowary::addStay(luabind::object obj, std::string key1, double coef1,
 												std::string key2, double coef2,
 							double x)
 {
+	assert(false);
 	double val1 = luabind::object_cast<double>(obj[key1]);
 	double val2 = luabind::object_cast<double>(obj[key2]);
 
@@ -149,6 +179,8 @@ void LuaCassowary::addStay(luabind::object obj, std::string key1, double coef1,
 }
 
 void LuaCassowary::addPointStay(luabind::object obj, std::string key1, std::string key2){
+	assert(false);
+
 	double val1 = luabind::object_cast<double>(obj[key1]);
 	double val2 = luabind::object_cast<double>(obj[key2]);
 
@@ -168,7 +200,9 @@ void LuaCassowary::addEquation(luabind::object info1,
 							   luabind::object info2,
 							   double dx)
 {
-	bool logging = ((unsigned)this&0xffff) == 0xf8a0;
+	bool log = true;//((unsigned)this&0xffff) == 0x8dc0;
+	ostrstream ostr;	
+	ostream& cout = log ? ::cout : ostr;
 
 //	cout << "\tbegin link" << endl;
 	cout << this << ":" << endl;
@@ -200,45 +234,43 @@ void LuaCassowary::addEquation(luabind::object info1,
 	// find patient's vars if present
 	if( cl_vars.find(make_pair(obj1, key11)) == cl_vars.end() && coef11 != 0.0){
 		cl_vars[make_pair(obj1, key11)] = cl_var11;
-//		cout << "added " << cl_var11 << endl;
+//		cl_stays[make_pair(obj1, key11)] = NULL;			// will be added in solve()
 	}
 	else if(coef11 != 0.0)
 		cl_var11 = cl_vars[make_pair(obj1, key11)];
 	if( cl_vars.find(make_pair(obj1, key12)) == cl_vars.end() && coef12 != 0.0){
 		cl_vars[make_pair(obj1, key12)] = cl_var12;
-//		cout << "added " << cl_var12 << endl;
+//		cl_stays[make_pair(obj1, key12)] = NULL;			// will be added in solve()
 	}
 	else if(coef12 != 0.0)
 		cl_var12 = cl_vars[make_pair(obj1, key12)];
 
 	// nurse should be present. if not - add it as "stay"
 		// 1
-	if( cl_vars.find(make_pair(obj2, key21)) == cl_vars.end() ){
-		//ClConstraint *pcn = new ClLinearInequality(ClLinearExpression(cl_var21).Plus(-1));
-		ClConstraint *pcn = new ClStayConstraint(cl_var21, ClsWeak());
-		solver.AddConstraint(pcn);
+	if( cl_vars.find(make_pair(obj2, key21)) == cl_vars.end() && coef21 != 0.0){
 		cl_vars[make_pair(obj2, key21)] = cl_var21;
-		cl_stays[make_pair(obj2, key21)] = pcn;
+		
+		ClConstraint* pcn = new ClStayConstraint(cl_var21, ClsWeak());
+		solver.AddConstraint(pcn);
+		//cl_stays[make_pair(obj2, key21)] = pcn;			// will be added in solve()
 
 		cout << cl_var21 << " = " << cl_var21.Value() << endl;
 	}
-	else{
+	else if(coef21 != 0.0){
 		cl_var21 = cl_vars[make_pair(obj2, key21)];
-//		assert(cl_var21.Value() == val21);			may be waiting to solve
 	}
 		// 2
-	if( cl_vars.find(make_pair(obj2, key22)) == cl_vars.end() ){
-		//ClConstraint* pcn = new ClLinearInequality(ClLinearExpression(cl_var22).Plus(-1));
+	if( cl_vars.find(make_pair(obj2, key22)) == cl_vars.end() && coef22 != 0.0){
+		cl_vars[make_pair(obj2, key22)] = cl_var22;
+
 		ClConstraint* pcn = new ClStayConstraint(cl_var22, ClsWeak());
 		solver.AddConstraint(pcn);
-		cl_vars[make_pair(obj2, key22)] = cl_var22;
-		cl_stays[make_pair(obj2, key22)] = pcn;
+		//cl_stays[make_pair(obj2, key22)] = pcn;			// will be added in solve()
 
 		cout << cl_var22 << " = " << cl_var22.Value() << endl;
 	}
-	else{
+	else if(coef22 != 0.0){
 		cl_var22 = cl_vars[make_pair(obj2, key22)];
-//		assert(cl_var22.Value() == val22);			may be waiting to solve
 	}
 
 	ClLinearExpression left;
@@ -324,9 +356,9 @@ void LuaCassowary::luabind(lua_State* L){
 		luabind::class_<LuaCassowary>("Cassowary")
 		.def(luabind::constructor<>())
 		.def("solve", &LuaCassowary::solve)
-		.def("addStay", (void (LuaCassowary::*)(luabind::object, std::string key, double x))&LuaCassowary::addStay)
-		.def("addStay", (void (LuaCassowary::*)(luabind::object, std::string key1, double coef1, std::string key2, double coef2, double x))&LuaCassowary::addStay)
-		.def("addPointStay", &LuaCassowary::addPointStay)
+		//.def("addStay", (void (LuaCassowary::*)(luabind::object, std::string key, double x))&LuaCassowary::addStay)
+		//.def("addStay", (void (LuaCassowary::*)(luabind::object, std::string key1, double coef1, std::string key2, double coef2, double x))&LuaCassowary::addStay)
+		//.def("addPointStay", &LuaCassowary::addPointStay)
 		.def("addEquation", &LuaCassowary::addEquation)
 //		.def("editVar", &LuaCassowary::editVar)
 //		.def("editPoint", &LuaCassowary::editPoint)

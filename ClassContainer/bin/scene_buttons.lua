@@ -110,20 +110,17 @@ getmetatable(Buttons).__call = function(_,conf)
 		--self.agree_button.x = self.width / 2
 	 --self.agree_button.y = self.height - self.agree_button.height/2
 	self:add(self.agree_button)
-	-- print("link button start")
-	self:link(self.agree_button, 0.5, 1, self, 0.5, 1)
-	-- print("link button end")
 	
---	self.agree_button_label.x, self.agree_button_label.y = self.agree_button.x, self.agree_button.y
---	self:add(self.agree_button_label)
+	--self:link(self.agree_button, 0.5, 1, self, 0.5, 1)
 	
-	-- self.agree_button.onDragStart = function()
-		-- self.agree_button:over(true)
-	-- end
-	
-	-- self.agree_button.onClick = function()
-		-- if self.onFinish then self:onFinish() end
-	-- end
+--	self:link(self.agree_button, nil, 0, self, nil, 1, 0, -25)
+	self:link(self.agree_button, nil, 1, self, nil, 1)
+	self:link(self.agree_button, 0, nil, self, 0.5, nil, -100, 0)
+	self:link(self.agree_button, 1, nil, self, 0.5, nil, 100, 0)
+		
+	self.agree_button.onClick = function()
+		if self.onFinish then self:onFinish() end
+	end
 	return self
 end
 

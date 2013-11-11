@@ -232,7 +232,7 @@ function TextButton(...)
 	end
 	image_item.id = "image_item"
 
-	local text_item = TextBoxItem(text, 200)
+	local text_item = TextBoxItem(text)
 	text_item.id = "text_item"
 	self:add(text_item)
 	text_item.rel_hpx, text_item.rel_hpy = 0, 0
@@ -250,7 +250,7 @@ function TextButton(...)
 	image_item.rel_hpx, image_item.rel_hpy = 0, 0
 	image_item.x, image_item.y = 0, 0
 	self:link(text_item, 0, 0, self, 0, 0, padding, padding)
-	--self:link(text_item, 1, nil, self, 1, nil, -padding)
+	self:link(text_item, 1, nil, self, 1, nil, -padding)
 	self:link(self, nil, 1, text_item, nil, 1, 0, padding)
 	self:link(image_item, 0, 0, self, 0, 0)	
 
@@ -737,34 +737,22 @@ CompositeItem = function(...)
 		patient.rel_hpx, patient.rel_hpy = 0, 0
 		nurse.rel_hpx, nurse.rel_hpy = 0, 0
 	
-		adjust_link(patient, px, py, nurse, nx, ny, dx, dy)
+		--bad idea! adjust_link(patient, px, py, nurse, nx, ny, dx, dy)
 	
 		-- nurse is parent
 		if nurse == patient.parent then
 		  -- TODO remove other solver functions and do nicer: nurse x*0
-			if px ~= nil then
-				solver:addEquation({patient, "x", 1, "width", px}, {nurse, "x", 0, "width", nx}, dx)
-			end
-			if py ~= nil then
-				solver:addEquation({patient, "y", 1, "height", py}, {nurse, "y", 0, "height", ny}, dy)
-			end
+			if px ~= nil then	solver:addEquation({patient, "x", 1, "width", px}, {nurse, "x", 0, "width", nx}, dx) end
+			if py ~= nil then	solver:addEquation({patient, "y", 1, "height", py}, {nurse, "y", 0, "height", ny}, dy) end
 		-- patient is parent
 		elseif patient == nurse.parent then
 			assert(px ~= 0 and py ~= 0)			-- cannot link top-left of parent to child!
-			if px ~= nil then
-				solver:addEquation({patient, "x", 0, "width", px}, {nurse, "x", 1, "width", nx}, dx)
-			end
-			if py ~= nil then
-				solver:addEquation({patient, "y", 0, "height", py}, {nurse, "y", 1, "height", ny}, dy)
-			end
+			if px ~= nil then	solver:addEquation({patient, "x", 0, "width", px}, {nurse, "x", 1, "width", nx}, dx) end
+			if py ~= nil then	solver:addEquation({patient, "y", 0, "height", py}, {nurse, "y", 1, "height", ny}, dy) end
 		-- both inside container
 		else
-			if px ~= nil then
-				solver:addEquation({patient, "x", 1, "width", px}, {nurse, "x", 1, "width", nx}, dx)
-			end
-			if py ~= nil then
-				solver:addEquation({patient, "y", 1, "height", py}, {nurse, "y", 1, "height", ny}, dy)
-			end
+			if px ~= nil then solver:addEquation({patient, "x", 1, "width", px}, {nurse, "x", 1, "width", nx}, dx) end
+			if py ~= nil then	solver:addEquation({patient, "y", 1, "height", py}, {nurse, "y", 1, "height", ny}, dy) end
 		end -- if
 		
 		self:requestLayOut()

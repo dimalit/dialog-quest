@@ -1,3 +1,6 @@
+--dofile("test_buttons_element.lua")
+--dofile("test_text_button.lua")
+
 -- all "test_XXX.lua" scripts create global variable "scene"
 -- and add its contents to root
 
