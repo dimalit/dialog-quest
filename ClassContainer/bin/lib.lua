@@ -759,6 +759,10 @@ CompositeItem = function(...)
 		return self
 	end -- link()
 	
+	self.restrict = function(_, left, op, right)
+		solver:addConstraint(left, right, op)
+	end
+	
 	self.old_link = function(_, patient, px, py, nurse, nx, ny, dx, dy)
 		if dx == nil then dx = 0 end
 		if dy == nil then dy = 0 end

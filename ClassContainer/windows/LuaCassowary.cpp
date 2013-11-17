@@ -1,11 +1,25 @@
 #include "PlatformPrecomp.h"
 #include "LuaCassowary.h"
+#include "luabind/operator.hpp"
 
 #include <map>
 #include <iostream>
 #include <strstream>
 
 using namespace std;
+
+std::string make_var_name(const luabind::object& obj, const string& key){
+	string var_name;
+	if(obj["id"])
+		var_name += luabind::object_cast<string>(obj["id"])+".";
+	var_name += key;
+	return var_name;
+}
+
+LuaClVariable::LuaClVariable(const luabind::object& obj, const std::string& key)
+:obj(obj), key(key){
+	ClFloatVariable::SetName(make_var_name(obj, key));
+}
 
 LuaCassowary::LuaCassowary(void){
 	solver.SetAutosolve(false);
@@ -55,6 +69,9 @@ void LuaCassowary::solve(){
 		need_resolve = false;
 		return;
 	}// if
+
+	// first check well binded vars :)
+	solver.GetExternalVariables();
 
 	// store iterators to changed vars here
 	std::vector<std::map<obj_key, ClVariable>::iterator> changed;
@@ -115,13 +132,6 @@ void LuaCassowary::solve(){
 	cout << endl;
 }
 
-std::string make_var_name(const luabind::object& obj, const string& key){
-	string var_name;
-	if(obj["id"])
-		var_name += luabind::object_cast<string>(obj["id"])+".";
-	var_name += key;
-	return var_name;
-}
 
 void LuaCassowary::addStay(luabind::object obj, std::string key, double x){
 	assert(false);
@@ -250,7 +260,8 @@ void LuaCassowary::addEquation(luabind::object info1,
 	if( cl_vars.find(make_pair(obj2, key21)) == cl_vars.end() && coef21 != 0.0){
 		cl_vars[make_pair(obj2, key21)] = cl_var21;
 		
-		ClConstraint* pcn = new ClStayConstraint(cl_var21, ClsWeak());
+		double strength = key21=="width" || key21=="height" ? 1.5 : 1.0;
+		ClConstraint* pcn = new ClStayConstraint(cl_var21, ClsWeak(), strength);
 		solver.AddConstraint(pcn);
 		//cl_stays[make_pair(obj2, key21)] = pcn;			// will be added in solve()
 
@@ -263,7 +274,8 @@ void LuaCassowary::addEquation(luabind::object info1,
 	if( cl_vars.find(make_pair(obj2, key22)) == cl_vars.end() && coef22 != 0.0){
 		cl_vars[make_pair(obj2, key22)] = cl_var22;
 
-		ClConstraint* pcn = new ClStayConstraint(cl_var22, ClsWeak());
+		double strength = key22=="width" || key22=="height" ? 1.5 : 1.0;
+		ClConstraint* pcn = new ClStayConstraint(cl_var22, ClsWeak(), strength);
 		solver.AddConstraint(pcn);
 		//cl_stays[make_pair(obj2, key22)] = pcn;			// will be added in solve()
 
@@ -301,6 +313,64 @@ void LuaCassowary::addEquation(luabind::object info1,
 	need_resolve = true;
 //	cout << "\tend link" << endl;
 }
+
+void LuaCassowary::addConstraint(const LuaClLinearExpression& left, const LuaClLinearExpression& right, string sign){
+	
+	ClLinearExpression::ClVarToCoeffMap& terms = const_cast<ClLinearExpression::ClVarToCoeffMap&>(right.expr.Terms());
+	for(ClLinearExpression::ClVarToCoeffMap::iterator it = terms.begin(); it != terms.end();){
+		LuaClVariable* lv = dynamic_cast<LuaClVariable*>(it->first.get_pclv());
+			assert(lv);
+		// add if absent
+		if(cl_vars.find(make_pair(lv->obj, lv->key)) == cl_vars.end()){
+			cl_vars[make_pair(lv->obj, lv->key)] = it->first;
+
+			// add stay
+			double strength = lv->key=="width" || lv->key=="height" ? 1.5 : 1.0;
+			ClConstraint* pcn = new ClStayConstraint(it->first, ClsWeak(), strength);
+			solver.AddConstraint(pcn);
+			cout << it->first << " = " << it->first.Value() << endl;
+
+			++it;
+		}
+		// take if present
+		else{
+			double coef = it->second;
+
+			ClLinearExpression::ClVarToCoeffMap::iterator next = it;			// need to remember next before erasing
+				++next;
+			terms.erase(it);
+
+			ClVariable present = cl_vars[make_pair(lv->obj, lv->key)];
+			terms[present] = coef;
+
+			it = next;
+		}
+	}// for
+
+	if(sign=="=="){
+		ClLinearEquation eq(left.expr, right.expr);
+		solver.AddConstraint(eq);
+	}// if equality
+	else{
+		ClCnRelation op;
+		if(sign==">")
+			op = cnGT;
+		else if(sign=="<")
+			op = cnLT;
+		else if(sign==">=")
+			op = cnGEQ;
+		else if(sign=="<=")
+			op = cnLEQ;
+		else
+			assert(false);
+
+		ClLinearInequality ineq(left.expr, op, right.expr, ClsRequired(), 2.0);		// ineq are stronger
+		solver.AddConstraint(ineq);
+	}// if inequality
+
+	need_resolve = true;
+}
+
 //void LuaCassowary::editVar(luabind::object obj, std::string key){
 //	double val = luabind::object_cast<double>(obj[key]);
 //
@@ -360,7 +430,18 @@ void LuaCassowary::luabind(lua_State* L){
 		//.def("addStay", (void (LuaCassowary::*)(luabind::object, std::string key1, double coef1, std::string key2, double coef2, double x))&LuaCassowary::addStay)
 		//.def("addPointStay", &LuaCassowary::addPointStay)
 		.def("addEquation", &LuaCassowary::addEquation)
+		.def("addConstraint", &LuaCassowary::addConstraint)
 //		.def("editVar", &LuaCassowary::editVar)
 //		.def("editPoint", &LuaCassowary::editPoint)
+		
+		,
+
+		luabind::class_<LuaClLinearExpression>("Expr")
+		.def(luabind::constructor<double>())
+		.def(luabind::constructor<const luabind::object&, const std::string&>())
+		.def(luabind::self + luabind::other<LuaClLinearExpression&>())
+		.def(luabind::self - luabind::other<LuaClLinearExpression&>())
+		.def(luabind::self * luabind::other<LuaClLinearExpression&>())
+		.def(luabind::self / luabind::other<LuaClLinearExpression&>())
 	];
 }

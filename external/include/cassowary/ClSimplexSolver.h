@@ -548,6 +548,9 @@ class ClSimplexSolver : public ClSolver, public ClTableau {
   // them.
   void SetExternalVariables();
 
+  // !!!
+  void GetExternalVariables();
+
   // this gets called by RemoveConstraint and by AddConstraint when the
   // contraint we're trying to Add is inconsistent
   ClSimplexSolver &RemoveConstraintInternal(const ClConstraint *const pcn)

@@ -114,9 +114,12 @@ getmetatable(Buttons).__call = function(_,conf)
 	--self:link(self.agree_button, 0.5, 1, self, 0.5, 1)
 	
 --	self:link(self.agree_button, nil, 0, self, nil, 1, 0, -25)
-	self:link(self.agree_button, nil, 1, self, nil, 1)
-	self:link(self.agree_button, 0, nil, self, 0.5, nil, -100, 0)
-	self:link(self.agree_button, 1, nil, self, 0.5, nil, 100, 0)
+	
+	--self:link(self.agree_button, nil, 1, self, nil, 1)
+	-- TODO: With mistake: == y + height it will fail assertion on 3 iterations. How do diagnose it?
+	self:restrict(Expr(self.agree_button, "y") + Expr(self.agree_button, "height"), "==", Expr(self, "height"))
+	self:link(self.agree_button, 0, nil, self, 0.5, nil, -80, 0)
+	self:link(self.agree_button, 1, nil, self, 0.5, nil, 80, 0)
 		
 	self.agree_button.onClick = function()
 		if self.onFinish then self:onFinish() end
