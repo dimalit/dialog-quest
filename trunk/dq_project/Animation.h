@@ -4,6 +4,7 @@
 #include "Entity/InterpolateComponent.h"
 #include <luabind/luabind.hpp>
 
+// TODO: Make it inherit ImageItem!!
 class AnimatedItem: virtual public ScreenItem
 {
 public:
@@ -32,6 +33,12 @@ public:
 	float getScaleY(){
 		assert(getParent());
 		return entity->GetVar("scale2d")->GetVector2().y;
+	}
+	float getFrameWidth(){
+		return component->GetVar("frameSize2d")->GetVector2().x;
+	}
+	float getFrameHeight(){
+		return component->GetVar("frameSize2d")->GetVector2().y;
 	}
 
 	int getNumFrames(){

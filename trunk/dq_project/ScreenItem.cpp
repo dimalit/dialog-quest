@@ -68,6 +68,7 @@ Entity* ScreenItem::acquireEntity(Entity* e){
 
 // my hotSpot is also rotation center. Proton's - not.
 void ScreenItem::setX(float x){
+	assert(_finite(x));
 	CL_Vec2f v = entity->GetVar("pos2d")->GetVector2();
 	if(v.x != x - getHotSpotX()){
 		v.x = x - getHotSpotX();
@@ -75,6 +76,7 @@ void ScreenItem::setX(float x){
 	}
 }
 void ScreenItem::setY(float y){
+	assert(_finite(y));
 	CL_Vec2f v = entity->GetVar("pos2d")->GetVector2();
 	if(v.y != y - getHotSpotY()){
 		v.y = y - getHotSpotY();

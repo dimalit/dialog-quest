@@ -42,7 +42,8 @@ LuaCompositeItem* LuaScreenItem::getParent(){
 void LuaCompositeItem::doLayOutIfNeeded(){
 	moving_children_now = true;			// if child wants to re-layout I will do it now (see below)
 	
-	if(need_lay_out_children)
+	// ignore this recursion if we in either case will call it later
+	if(need_lay_out_children && !(need_lay_out && onRequestLayOut_cb))
 		lay_out_children();
 
 	int counter = 0;

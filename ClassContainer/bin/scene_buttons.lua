@@ -12,9 +12,11 @@ getmetatable(Buttons).__call = function(_,conf)
 	local self = CompositeItem()
 	self.id = "scene"
 	self.width = screen_width - Buttons.margin*2
-	self.height = screen_height - Buttons.margin*2
 	self.rel_hpx, self.rel_hpy = 0, 0
-	self.x, self.y = Buttons.margin, Buttons.margin
+	self.height = screen_height - Buttons.margin*2
+	-- self.x, self.y = Buttons.margin, Buttons.margin
+	self:restrict(Expr(self, "width"), "==", Expr(self.width))
+	self:restrict(Expr(self, "height"), "==", Expr(self.height))				-- TODO: add special function a-la "keep value"?
 
 	self.background = TextureItem("", screen_width, screen_height)
 	self.background.rel_hpx, self.background.rel_hpy = self.x/self.background.width, self.y/self.background.height
@@ -24,9 +26,10 @@ getmetatable(Buttons).__call = function(_,conf)
 	self.title = TextItem("self.title")
 	self.title.id = "title"
 	self:add(self.title)
-	self.title.rel_hpy = 0
-	self.title.y = 0
-	self.title.x = self.width / 2	
+	-- self.title.rel_hpy = 0
+	-- self.title.y = 0
+	-- self.title.x = self.width / 2	
+	self:link(self.title, 0.5, 0, self, 0.5, 0)
 
 	self.description = FlowLayout()
 	self.description.id = "desc"
@@ -35,10 +38,11 @@ getmetatable(Buttons).__call = function(_,conf)
 	self:link(self.description, 1, nil, self, 1, nil)
 	self:link(self.description, nil, 0, self.title, nil, 1)		
 
-	self.columns = {}		
+	self.columns = {}
+	self.rows = {}					-- dummy items for alignment
 	
 	for i=1,Buttons.num_columns do
-		local it = CompositeItem()
+		local it = ScreenItem()
 		it.id = "col_"..i
 		self:add(it)
 		it.debugDrawColor = 0xff0000ff
@@ -56,19 +60,32 @@ getmetatable(Buttons).__call = function(_,conf)
 			-- make good child
 			local child = ButtonsElement(arr[1], arr[2], arr[3])
 			table.insert(it.buttons, child)			
-			-- place it
-			old_add(it, child)
+			-- place it on scene!
+			self:add(child)
 			child.rel_hpx, child.rel_hpy = 0, 0
 			local top = 0
 			if #it.buttons>1 then	top = it.buttons[#it.buttons-1].top end
 			--child.y = top + Buttons.row_interval
 			if #it.buttons==1 then	-- just me
-				it:link(child, nil, 0, it, nil, 0, 0, 0)		-- link to parent
+				self:link(child, nil, 0, it, nil, 0, 0, 0)		-- link to col object but inside scene!
 			else
-				it:link(child, nil, 0, it.buttons[#it.buttons-1], nil, 1, 0, Buttons.row_interval)		-- link to prev
+				self:link(child, nil, 0, it.buttons[#it.buttons-1], nil, 1, 0, Buttons.row_interval)		-- link to prev
 			end
-			it:link(child, 0, nil, it, 0, nil);
-			it:link(child, 1, nil, it, 1, nil);
+			self:link(child, 0, nil, it, 0, nil);
+			self:link(child, 1, nil, it, 1, nil);
+			
+			-- adjust row
+				-- create
+			if self.rows[#it.buttons] == nil then
+				local row = ScreenItem()
+				self:add(row)
+				self:link(row, 0, nil, self, 0, nil,  2, 0)
+				self:link(row, 1, nil, self, 1, nil, -2, 0)
+				self.rows[#it.buttons] = row
+			end
+				-- resize
+			--self:link(row, nil, 0, child, nil, 0, 0, -2)
+			
 			return it
 		end -- add
 		
@@ -106,7 +123,7 @@ getmetatable(Buttons).__call = function(_,conf)
 		-- FrameItem(Buttons.button_down_frame, self.agree_button_label.width+10, self.agree_button_label.height+10)
 	-- )	
 	self.agree_button = TextButton{"Мне понятно", Buttons.button_anim, shrink=true}
-	self.agree_button.width, self.agree_button.height = 200, 25
+	self.agree_button.width, self.agree_button.height = 180, 30
 		--self.agree_button.x = self.width / 2
 	 --self.agree_button.y = self.height - self.agree_button.height/2
 	self:add(self.agree_button)
@@ -117,6 +134,7 @@ getmetatable(Buttons).__call = function(_,conf)
 	
 	--self:link(self.agree_button, nil, 1, self, nil, 1)
 	-- TODO: With mistake: == y + height it will fail assertion on 3 iterations. How do diagnose it?
+
 	self:restrict(Expr(self.agree_button, "y") + Expr(self.agree_button, "height"), "==", Expr(self, "height"))
 	self:link(self.agree_button, 0, nil, self, 0.5, nil, -80, 0)
 	self:link(self.agree_button, 1, nil, self, 0.5, nil, 80, 0)

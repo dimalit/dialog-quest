@@ -269,16 +269,18 @@ function TextButton(...)
 		local required_width = self.width
 		local required_height = self.height
 		
+		--print("image: ", image_item.scaleX, image_item.scaleY, image_item.x, image_item.y, image_item.width, image_item.height)
+		
 		-- HACK: should eliminate this e-comparison!!!		
 		if math.abs(image_item.width - required_width) > 0.01 then		
-			image_item.scaleX = required_width / (image_item.width  / image_item.scaleX)
+			image_item.scaleX = required_width / (image_item.frameWidth)
 		end
 		if math.abs(image_item.height - required_height) > 0.01 then		
-			image_item.scaleY = required_height / (image_item.height  / image_item.scaleY)
+			image_item.scaleY = required_height / (image_item.frameHeight)
 		end
 		
-		-- print(self.width, self.height, text_item.x, text_item.y, text_item.width, text_item.height)
-		-- print(self.width, self.height, image_item.x, image_item.y, image_item.width, image_item.height)
+		--print(self.width, self.height, text_item.x, text_item.y, text_item.width, text_item.height)
+		--print("image: ", image_item.scaleX, image_item.scaleY, image_item.x, image_item.y, image_item.width, image_item.height)
 		return
 	
 		-- local required_width = text_item.width + padding*2
@@ -625,6 +627,11 @@ CompositeItem = function(...)
 	local self = old_CompositeItem(unpack(arg))
 	local solver = Cassowary()
 	
+	-- make 2.0-strength Stay on them, so inner vaes were prefereble to change
+	-- TODO: No id at this moment - so var will have partial name
+	-- solver:addExternalStay(self, "width")
+	-- solver:addExternalStay(self, "height")
+	
 	-- add our own stuff
 	local links = {}				-- array of link_obj
 
@@ -760,7 +767,7 @@ CompositeItem = function(...)
 	end -- link()
 	
 	self.restrict = function(_, left, op, right)
-		solver:addConstraint(left, right, op)
+		solver:addConstraint(left, op, right)
 	end
 	
 	self.old_link = function(_, patient, px, py, nurse, nx, ny, dx, dy)
@@ -816,11 +823,13 @@ end -- CompositeItem:__init
 do
 	local old_root = root
 	root = CompositeItem()
-	root.width, root.height = old_root.width, old_root.height
 	root.rel_hpx, root.rel_hpy = 0, 0
 	root.x, root.y = 0, 0
+	root.width, root.height = old_root.width, old_root.height
 	old_root:add(root)
 	root.id = "root"
+	root:link(root, 0, 0, old_root, 0, 0)
+	root:link(root, 1, 1, old_root, 0, 0, old_root.width, old_root.height)
 end
 
 -- TODO: spacing is not dynamic - if you change it later on - nothing happens!

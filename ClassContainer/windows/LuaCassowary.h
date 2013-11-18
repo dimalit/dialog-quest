@@ -7,6 +7,9 @@
 
 #include <string>
 #include <vector>
+#include <iostream>
+
+#include <cfloat>
 
 // TODO: Should inherit directly from ClAbstractVariable!!
 class LuaClVariable: public ClFloatVariable{
@@ -16,15 +19,20 @@ public:
 	LuaClVariable(const luabind::object& obj, const std::string& key);
 	virtual void SetName(string const &Name){assert(0 && "I know my name better.");}
 	virtual double Value() const {
+		assert(_finite(luabind::object_cast<double>(obj[key])));
 		return luabind::object_cast<double>(obj[key]);
 	}
 	virtual int IntValue() const {
 		return int(Value() + 0.5);
 	}
 	virtual void SetValue(double val){
+		assert(_finite(val));
+		std::cout << "Setting " << *this << " = " << val << std::endl;
 		obj[key] = val;
 	}
 	virtual void ChangeValue(double val){
+		assert(_finite(val));
+		std::cout << "Changing " << *this << " = " << val << std::endl;
 		obj[key] = val; 
 	}
 
@@ -102,12 +110,6 @@ private:
 
 class LuaCassowary
 {
-	struct lua_var{
-		luabind::object obj;
-		std::string key;
-		lua_var(luabind::object obj, std::string key)
-			:obj(obj), key(key){}
-	};
 public:
 	LuaCassowary(void);
 	~LuaCassowary(void);
@@ -115,26 +117,26 @@ public:
 
 	void solve();			// update lua vars from Cassowary vars!
 
-	void addStay(luabind::object obj, std::string key, double x);
-	void addStay(luabind::object obj, std::string key1, double coef1, std::string key2, double coef2, double x);
-	void addPointStay(luabind::object obj, std::string key1, std::string key2);
 	void addEquation(luabind::object info1,
 					 luabind::object info2,
 					 double dx);
-	void addConstraint(const LuaClLinearExpression& left, const LuaClLinearExpression& right, string sign);
-	//void editVar(luabind::object obj, std::string key1);	
-	//void editPoint(luabind::object obj, std::string key1, std::string key2);
-
+	void addConstraint(const LuaClLinearExpression& left, string op_sign, const LuaClLinearExpression& right);
+	void addExternalStay(luabind::object obj, std::string key);
 private:
 	ClSimplexSolver solver;
 	bool need_resolve;
 	typedef std::pair<luabind::object, std::string> obj_key;
-	friend bool operator<(const obj_key& k1, const obj_key& k2){
-		if(k1.first == k2.first)
-			return k1.second < k2.second;
-		else
-			return k1.first < k2.first;
-	}
-	std::map<obj_key, ClVariable> cl_vars;
-	std::map<obj_key, ClConstraint*> cl_stays;
+	
+	struct CompareVarsUnderPtr{
+		bool operator()(const LuaClVariable* left, const LuaClVariable* right){
+			return *left < *right;
+		}
+	};
+
+	// if somebody wants to add existing var - take it from here
+	// also remember stay strength coef for this var
+	// if == 0 - do not add it in solve()
+	// if > 0 - mult strength by it 
+	std::map<LuaClVariable*, double, CompareVarsUnderPtr> cl_vars;
+	std::set<LuaClVariable*, CompareVarsUnderPtr> cl_stays;					// who stays with strength=2.0 (self width and height)
 };

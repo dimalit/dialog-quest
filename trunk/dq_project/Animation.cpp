@@ -81,6 +81,8 @@ void LuaAnimatedItem::luabind(lua_State* L){
 			.def(luabind::constructor<luabind::object>())
 			.property("scaleX", &LuaAnimatedItem::getScaleX, &LuaAnimatedItem::setScaleX)
 			.property("scaleY", &LuaAnimatedItem::getScaleY, &LuaAnimatedItem::setScaleY)
+			.property("frameWidth", &LuaAnimatedItem::getFrameWidth)
+			.property("frameHeight", &LuaAnimatedItem::getFrameHeight)
 			.property("frame", &LuaAnimatedItem::getFrame, &LuaAnimatedItem::setFrame)
 			.property("num_frames", &LuaAnimatedItem::getNumFrames)
 			.property("loop", &LuaAnimatedItem::getLoop, &LuaAnimatedItem::setLoop)

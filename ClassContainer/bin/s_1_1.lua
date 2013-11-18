@@ -14,6 +14,7 @@ scene.title.text = "`b 1.1"
 -- width = always 0
 -- font: 0=times, 1=trajan, 3=phonetic
 -- NOTE: Center alignment doesn't work yet!
+
 scene.description
 	:addItem(TextBoxItem("`b Послушайте диалог-знакомство. Проговаривайте за дикторами каждую фразу, подражая интонации. ", 0, 0))
 	
