@@ -31,6 +31,12 @@ public:
 		assert(getParent());
 		return entity->GetVar("scale2d")->GetVector2().y;
 	}
+	float getFrameWidth(){
+		return component->GetVar("frameSize2d")->GetVector2().x;
+	}
+	float getFrameHeight(){
+		return component->GetVar("frameSize2d")->GetVector2().y;
+	}
 
 	void setFile(std::string);
 

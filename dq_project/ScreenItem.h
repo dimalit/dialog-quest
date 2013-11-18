@@ -91,6 +91,7 @@ public:
 		return entity->GetVar("size2d")->GetVector2().y;
 	}
 	void setWidth(float w){
+		assert(_finite(w));
 		CL_Vec2f v = entity->GetVar("size2d")->GetVector2();
 		// prevent parent requestLayOut
 		if(v.x != w){
@@ -100,6 +101,7 @@ public:
 		// note: pos is automatically adjusted in OnResize
 	}
 	void setHeight(float h){
+		assert(_finite(h));
 		// then grow it
 		CL_Vec2f v = entity->GetVar("size2d")->GetVector2();
 		// prevent parent requestLayOut

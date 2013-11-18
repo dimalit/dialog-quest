@@ -32,6 +32,8 @@ void LuaImageItem::luabind(lua_State* L){
 			.def(luabind::constructor<std::string>())
 			.property("width", &LuaImageItem::getWidth)
 			.property("height", &LuaImageItem::getHeight)
+			.property("frameWidth", &LuaImageItem::getFrameWidth)
+			.property("frameHeight", &LuaImageItem::getFrameHeight)
 			.property("scaleX", &LuaImageItem::getScaleX, &LuaImageItem::setScaleX)
 			.property("scaleY", &LuaImageItem::getScaleY, &LuaImageItem::setScaleY)
 			.def(luabind::self == luabind::other<LuaImageItem&>())		// remove operator ==
