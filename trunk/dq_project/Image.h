@@ -12,23 +12,19 @@ public:
 	~ImageItem(){}
 	bool operator==(ImageItem& rhs){return false;}
 	void setScaleX(float sx){
-		assert(getParent());
 		CL_Vec2f scale = entity->GetVar("scale2d")->GetVector2();
 		scale.x = sx;
 		entity->GetVar("scale2d")->Set(scale);
 	}
 	void setScaleY(float sy){
-		assert(getParent());
 		CL_Vec2f scale = entity->GetVar("scale2d")->GetVector2();
 		scale.y = sy;
 		entity->GetVar("scale2d")->Set(scale);
 	}
 	float getScaleX(){
-		assert(getParent());
 		return entity->GetVar("scale2d")->GetVector2().x;
 	}
 	float getScaleY(){
-		assert(getParent());
 		return entity->GetVar("scale2d")->GetVector2().y;
 	}
 	float getFrameWidth(){

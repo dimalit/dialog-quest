@@ -87,10 +87,10 @@ test_mosaic = function()
 end
 
 -- run it!
---test_input()
 --test_buttons()
-test_1_1()
---test_explain_rel()
+--test_1_1()
+--test_input()
+test_explain_rel()
 --test_basket();
 --test_baloons()
 --test_mosaic()

@@ -54,9 +54,9 @@ getmetatable(Buttons).__call = function(_,conf)
 		-- align top
 		self:link(it, nil, 0, self.description, nil, 1, 0, Buttons.margin)
 		-- align edges
-		self:link(it, 0, nil, self, 1/Buttons.num_columns*(i-1), nil)
-		--self:link(it, 1, nil, self, 1/Buttons.num_columns*i, nil)
-		self:restrict(Expr(it, "width"), "==", Expr(self, "width")/Expr(Buttons.num_columns))								-- not more then W/n
+		--self:link(it, 0, nil, self, 1/Buttons.num_columns*(i-1), nil)
+		----self:link(it, 1, nil, self, 1/Buttons.num_columns*i, nil)
+		self:restrict(Expr(it, "width"), "<=", Expr(self, "width")/Expr(Buttons.num_columns))								-- not more then W/n (and not less then max  child's width)
 		
 		it.buttons = {}
 		
@@ -103,10 +103,27 @@ getmetatable(Buttons).__call = function(_,conf)
 			return it
 		end -- add
 		
+		-- equalize the size and center them
+		if #self.columns > 0 then
+			-- all are equal to 1st and greater then their maximums
+			self:restrict(Expr(it, "width"), "==", Expr(self.columns[1], "width"))
+			-- distribute evenly: my distance to prev equals to 1st distance to 0
+			-- se also below for last element
+			local prev = self.columns[#self.columns]
+			self:restrict(Expr(it, "x")-Expr(prev, "x")-Expr(prev, "width"), "==", Expr(self.columns[1], "x"))
+		end
+		
 		it.height = 200			-- just to see it
 		table.insert(self.columns, it)
 	end
 
+	-- space at right edge equals to one at left edge
+	if #self.columns > 0 then
+		local last = self.columns[#self.columns]
+		self:restrict(Expr(self, "width")-Expr(last, "x")-Expr(last, "width"), "==", Expr(self.columns[1], "x"))
+		self:maximize(Expr(self.columns[1], "x"));
+	end
+	
 	local old_onRequestLayOut = self.onRequestLayOut
 	self.onRequestLayOut = function(...)	
 		if old_onRequestLayOut then old_onRequestLayOut(unpack(arg)) end
@@ -187,7 +204,7 @@ ButtonsElement = function(button_text, label_text, sound)
 		
 		self:link(button, 0, 0, self, 0, 0)
 		self:link(right_label, 0, nil, button, 1, nil, 5,0)
-		self:link(right_label, nil, 0.5, self, nil, 0.5)		
+		self:link(right_label, nil, 0, self, nil, 0)		
 		
 		-- restrict with
 		--self:restrict(Expr(right_label, "x")+Expr(right_label, "width"), "<=", Expr(self, "width"))
@@ -264,6 +281,16 @@ ButtonsElement = function(button_text, label_text, sound)
 				else
 					right_label.width = self.width
 				end
+		end
+		
+		if old_onRequestLayOut then old_onRequestLayOut(unpack(arg)) end
+		
+		-- shrink if needed
+		local right = 0
+		if button~=nil then right = button.right end
+		if right_label~=nil then right = right_label.right end
+		if self.width > right then
+			self.width = right
 		end
 		
 		print(self.left, self.top, self.width, self.height)

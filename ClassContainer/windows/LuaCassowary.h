@@ -56,23 +56,6 @@ private:
 	int obj_ref;
 	std::string key;
 	lua_State* L;
-private:
-	struct fake_handle{
-		lua_State* m_interpreter;
-		int m_index;
-	};
-	static bool objects_less(const luabind::object& l, const luabind::object& r){
-		fake_handle* l_h = reinterpret_cast<fake_handle*>(const_cast<luabind::object*>(&l));
-		fake_handle* r_h = reinterpret_cast<fake_handle*>(const_cast<luabind::object*>(&r));
-		assert(l_h->m_interpreter==l_h->m_interpreter);
-		return lua_lessthan(l_h->m_interpreter, l_h->m_index, r_h->m_index);
-	}
-	static bool objects_equal(const luabind::object& l, const luabind::object& r){
-		fake_handle* l_h = reinterpret_cast<fake_handle*>(const_cast<luabind::object*>(&l));
-		fake_handle* r_h = reinterpret_cast<fake_handle*>(const_cast<luabind::object*>(&r));
-		assert(l_h->m_interpreter==l_h->m_interpreter);
-		return lua_equal(l_h->m_interpreter, l_h->m_index, r_h->m_index);
-	}
 };
 
 class LuaClLinearExpression{
@@ -147,6 +130,8 @@ public:
 	void addEquation(luabind::object info1,
 					 luabind::object info2,
 					 double dx);
+	void minimize(const LuaClLinearExpression& expr);
+	void maximize(const LuaClLinearExpression& expr);
 	void addConstraint(const LuaClLinearExpression& left, string op_sign, const LuaClLinearExpression& right);
 	void addExternalStay(luabind::object obj, std::string key);
 private:
@@ -154,6 +139,8 @@ private:
 	bool need_resolve;
 	typedef std::pair<luabind::object, std::string> obj_key;
 	
+	void change_vars_to_cached(ClLinearExpression::ClVarToCoeffMap& terms);
+
 	struct CompareVarsUnderPtr{
 		bool operator()(const LuaClVariable* left, const LuaClVariable* right){
 			return *left < *right;

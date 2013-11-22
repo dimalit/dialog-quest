@@ -780,6 +780,13 @@ CompositeItem = function(...)
 	self.restrict = function(_, left, op, right)
 		solver:addConstraint(left, op, right)
 	end
+
+	self.maximize = function(_, expr)
+		solver:maximize(expr)
+	end
+	self.minimize = function(_, expr)
+		solver:minimize(expr)
+	end	
 	
 	self.old_link = function(_, patient, px, py, nurse, nx, ny, dx, dy)
 		if dx == nil then dx = 0 end

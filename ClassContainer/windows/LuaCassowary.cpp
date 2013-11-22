@@ -48,6 +48,7 @@ LuaClVariable::LuaClVariable(const luabind::object& obj, const std::string& key)
 
 LuaCassowary::LuaCassowary(void){
 	solver.SetAutosolve(false);
+	solver.SetExplaining(true);
 	need_resolve = false;
 }
 
@@ -75,15 +76,16 @@ void LuaCassowary::solve(){
 			// add stay 1.0 - 1.5
 			LuaClVariable* lv = it->first;
 
-			double strength = lv->key=="width" || lv->key=="height" ? 1.5 : 1.0;
+			double strength = lv->key=="width" || lv->key=="height" ? 1000.0 : 1.0;
 
 			ClConstraint* pcn;
 			// specially for self width and height
 			if(cl_stays.find(lv) == cl_stays.end()){
-				strength *= it->second;
+				//strength *= it->second;			// !!!
 				pcn = new ClStayConstraint(ClVariable(lv), ClsWeak(), strength);
 			}
 			else{
+				assert(false);
 				strength = 1.0;
 				strength *= it->second;
 				ClVariable var(lv);
@@ -151,17 +153,13 @@ void LuaCassowary::addEquation(luabind::object info1,
 //	cout << "\tend link" << endl;
 }
 
-void LuaCassowary::addConstraint(const LuaClLinearExpression& left, string op_sign, const LuaClLinearExpression& right){
-	
-	// get from cache and add Stay independent vars
-	ClLinearExpression::ClVarToCoeffMap& terms_r = const_cast<ClLinearExpression::ClVarToCoeffMap&>(right.expr.Terms());
-	for(ClLinearExpression::ClVarToCoeffMap::iterator it = terms_r.begin(); it != terms_r.end();){
+void LuaCassowary::change_vars_to_cached(ClLinearExpression::ClVarToCoeffMap& terms){
+	for(ClLinearExpression::ClVarToCoeffMap::iterator it = terms.begin(); it != terms.end();){
 		LuaClVariable* lv = dynamic_cast<LuaClVariable*>(it->first.get_pclv());
 			assert(lv);
 		// add if absent
 		if(cl_vars.find(lv) == cl_vars.end() && it->second != 0.0){
-			double strength = 1.0;// set x and y too lv->key=="width" || lv->key=="height" ? 1.0 : 0.0;
-			cl_vars[lv] = strength;
+			cl_vars[lv] = 1.0;
 			++it;
 		}
 		// take if present
@@ -171,51 +169,56 @@ void LuaCassowary::addConstraint(const LuaClLinearExpression& left, string op_si
 
 			ClLinearExpression::ClVarToCoeffMap::iterator next = it;			// need to remember next before erasing
 				++next;
-			terms_r.erase(it);
+			terms.erase(it);
 
 			ClVariable var(cl_vars.find(lv)->first);							// new ClVariable with old LuaClVariable
-			terms_r[var] = coef;
+			terms[var] = coef;
 
 			it = next;
 		}
 		else
 			++it;
 	}// for
+}
 
+void LuaCassowary::maximize(const LuaClLinearExpression& expr){
 	
-	// get from cache dependent vars
+	// get from cache vars
+	ClLinearExpression::ClVarToCoeffMap& terms = const_cast<ClLinearExpression::ClVarToCoeffMap&>(expr.expr.Terms());
+	change_vars_to_cached(terms);
+
+	// maximize
+	ClLinearEquation eq(expr.expr, ClLinearExpression(1000000.0), ClsWeak());
+	solver.AddConstraint(eq);
+
+	// print
+	cout << expr.expr << " -> MAX" << endl;
+	need_resolve = true;
+}
+
+void LuaCassowary::minimize(const LuaClLinearExpression& expr){
+	
+	// get from cache vars
+	ClLinearExpression::ClVarToCoeffMap& terms = const_cast<ClLinearExpression::ClVarToCoeffMap&>(expr.expr.Terms());
+	change_vars_to_cached(terms);
+
+	// minimize
+	ClLinearEquation eq(expr.expr, ClLinearExpression(-1000000.0), ClsWeak());
+	solver.AddConstraint(eq);
+
+	// print
+	cout << expr.expr << " -> MIN" << endl;
+	need_resolve = true;
+}
+
+void LuaCassowary::addConstraint(const LuaClLinearExpression& left, string op_sign, const LuaClLinearExpression& right){
+	
+	// get from cache vars
+	ClLinearExpression::ClVarToCoeffMap& terms_r = const_cast<ClLinearExpression::ClVarToCoeffMap&>(right.expr.Terms());
 	ClLinearExpression::ClVarToCoeffMap& terms_l = const_cast<ClLinearExpression::ClVarToCoeffMap&>(left.expr.Terms());
-	for(ClLinearExpression::ClVarToCoeffMap::iterator it = terms_l.begin(); it != terms_l.end();){
-		LuaClVariable* lv = dynamic_cast<LuaClVariable*>(it->first.get_pclv());
-			assert(lv);
-		// add if absent
-		if(cl_vars.find(lv) == cl_vars.end() && it->second != 0.0){
-			double strength = 0.1;// also x and y at 0.1 lv->key=="width" || lv->key=="height" ? 0.1 : 0.0;
-			cl_vars[lv] = strength;								// 10 times less for dependents
-//			cout << "Added " << it->first << endl;
-			++it;
-		}
-		// take if present
-		else if(it->second != 0.0){
-			if(cl_vars[lv] != 0.0)
-				cl_vars[lv] = 0.1;			// now you are dependent
-			double coef = it->second;
-//оно ставит кнопку не туда потому что она не добавляется в Stay
-//а если ее туда добавить - то непонятно кого из двоих связанных можно двигать, а кого нет
-			ClLinearExpression::ClVarToCoeffMap::iterator next = it;			// need to remember next before erasing
-				++next;
-			terms_l.erase(it);
+	change_vars_to_cached(terms_r);
+	change_vars_to_cached(terms_l);
 
-			ClVariable var(cl_vars.find(lv)->first);							// new ClVariable with old LuaClVariable
-			terms_l[var] = coef;
-
-			it = next;
-		}
-		else
-			++it;
-	}// for
-
-	
 	if(op_sign=="=="){
 		ClLinearEquation eq(left.expr, right.expr);
 		solver.AddConstraint(eq);
@@ -332,6 +335,8 @@ void LuaCassowary::luabind(lua_State* L){
 		//.def("addStay", (void (LuaCassowary::*)(luabind::object, std::string key, double x))&LuaCassowary::addStay)
 		//.def("addStay", (void (LuaCassowary::*)(luabind::object, std::string key1, double coef1, std::string key2, double coef2, double x))&LuaCassowary::addStay)
 		//.def("addPointStay", &LuaCassowary::addPointStay)
+		.def("maximize", &LuaCassowary::maximize)
+		.def("minimize", &LuaCassowary::minimize)
 		.def("addEquation", &LuaCassowary::addEquation)
 		.def("addConstraint", &LuaCassowary::addConstraint)
 		.def("addExternalStay", &LuaCassowary::addExternalStay)
