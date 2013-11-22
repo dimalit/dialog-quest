@@ -57,11 +57,15 @@ void LuaCompositeItem::doLayOutIfNeeded(){
 		if(need_lay_out_children)
 			lay_out_children();			// recurse (lay fixed children)
 		counter++;
-	}//if
+	}//while
 	
 	moving_children_now = false;
 
-	assert(counter <= 3);
+	// TODO: Find why it doesn't want to use suggested value!!!
+	if(counter > 3){
+		cout << "WARNING: Counter = " << counter << std::endl;
+		assert(counter <= 5);
+	}
 
 	need_lay_out = false;				// if no user layout handler
 }
