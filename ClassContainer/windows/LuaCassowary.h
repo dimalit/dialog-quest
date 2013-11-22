@@ -19,6 +19,8 @@ public:
 	LuaClVariable(const luabind::object& obj, const std::string& key);
 	virtual void SetName(string const &Name){assert(0 && "I know my name better.");}
 	virtual double Value() const {
+		lua_rawgeti(L, LUA_REGISTRYINDEX, obj_ref);
+		luabind::object obj(luabind::from_stack(L, -1));
 		assert(_finite(luabind::object_cast<double>(obj[key])));
 		return luabind::object_cast<double>(obj[key]);
 	}
@@ -27,25 +29,50 @@ public:
 	}
 	virtual void SetValue(double val){
 		assert(_finite(val));
+		lua_rawgeti(L, LUA_REGISTRYINDEX, obj_ref);
+		luabind::object obj(luabind::from_stack(L, -1));
 		std::cout << "Setting " << *this << " = " << val << std::endl;
 		obj[key] = val;
 	}
 	virtual void ChangeValue(double val){
 		assert(_finite(val));
+		lua_rawgeti(L, LUA_REGISTRYINDEX, obj_ref);
+		luabind::object obj(luabind::from_stack(L, -1));
 		std::cout << "Changing " << *this << " = " << val << std::endl;
 		obj[key] = val; 
 	}
 
 	bool operator<(const LuaClVariable& right) const{
-		if(this->obj == right.obj)
+//		assert(this->obj != luabind::nil && right.obj != luabind::nil);
+		if(this->obj_ref == right.obj_ref)//(objects_equal(this->obj, right.obj))			// do not want to overload == everywhere
 			return this->key < right.key;
 		else
-			return this->obj < right.obj;
+			return this->obj_ref < right.obj_ref;//objects_less(this->obj, right.obj);
 	}
 private:
 //	ClVariable var;
-	luabind::object obj;
+	static const int key4refs;
+	//luabind::object obj;
+	int obj_ref;
 	std::string key;
+	lua_State* L;
+private:
+	struct fake_handle{
+		lua_State* m_interpreter;
+		int m_index;
+	};
+	static bool objects_less(const luabind::object& l, const luabind::object& r){
+		fake_handle* l_h = reinterpret_cast<fake_handle*>(const_cast<luabind::object*>(&l));
+		fake_handle* r_h = reinterpret_cast<fake_handle*>(const_cast<luabind::object*>(&r));
+		assert(l_h->m_interpreter==l_h->m_interpreter);
+		return lua_lessthan(l_h->m_interpreter, l_h->m_index, r_h->m_index);
+	}
+	static bool objects_equal(const luabind::object& l, const luabind::object& r){
+		fake_handle* l_h = reinterpret_cast<fake_handle*>(const_cast<luabind::object*>(&l));
+		fake_handle* r_h = reinterpret_cast<fake_handle*>(const_cast<luabind::object*>(&r));
+		assert(l_h->m_interpreter==l_h->m_interpreter);
+		return lua_equal(l_h->m_interpreter, l_h->m_index, r_h->m_index);
+	}
 };
 
 class LuaClLinearExpression{
@@ -56,7 +83,7 @@ class LuaClLinearExpression{
 	public:
 		bool operator()(const LuaClVariable& left, const LuaClVariable& right){
 			if(!(left < right) && !(right < left)){
-				assert(left.obj == right.obj && left.key == right.key);
+				assert(left.obj_ref == right.obj_ref && left.key == right.key);
 			}// if equal
 			return left < right;
 		}

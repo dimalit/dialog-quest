@@ -8,6 +8,8 @@
 
 using namespace std;
 
+const int LuaClVariable::key4refs = 0;		// value doesn't matter, we need unique address
+
 std::string make_var_name(const luabind::object& obj, const string& key){
 	string var_name;
 	if(obj["id"])
@@ -17,8 +19,31 @@ std::string make_var_name(const luabind::object& obj, const string& key){
 }
 
 LuaClVariable::LuaClVariable(const luabind::object& obj, const std::string& key)
-:obj(obj), key(key){
+:key(key){
+	this->L = obj.interpreter();
 	ClFloatVariable::SetName(make_var_name(obj, key));
+
+	// try find its obj_ref in registry
+	lua_pushlightuserdata(L, (void*)&key4refs);
+	lua_gettable(L, LUA_REGISTRYINDEX); assert(lua_istable(L, -1));		// get obj->ref storage in stack (-2)
+	obj.push(L); assert(!lua_isnil(L, -1));								// -1
+	lua_gettable(L, -2);												// get ref for it
+	
+	if(!lua_isnil(L, -1)){
+		this->obj_ref = (int)lua_tonumber(L, -1);
+	}
+	// not found - obtain new reference
+	else{
+		obj.push(L);											// now -1
+		this->obj_ref = luaL_ref(L, LUA_REGISTRYINDEX);			// popped
+
+		// add to refs_table
+		lua_pushlightuserdata(L, (void*)&key4refs);
+		lua_gettable(L, LUA_REGISTRYINDEX);					// -3
+		obj.push(L);										// -2
+		lua_pushnumber(L, this->obj_ref);					// -1
+		lua_settable(L, -3);								// obj->ref table
+	}// else
 }
 
 LuaCassowary::LuaCassowary(void){
@@ -88,6 +113,8 @@ void LuaCassowary::solve(){
 		solver.GetExternalVariables();
 	}catch(ExCLError& ex){
 		cout << ex.description() << endl;
+	}catch(...){
+		cout << "caught something different in " << __FILE__ << ":" << __LINE__ << std::endl;
 	}
 			
 }
@@ -133,7 +160,8 @@ void LuaCassowary::addConstraint(const LuaClLinearExpression& left, string op_si
 			assert(lv);
 		// add if absent
 		if(cl_vars.find(lv) == cl_vars.end() && it->second != 0.0){
-			cl_vars[lv] = 1.0;
+			double strength = 1.0;// set x and y too lv->key=="width" || lv->key=="height" ? 1.0 : 0.0;
+			cl_vars[lv] = strength;
 			++it;
 		}
 		// take if present
@@ -162,13 +190,15 @@ void LuaCassowary::addConstraint(const LuaClLinearExpression& left, string op_si
 			assert(lv);
 		// add if absent
 		if(cl_vars.find(lv) == cl_vars.end() && it->second != 0.0){
-			cl_vars[lv] = 0.1;		// 10 times less for dependents
+			double strength = 0.1;// also x and y at 0.1 lv->key=="width" || lv->key=="height" ? 0.1 : 0.0;
+			cl_vars[lv] = strength;								// 10 times less for dependents
 //			cout << "Added " << it->first << endl;
 			++it;
 		}
 		// take if present
 		else if(it->second != 0.0){
-			cl_vars[lv] = 0.1;			// now you are dependent
+			if(cl_vars[lv] != 0.0)
+				cl_vars[lv] = 0.1;			// now you are dependent
 			double coef = it->second;
 //оно ставит кнопку не туда потому что она не добавляется в Stay
 //а если ее туда добавить - то непонятно кого из двоих связанных можно двигать, а кого нет
@@ -288,6 +318,13 @@ void LuaCassowary::addExternalStay(luabind::object obj, std::string key){
 //}
 
 void LuaCassowary::luabind(lua_State* L){
+
+	// register table for storing references inside LuaClVariable
+	//luabind::registry(L)[(void*)&LuaClVariable::key4refs] = luabind::newtable(L);
+	lua_pushlightuserdata(L, (void*)&LuaClVariable::key4refs);
+	lua_newtable(L);
+	lua_rawset(L, LUA_REGISTRYINDEX);
+
 	luabind::module(L) [
 		luabind::class_<LuaCassowary>("Cassowary")
 		.def(luabind::constructor<>())

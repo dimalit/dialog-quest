@@ -41,10 +41,11 @@ void TextBoxRenderComponent::OnAdd(Entity *pEnt)
 	GetVar("firstLineDecrement")->GetSigOnChanged()->connect(1, boost::bind(&TextBoxRenderComponent::OnTextChanged, this, _1));
 
 	// re-wrap when width is changed
-	GetParent()->GetVar("size2d")->GetSigOnChanged()->connect(1, boost::bind(&TextBoxRenderComponent::OnTextChanged, this, _1));
+	GetParent()->GetVar("size2d")->GetSigOnChanged()->connect(1, boost::bind(&TextBoxRenderComponent::OnSizeChanged, this, _1));
 
 	m_pLastLineEndX = &GetVarWithDefault("lastLineEndX", Variant(0.0f))->GetFloat();
 	m_pLastLineEndY = &GetVarWithDefault("lastLineEndY", Variant(0.0f))->GetFloat();
+	m_pOneLineWidth = &GetVarWithDefault("oneLineWidth", Variant(0.0f))->GetFloat();
 
 	m_pText = &GetVar("text")->GetString(); //local to us
 	GetVar("text")->GetSigOnChanged()->connect(1, boost::bind(&TextBoxRenderComponent::OnTextChanged, this, _1));
@@ -67,9 +68,26 @@ void TextBoxRenderComponent::OnRemove()
 	EntityComponent::OnRemove();
 }
 
+void TextBoxRenderComponent::OnSizeChanged(Variant *pDataObject){
+	// begin stretching if very wide
+	if(m_pSize2d->x >= *m_pOneLineWidth){
+		m_pSize2d->x = *m_pOneLineWidth;
+	}
+	OnTextChanged(NULL);
+}
 
 void TextBoxRenderComponent::OnTextChanged(Variant *pDataObject)
 {
+	// measure w
+	rtRectf one_line_rect;
+	GetBaseApp()->GetFont(eFont(*m_pFontID))->MeasureText(&one_line_rect, *m_pText, *m_pFontScale, *m_pFirstLineDecrement);
+
+	// stretch if width was exactly as one line width
+	if(*m_pOneLineWidth == m_pSize2d->x){
+		// set explicitly
+		m_pSize2d->x = one_line_rect.GetWidth();
+	}
+
 	//we need to breakdown the text and convert it into word wrapped lines in our deque
 	m_lines.clear();
 	GetBaseApp()->GetFont(eFont(*m_pFontID))->MeasureTextAndAddByLinesIntoDeque(*m_pSize2d, *m_pText, &m_lines, *m_pFontScale, *m_pEnclosedSize2d, *m_pFirstLineDecrement, left_obstacles, right_obstacles);
@@ -104,7 +122,7 @@ void TextBoxRenderComponent::OnTextChanged(Variant *pDataObject)
 		VariantList v(GetParent());
 		GetParent()->GetFunction("OnSizeChanged")->sig_function(&v);
 	}
-	
+	*m_pOneLineWidth = one_line_rect.GetWidth();
 }
 
 

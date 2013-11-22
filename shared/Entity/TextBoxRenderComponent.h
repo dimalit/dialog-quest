@@ -51,6 +51,7 @@ private:
 	//our stuff
 	void OnRender(VariantList *pVList);
 	void OnTextChanged(Variant *pDataObject);
+	void OnSizeChanged(Variant *pDataObject);
 	void OnScaleChanged(Variant *pDataObject);
 	void OnFontChanged(Variant *pDataObject);
 	void DrawTextNormal(CL_Vec2f vPos);
@@ -79,6 +80,7 @@ private:
 	
 	float *m_pFirstLineDecrement;			// start not from x=0
 	const float *m_pLastLineEndX, *m_pLastLineEndY;
+	float *m_pOneLineWidth;
 
 public:
 	const StairsProfile& getLeftObstacles() const{

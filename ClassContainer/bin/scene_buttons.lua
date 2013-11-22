@@ -15,13 +15,17 @@ getmetatable(Buttons).__call = function(_,conf)
 	self.rel_hpx, self.rel_hpy = 0, 0
 	self.height = screen_height - Buttons.margin*2
 	-- self.x, self.y = Buttons.margin, Buttons.margin
+	self:restrict(Expr(self, "x"), "==", Expr(Buttons.margin))
+	self:restrict(Expr(self, "y"), "==", Expr(Buttons.margin))
 	self:restrict(Expr(self, "width"), "==", Expr(self.width))
 	self:restrict(Expr(self, "height"), "==", Expr(self.height))				-- TODO: add special function a-la "keep value"?
 
 	self.background = TextureItem("", screen_width, screen_height)
-	self.background.rel_hpx, self.background.rel_hpy = self.x/self.background.width, self.y/self.background.height
+	self.background.rel_hpx, self.background.rel_hpy = Buttons.margin/self.background.width, Buttons.margin/self.background.height
 	self.background.x, self.background.y = 0, 0
-	self:add(self.background)	
+	self:add(self.background)
+	--TODO: For some misterious reason this would fail on absence of __eq:
+	--self:link(self.background, 0, 0, self, 0, 0, -Buttons.margin, -Buttons.margin)
 	
 	self.title = TextItem("self.title")
 	self.title.id = "title"
@@ -51,7 +55,8 @@ getmetatable(Buttons).__call = function(_,conf)
 		self:link(it, nil, 0, self.description, nil, 1, 0, Buttons.margin)
 		-- align edges
 		self:link(it, 0, nil, self, 1/Buttons.num_columns*(i-1), nil)
-		self:link(it, 1, nil, self, 1/Buttons.num_columns*i, nil)
+		--self:link(it, 1, nil, self, 1/Buttons.num_columns*i, nil)
+		self:restrict(Expr(it, "width"), "==", Expr(self, "width")/Expr(Buttons.num_columns))								-- not more then W/n
 		
 		it.buttons = {}
 		
@@ -67,24 +72,30 @@ getmetatable(Buttons).__call = function(_,conf)
 			if #it.buttons>1 then	top = it.buttons[#it.buttons-1].top end
 			--child.y = top + Buttons.row_interval
 			if #it.buttons==1 then	-- just me
-				self:link(child, nil, 0, it, nil, 0, 0, 0)		-- link to col object but inside scene!
+				--self:link(child, nil, 0, it, nil, 0, 0, 0)		-- link to col object but inside scene!
+				self:restrict(Expr(child, "y"), ">=", Expr(it, "y"))
 			else
-				self:link(child, nil, 0, it.buttons[#it.buttons-1], nil, 1, 0, Buttons.row_interval)		-- link to prev
+				--self:link(child, nil, 0, it.buttons[#it.buttons-1], nil, 1, 0, Buttons.row_interval)		-- link to prev
+				self:restrict(Expr(child, "y"), ">=", Expr(it.buttons[#it.buttons-1], "y")+Expr(it.buttons[#it.buttons-1], "height")+Expr(Buttons.row_interval))
 			end
 			self:link(child, 0, nil, it, 0, nil);
-			self:link(child, 1, nil, it, 1, nil);
+			--self:link(child, 1, nil, it, 1, nil);
+			self:restrict(Expr(child, "width"), "<=", Expr(it, "width"))
 			
 			-- adjust row
 				-- create
+			local row
 			if self.rows[#it.buttons] == nil then
-				local row = ScreenItem()
+				row = ScreenItem()
 				self:add(row)
-				self:link(row, 0, nil, self, 0, nil,  2, 0)
-				self:link(row, 1, nil, self, 1, nil, -2, 0)
+				self:link(row, 0, nil, self, 0, nil)
+				self:link(row, 1, nil, self, 1, nil)
 				self.rows[#it.buttons] = row
+			else
+				row = self.rows[#it.buttons]
 			end
 				-- resize
-			--self:link(row, nil, 0, child, nil, 0, 0, -2)
+			self:link(row, nil, 0, child, nil, 0, 0)
 			
 			return it
 		end -- add
@@ -123,7 +134,7 @@ getmetatable(Buttons).__call = function(_,conf)
 		-- FrameItem(Buttons.button_down_frame, self.agree_button_label.width+10, self.agree_button_label.height+10)
 	-- )	
 	self.agree_button = TextButton{"Мне понятно", Buttons.button_anim, shrink=true}
-	self.agree_button.width, self.agree_button.height = 180, 30
+	self.agree_button.width, self.agree_button.height = 160, 30
 		--self.agree_button.x = self.width / 2
 	 --self.agree_button.y = self.height - self.agree_button.height/2
 	self:add(self.agree_button)
@@ -135,9 +146,9 @@ getmetatable(Buttons).__call = function(_,conf)
 	--self:link(self.agree_button, nil, 1, self, nil, 1)
 	-- TODO: With mistake: == y + height it will fail assertion on 3 iterations. How do diagnose it?
 
-	self:restrict(Expr(self.agree_button, "y") + Expr(self.agree_button, "height"), "==", Expr(self, "height"))
-	self:link(self.agree_button, 0, nil, self, 0.5, nil, -80, 0)
-	self:link(self.agree_button, 1, nil, self, 0.5, nil, 80, 0)
+--	self:restrict(Expr(self.agree_button, "y") + Expr(self.agree_button, "height"), "==", Expr(self, "height"))
+	self:link(self.agree_button, 0.5, 1, self, 0.5, 1)
+--	self:link(self.agree_button, 1, nil, self, 0.5, nil, 80, 0)
 		
 	self.agree_button.onClick = function()
 		if self.onFinish then self:onFinish() end
@@ -147,6 +158,7 @@ end
 
 ButtonsElement = function(button_text, label_text, sound)
 	local self = CompositeItem()
+	self.width = 2000000
 	self.debugDrawColor = 0x00ffffff
 	self.id = "ButtonsElement"
 
@@ -161,35 +173,50 @@ ButtonsElement = function(button_text, label_text, sound)
 	-- place both
 	if button_present and label_present then
 		button = TextButton{button_text, Buttons.button_anim,  shrink=true, padding=5, freeScale=true}	
-		right_label = TextBoxItem(label_text, 200)
+		button.width = 1000000
+		
+		right_label = TextBoxItem(label_text)
+		right_label.width = 1000000
 		right_label.id="right_label"	
 		
 		self:add(button)
 		self:add(right_label)
 		
 		self:link(button, 0, 0, self, 0, 0)
-		self:link(self, nil, 1, button, nil, 1)
-		self:link(button, 1, nil, self, 0.5, nil)	-- button - half width
 		self:link(right_label, 0, nil, button, 1, nil, 5,0)
 		self:link(right_label, nil, 0.5, self, nil, 0.5)		
+		
+		-- restrict with
+		--self:restrict(Expr(right_label, "x")+Expr(right_label, "width"), "<=", Expr(self, "width"))
+		
+		-- height
+		--self:link(self, nil, 1, button, nil, 1)
+		self:restrict(Expr(self, "height"), ">=", Expr(button, "y")+Expr(button, "height"))
+		self:restrict(Expr(self, "height"), ">=", Expr(right_label, "y")+Expr(right_label, "height"))
+
+--		self:link(button, 1, nil, self, 0.5, nil)	-- button - half width
+--		self:link(self, 1, nil, right_label, 1, nil)	-- self - full width
+	
 		-- TODO: This should work!
 --		self:link(right_label, 1, nil, self, 1, nil)		
 	-- place only button
 	elseif button_present then
 			button = TextButton{button_text, Buttons.button_anim,  shrink=true, padding=5, freeScale=true}		
+			button.width = 1000000
 	
 			self:add(button)
 			self:link(button, 0, 0, self, 0, 0)
 			self:link(self, nil, 1, button, nil, 1)
-			self:link(button, 1, nil, self, 1, nil)
+--			self:link(button, 1, nil, self, 1, nil)
 	-- place only label
 	elseif label_present then
-		right_label = TextBoxItem(label_text, 200)
+		right_label = TextBoxItem(label_text)
+		right_label.width = 1000000
 		right_label.id="right_label"		
 	
 		self:add(right_label)
 		self:link(right_label, 0, 0, self, 0, 0)
-		self:link(right_label, 1, nil, self, 1, nil)		
+--		self:link(right_label, 1, nil, self, 1, nil)		
 		self:link(self, nil, 1, right_label, nil, 1)
 	else
 		error("Create either button or label!")
@@ -203,10 +230,40 @@ ButtonsElement = function(button_text, label_text, sound)
 
 	local old_onRequestLayOut = self.onRequestLayOut
 	self.onRequestLayOut = function(...)
---		print("ButtonElement begin")
+		-- use auto lay-out
 		if old_onRequestLayOut then old_onRequestLayOut(unpack(arg)) end
---		print("ButtonElement end")
---		print(self.left, self.top, self.width, self.height)
+		-- correct it
+		if button~=nil and right_label~=nil then
+			local w1 = button.oneLineWidth
+			local w2 = right_label.oneLineWidth
+			
+			if(w1 < self.width) then
+				button.width = w1
+				if(w1+5+w2 <= self.width) then
+					right_label.width = w2
+				else
+					right_label.width = self.width - w1 - 5
+				end
+			else
+				button.width = self.width / 2
+				right_label.x = button.right + 5
+				right_label.width = self.width - right_label.left			
+			end
+		elseif button~=nil then
+				if(button.oneLineWidth <= self.width) then
+					button.width = button.oneLineWidth
+				else
+					button.width = self.width
+				end
+		elseif right_label~=nil then
+				if(right_label.oneLineWidth <= self.width) then
+					right_label.width = right_label.oneLineWidth
+				else
+					right_label.width = self.width
+				end
+		end
+		
+		print(self.left, self.top, self.width, self.height)
 		-- button.x, button.y = button.hpx, button.hpy
 	-- --	left_label.x, left_label.y = button.x, button.y
 		-- right_label.y = button.y
@@ -218,4 +275,4 @@ ButtonsElement = function(button_text, label_text, sound)
 	return self
 end
 
--- THINK abou layou requests!
+-- THINK about layout requests!

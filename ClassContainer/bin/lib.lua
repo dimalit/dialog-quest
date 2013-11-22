@@ -215,7 +215,7 @@ function TextButton(...)
 	local text = arg[1]
 	local image = arg[2]
 	
-	local self = CompositeItem()	
+	local self = CompositeItem()
 	self.id="TextButton"
 		
 	local image_item = nil
@@ -332,7 +332,18 @@ function TextButton(...)
 		if self.onClick then self:onClick() end
 	end
 	
-	return self
+	--add some properties
+	local fake = {}
+	setmetatable(fake, {})
+	getmetatable(fake).__index = function(_, key)
+		if key == "oneLineWidth" then return text_item.oneLineWidth + padding*2
+		else return nil
+		end
+	end
+	local res = {}
+	setmetatable(res, inherit(self, fake))
+	
+	return res
 end
 
 function FlowLayout(w, indent)

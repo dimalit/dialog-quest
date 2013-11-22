@@ -84,6 +84,9 @@ public:
 	float getLastLineEndY(){
 		return component->GetVar("lastLineEndY")->GetFloat();
 	}
+	float getOneLineWidth() const{
+		return component->GetVar("oneLineWidth")->GetFloat();
+	}
 private:
 	TextBoxRenderComponent* component;
 };

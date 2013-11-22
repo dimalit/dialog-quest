@@ -153,6 +153,7 @@ int lua_error_handler(lua_State* L){
 	lua_pop(L, 1);
 
 	luaL_dostring(L, "print(debug.traceback(\"\", 4))");
+	exit(1);
 
 //	lua_Debug d;
 //	lua_getinfo(L, "Sln", &d);
