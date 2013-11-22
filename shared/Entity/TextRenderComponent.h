@@ -35,6 +35,7 @@ private:
 	void OnTextChanged(Variant *pDataObject);
 	void OnScaleChanged(Variant *pDataObject);
 	void OnFontChanged(Variant *pDataObject);
+	void OnSizeChanged(Variant *pDataObject);			// !!!
 
 	void RenderAsWave(CL_Vec2f vPos, uint32 color);
 

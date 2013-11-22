@@ -31,6 +31,16 @@ void TextRenderComponent::OnFontChanged(Variant *pDataObject)
 	OnTextChanged(NULL);
 }
 
+void TextRenderComponent::OnSizeChanged(Variant *pDataObject)
+{
+	// ignore outside size change requests!
+	// TODO this also results in double size recomputing (see OnTextChanged)
+	rtRectf rt;
+	GetBaseApp()->GetFont(eFont(*m_pFontID))->MeasureText(&rt, *m_pText, m_pScale2d->x);
+	m_pSize2d->x = rt.GetWidth();
+	m_pSize2d->y = rt.GetHeight();
+}
+
 void TextRenderComponent::OnAdd(Entity *pEnt)
 {
 	EntityComponent::OnAdd(pEnt);
@@ -62,6 +72,7 @@ void TextRenderComponent::OnAdd(Entity *pEnt)
 	GetVar("font")->GetSigOnChanged()->connect(1, boost::bind(&TextRenderComponent::OnFontChanged, this, _1));
 
 	GetParent()->GetVar("scale2d")->GetSigOnChanged()->connect(1, boost::bind(&TextRenderComponent::OnScaleChanged, this, _1));
+	GetParent()->GetVar("size2d")->GetSigOnChanged()->connect(1, boost::bind(&TextRenderComponent::OnSizeChanged, this, _1));
 	
 	//register ourselves to render if the parent does
 	GetParent()->GetFunction("OnRender")->sig_function.connect(1, boost::bind(&TextRenderComponent::OnRender, this, _1));

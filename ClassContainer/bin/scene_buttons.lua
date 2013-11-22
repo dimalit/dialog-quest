@@ -73,7 +73,7 @@ getmetatable(Buttons).__call = function(_,conf)
 			--child.y = top + Buttons.row_interval
 			if #it.buttons==1 then	-- just me
 				--self:link(child, nil, 0, it, nil, 0, 0, 0)		-- link to col object but inside scene!
-				self:restrict(Expr(child, "y"), ">=", Expr(it, "y"))
+				self:restrict(Expr(child, "y"), "==", Expr(it, "y"))		-- see TODO below
 			else
 				--self:link(child, nil, 0, it.buttons[#it.buttons-1], nil, 1, 0, Buttons.row_interval)		-- link to prev
 				self:restrict(Expr(child, "y"), ">=", Expr(it.buttons[#it.buttons-1], "y")+Expr(it.buttons[#it.buttons-1], "height")+Expr(Buttons.row_interval))
@@ -87,6 +87,7 @@ getmetatable(Buttons).__call = function(_,conf)
 			local row
 			if self.rows[#it.buttons] == nil then
 				row = ScreenItem()
+				row.id = "row_"..#it.buttons
 				self:add(row)
 				self:link(row, 0, nil, self, 0, nil)
 				self:link(row, 1, nil, self, 1, nil)
@@ -95,7 +96,9 @@ getmetatable(Buttons).__call = function(_,conf)
 				row = self.rows[#it.buttons]
 			end
 				-- resize
-			self:link(row, nil, 0, child, nil, 0, 0)
+				-- TODO: When we use here 1-st row - title and description disappear! Resolve it!!
+				-- see also linking of first buttons to the top (above)
+			if #it.buttons > 1	then self:link(row, nil, 0, child, nil, 0, 0) end			-- do not use row for the top
 			
 			return it
 		end -- add
