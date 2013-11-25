@@ -14,8 +14,8 @@ bool ScreenItem::getDebugDrawBox() const{
 	return *debug_draw_box || (getParent() && getParent()->getDebugDrawBox());
 }
 
-ScreenItem::ScreenItem(bool soft)
-	:parent_item(NULL), i_am_soft(soft)
+ScreenItem::ScreenItem()
+	:parent_item(NULL)
 {
 	orig_width = orig_height = 0.0f;
 
@@ -183,7 +183,7 @@ void ScreenItem::onMove(Variant* /*NULL*/){
 	// will be handled in Lua
 }
 
-CompositeItem::CompositeItem(bool soft):ScreenItem(soft){
+CompositeItem::CompositeItem():ScreenItem(){
 	need_lay_out = true;
 	need_lay_out_children = true;
 	moving_children_now = false;

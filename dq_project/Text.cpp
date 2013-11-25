@@ -101,6 +101,7 @@ void LuaTextBoxItem::luabind(lua_State* L){
 			.def("at", &LuaStairsProfile::at)
 			.def("add", &LuaStairsProfile::add)
 			.def("setInterval", &LuaStairsProfile::setInterval)
+			.def("clear", &LuaStairsProfile::clear)
 			.def("shifted", &LuaStairsProfile::shifted)
 	];
 

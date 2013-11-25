@@ -30,7 +30,7 @@ CompositeItem* root_item(){
 	return root;
 }
 
-LuaScreenItem::LuaScreenItem(bool soft):ScreenItem(soft){
+LuaScreenItem::LuaScreenItem():ScreenItem(){
 }
 
 LuaCompositeItem* LuaScreenItem::getParent(){
@@ -195,18 +195,6 @@ void LuaCompositeItem::luabind(lua_State* L){
 		.def_readwrite("need_lay_out", &LuaCompositeItem::need_lay_out)
 
 		.def(luabind::self == luabind::other<LuaScreenItem&>())				// remove operator ==
-
-		,			// comma!
-
-		luabind::class_< LuaRigidCompositeItem, LuaCompositeItem >("RigidCompositeItem")
-		.def("rigid", &LuaRigidCompositeItem::isRigid)
-		.def("soft", &LuaRigidCompositeItem::isSoft)
-
-		,
-
-		luabind::class_< LuaSoftCompositeItem, LuaCompositeItem >("RigidCompositeItem")
-		.def("rigid", &LuaRigidCompositeItem::isRigid)
-		.def("soft", &LuaRigidCompositeItem::isSoft)
 	];
 
 	luabind::globals(L)["root"] = dynamic_cast<LuaCompositeItem*>(root_item());

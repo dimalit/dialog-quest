@@ -18,7 +18,7 @@ public:
 	Entity* acquireEntity(Entity* e);
 
 	// ctor/dtor
-	ScreenItem(bool soft=true);
+	ScreenItem();
 	virtual ~ScreenItem();
 
 	// parent/child relations
@@ -32,13 +32,31 @@ public:
 	}
 	bool getReallyVisible() const;
 
-	bool isSoft() const {return i_am_soft;}
-	bool isRigid() const {return !i_am_soft;}
-
 	// geometry
 	// polymorphic
 	virtual bool isPointIn(float mx, float my);
+	virtual void setWidth(float w){
+		assert(_finite(w));
+		CL_Vec2f v = entity->GetVar("size2d")->GetVector2();
+		// prevent parent requestLayOut
+		if(v.x != w){
+			v.x = w;
+			entity->GetVar("size2d")->Set(v);
+		}
+		// note: pos is automatically adjusted in OnResize
+	}
+	virtual void setHeight(float h){
+		assert(_finite(h));
+		// then grow it
+		CL_Vec2f v = entity->GetVar("size2d")->GetVector2();
+		// prevent parent requestLayOut
+		if(v.y != h){
+			v.y = h;
+			entity->GetVar("size2d")->Set(v);
+		}
+	}
 
+	
 	// position
 	void move(float dx, float dy){
 		if(dx != 0.0f || dy != 0.0f){
@@ -46,11 +64,10 @@ public:
 			entity->GetVar("pos2d")->Set(pos.x+dx, pos.y+dy);
 		}
 	}
-
-	void setX(float x);
-	void setY(float y);
 	float getX() const;
 	float getY() const;
+	void setX(float x);
+	void setY(float y);
 	float getAbsoluteX() const;
 	float getAbsoluteY() const;
 	void setAbsoluteX(float gx);
@@ -89,26 +106,6 @@ public:
 	}
 	float getHeight()	const {
 		return entity->GetVar("size2d")->GetVector2().y;
-	}
-	void setWidth(float w){
-		assert(_finite(w));
-		CL_Vec2f v = entity->GetVar("size2d")->GetVector2();
-		// prevent parent requestLayOut
-		if(v.x != w){
-			v.x = w;
-			entity->GetVar("size2d")->Set(v);
-		}
-		// note: pos is automatically adjusted in OnResize
-	}
-	void setHeight(float h){
-		assert(_finite(h));
-		// then grow it
-		CL_Vec2f v = entity->GetVar("size2d")->GetVector2();
-		// prevent parent requestLayOut
-		if(v.y != h){
-			v.y = h;
-			entity->GetVar("size2d")->Set(v);
-		}
 	}
 	float getHotSpotX()	const {
 		return entity->GetVar("rotationCenter")->GetVector2().x * getWidth();
@@ -178,7 +175,6 @@ protected:
 	void takeCharFocus();
 	void giveCharFocus();
 	Entity* entity;
-	bool i_am_soft;
 protected:
 	void compute_corner(int no, float &rx, float &ry) const {
 
@@ -221,7 +217,7 @@ private:
 class CompositeItem: virtual public ScreenItem{
 	friend class ScreenItem;
 public:
-	CompositeItem(bool soft=false);
+	CompositeItem();
 	virtual ~CompositeItem(){
 		std::set<ScreenItem*>::iterator it;
 		for(it=children.begin(); it != children.end(); it++){
