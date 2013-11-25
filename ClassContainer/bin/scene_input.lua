@@ -34,22 +34,25 @@ getmetatable(Input).__call = function(_,conf)
 	if conf == nil then conf = {} end
 	
 	local self = CompositeItem()
+	self.id="scene"
 	self.width = screen_width - Input.margin*2
 	self.height = screen_height - Input.margin*2
-	self.rel_hpx, self.rel_hpy = 0, 0
-	self.x, self.y = Input.margin, Input.margin
-
+	self:restrict(Expr(self, "x"), "==", Expr(Input.margin))
+	self:restrict(Expr(self, "y"), "==", Expr(Input.margin))
+	self:restrict(Expr(self, "width"), "==", Expr(self.width))
+	self:restrict(Expr(self, "height"), "==", Expr(self.height))				-- TODO: add special function a-la "keep value"?
+	
 	self.background = TextureItem("", screen_width, screen_height)
 	self.background.rel_hpx, self.background.rel_hpy = self.x/self.background.width, self.y/self.background.height
 	self:add(self.background)	
 	
 	self.title = TextItem("self.title")
+	self.title.id = "title"
 	self:add(self.title)
-	self.title.rel_hpy = 0
-	self.title.y = 0
-	self.title.x = self.width / 2	
+	self:link(self.title, 0.5, 0, self, 0.5, 0)
 
 	self.description = FlowLayout()
+	self.description.id = "desc"
 	self:add(self.description)
 	self:link(self.description, 0, nil, self, 0, nil)
 	self:link(self.description, 1, nil, self, 1, nil)
@@ -63,6 +66,7 @@ getmetatable(Input).__call = function(_,conf)
 	for i=1,Input.num_columns do
 		local col = CompositeItem()
 		self:add(col)
+		col.id = "col"..(#self.columns+1)
 		
 		-- align top
 		self:link(col, nil, 0, self.description, nil, 1, 0, Input.margin)
@@ -84,9 +88,9 @@ getmetatable(Input).__call = function(_,conf)
 			child.rel_hpx, child.rel_hpy = 0, 0
 
 			if #col.elements==1 then
-				col:link(child, 0.5, 0, col, 0.5, 0, 10, Input.row_interval)
+				col:link(child, 0, 0, col, 0, 0, 10, Input.row_interval)
 			else
-				col:link(child, 0.5, 0, col.elements[#col.elements-1], 0.5, 1, 0, Input.row_interval)
+				col:link(child, 0, 0, col.elements[#col.elements-1], 0, 1, 0, Input.row_interval)
 			end
 
 			-- movers and drops
@@ -117,6 +121,7 @@ getmetatable(Input).__call = function(_,conf)
 	end -- for columns
 	
 	local bottom_side = WordsPlacement()
+	bottom_side.id = "bottom_side"
 		self:add(bottom_side)
 	self:link(bottom_side, 0, 1, self, 0, 1)
 	self:link(bottom_side, 1, 1, self, 1, 1)	
@@ -137,10 +142,11 @@ getmetatable(Input).__call = function(_,conf)
 	local old_onRequestLayout = self.onRequestLayOut
 	self.onRequestLayOut = function(...)
 		if old_onRequestLayout then old_onRequestLayout(unpack(arg)) end
-	
+
 		--adjust bottom_side
 		local total_h = bottom_side.bottom - self.description.bottom
 		local bot = total_h * Input.bottom_ratio
+		if bot < 80 then bot = 80 end
 		if math.abs(bottom_side.height-bot) >= 0.5 then
 			bottom_side.height = bot
 		end
@@ -167,12 +173,12 @@ getmetatable(Input).__call = function(_,conf)
 	end	 -- add_words
 	
 	self.placeWordsRandomly = function(_)
-		local left = bottom_side.left + 50
-		local right = bottom_side.right - 50
-		local top = bottom_side.top + 20
-		local bottom = bottom_side.bottom - 20
+		local left = bottom_side.left
+		local right = bottom_side.right
+		local top = bottom_side.top
+		local bottom = bottom_side.bottom
 		
-		--print(left, right, top, bottom)
+		print("bottom:", left, right, top, bottom)
 
 		local placed_movers = {}		
 
@@ -187,11 +193,14 @@ getmetatable(Input).__call = function(_,conf)
 		
 		for _,mover in pairs(all_words)
 		do
-			repeat
-				mover.y = top + rand()*(bottom-top)
-				mover.x = left + rand()*(right-left)
-			until conflicts_with_placed(mover, placed_movers)
-			table.insert(placed_movers, mover)
+			if right-left-mover.width > 0 then
+				repeat
+					mover.y = top + rand()*(bottom-top-mover.height)
+					mover.x = left + rand()*(right-left-mover.width)
+					print("trying", mover.x, mover.y, mover.width, mover.height)
+				until conflicts_with_placed(mover, placed_movers)
+				table.insert(placed_movers, mover)
+			end -- if not too wide
 		end -- for mover
 	end -- placeWordsRandomly	
 	
@@ -200,30 +209,40 @@ end
 
 InputElement = function(phonetic_text, answer)
 	local self = CompositeItem()
-	self.line="line"
+	self.id="InputElement"
 	local input_w = 50
 	local drop_w = 80
 
 	-- invent poperties  also
 	
 	self.text = TextItem("["..phonetic_text.."]", 3)
+	self.text.id="text"
 	self.input = TextInputItem(input_w)
+	self.input.id="input"
 	self.drop = DropArea(TwoStateAnimation(
 																					FrameItem(Input.drop_frame, drop_w, 40),
 																					FrameItem(Input.drop_frame_active, drop_w, 40)
 																					)
 												)
+	self.drop.id="drop"
 	self:add(self.text):add(self.input):add(self.drop)
 
+	-- padder to slign texts from different rows
 	self.text_padder = ScreenItem()
-	self.text_padder.width = self.text.width
+	self.text_padder.id = "padder"
 	self:add(self.text_padder)
 	self:link(self.text_padder, 0, 0.5, self.text, 0, 0.5)
+	self:restrict(Expr(self.text_padder, "width"), ">=", Expr(self.text, "width"))
+	
+	-- stay widths
+	self:restrict(Expr(self.input, "width"), "==", Expr(input_w))
+	self:restrict(Expr(self.drop, "width"), "==", Expr(drop_w))
+	self:restrict(Expr(self.drop, "height"), "==", Expr(40))
 	
 	self:link(self.text, 0, 0.5, self, 0, 0.5)
 	self:link(self.input, 0, 0.5, self.text_padder, 1, 0.5, 5, 0)
 	self:link(self.drop, 0, 0.5, self.input, 1, 0.5, 5, 0)
-
+	
 	self:link(self, 1, 1, self.drop, 1, 1)
 	
 	return self

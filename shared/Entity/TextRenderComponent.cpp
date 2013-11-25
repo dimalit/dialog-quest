@@ -37,8 +37,11 @@ void TextRenderComponent::OnSizeChanged(Variant *pDataObject)
 	// TODO this also results in double size recomputing (see OnTextChanged)
 	rtRectf rt;
 	GetBaseApp()->GetFont(eFont(*m_pFontID))->MeasureText(&rt, *m_pText, m_pScale2d->x);
-	m_pSize2d->x = rt.GetWidth();
-	m_pSize2d->y = rt.GetHeight();
+	if(m_pSize2d->x != rt.GetWidth() || m_pSize2d->y != rt.GetHeight()){
+		// this will call all slots again with old value (after new)
+		// needed to requestLayOut
+		GetParent()->GetVar("size2d")->Set(rt.GetWidth(), rt.GetHeight());
+	}
 }
 
 void TextRenderComponent::OnAdd(Entity *pEnt)
@@ -72,7 +75,8 @@ void TextRenderComponent::OnAdd(Entity *pEnt)
 	GetVar("font")->GetSigOnChanged()->connect(1, boost::bind(&TextRenderComponent::OnFontChanged, this, _1));
 
 	GetParent()->GetVar("scale2d")->GetSigOnChanged()->connect(1, boost::bind(&TextRenderComponent::OnScaleChanged, this, _1));
-	GetParent()->GetVar("size2d")->GetSigOnChanged()->connect(1, boost::bind(&TextRenderComponent::OnSizeChanged, this, _1));
+	// TODO at_back very important! but ugly solution... check it everywhere.
+	GetParent()->GetVar("size2d")->GetSigOnChanged()->connect(1, boost::bind(&TextRenderComponent::OnSizeChanged, this, _1), boost::signals::at_back);
 	
 	//register ourselves to render if the parent does
 	GetParent()->GetFunction("OnRender")->sig_function.connect(1, boost::bind(&TextRenderComponent::OnRender, this, _1));

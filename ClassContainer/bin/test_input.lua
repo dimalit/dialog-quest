@@ -35,14 +35,10 @@ scene.columns[2]
 	:add{"r`@a`0t", "epsilon"}
 	:add{"t`@a`0n", "dzeta"}
 	
--- scene.columns[3]
-	-- :add{"mad", 2}
-	-- :add{"bat", 1}
-	-- :add{"hat", 7}
-	
 scene:addWords{"dummy", "omega"}
+
 scene.afterLayOut = function(self)
 	scene:placeWordsRandomly()
 end
 
---scene.debugDrawBox = true
+scene.debugDrawBox = true

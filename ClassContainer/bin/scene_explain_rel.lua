@@ -9,8 +9,11 @@ getmetatable(Explain).__call = function(_,conf)
 	self.id = "scene"
 	self.width = screen_width - Explain.margin*2
 	self.height = screen_height - Explain.margin*2
-	self.rel_hpx, self.rel_hpy = 0, 0
-	self.x, self.y = Explain.margin, Explain.margin
+	-- TODO: bad to restrict own x, y
+	self:restrict(Expr(self, "x"), "==", Expr(Explain.margin))
+	self:restrict(Expr(self, "y"), "==", Expr(Explain.margin))
+	self:restrict(Expr(self, "width"), "==", Expr(self.width))
+	self:restrict(Expr(self, "height"), "==", Expr(self.height))				-- TODO: add special function a-la "keep value"?
 
 	self.background = TextureItem("", screen_width, screen_height)
 	self.background.rel_hpx, self.background.rel_hpy = self.x/self.background.width, self.y/self.background.height
@@ -18,9 +21,7 @@ getmetatable(Explain).__call = function(_,conf)
 	
   self.title = TextItem("self.title")
 	self:add(self.title)
-	self.title.rel_hpy = 0
-	self.title.y = 0
-	self.title.x = self.width / 2
+	self:link(self.title, 0.5, 0, self, 0.5, 0)
 	
 	self.content = CompositeItem()
 	-- HACK: 600 prevents FlowLayout inside to overflow
@@ -49,10 +50,8 @@ getmetatable(Explain).__call = function(_,conf)
 	
 	self.agree_button = TextButton{"", "Start.anim"}
 --	Button(TwoStateAnimation(Animation(load_config("Start.anim"))))
-	self.agree_button.rel_hpy = 1
-	self.agree_button.x = self.width / 2
-	self.agree_button.y = self.height
 	self:add(self.agree_button)
+	self:link(self.agree_button, 0.5, 1, self, 0.5, 1)
 	self.agree_button.onClick = function()
 		if self.onFinish then self:onFinish() end
 	end

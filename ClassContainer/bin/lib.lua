@@ -217,6 +217,7 @@ function TextButton(...)
 	
 	local self = CompositeItem()
 	self.id="TextButton"
+	self.width = 1000000					-- max: full line length
 		
 	local image_item = nil
 	if image then
@@ -358,18 +359,35 @@ function FlowLayout(w, indent)
 	-- both profiles base on left edge
   local profile = { left = StairsProfile(), right = StairsProfile() }
   
+	local rebuild_profiles = function()
+		profile.left:clear();
+		profile.right:clear();
+		
+		for obst, side in pairs(obstacles) do
+			if side=="left" then
+				profile.left:setInterval(obst.top, obst.height, obst.right)
+			else
+				profile.right:setInterval(obst.top, obst.height, self.width-obst.left)
+			end		
+		end
+	end
+	
   self.onRequestLayOut = function(_)
-		if self.width==0 then return self end
+		if self.width==0 then return end
 	
 		local dw = self.width-old_width
 		if dw ~= 0 then
+		-- don't know what's this:
 			old_width = self.width				-- prevents recursion		
-			profile.right:add(-dw)
+--			profile.right:add(-dw)
 			for obst, side in pairs(obstacles) do
 				if side=="right" then
 					obst:move(dw, 0)
 				end
 			end
+		-- somebody moced!
+		else
+			rebuild_profiles()
 		end
 	
 		local cur_x, cur_y = profile.left:at(0,1)+indent, 0
@@ -416,9 +434,6 @@ function FlowLayout(w, indent)
   self.addItem = function(self, item)
 		self:add(item)
 		table.insert(items, item)
-		-- HACK: this sould be called automatically:
-		-- BUG:
-		self:requestLayOut()
 		return self
   end
   
@@ -456,11 +471,11 @@ function FlowLayout(w, indent)
   
   self.clearObstacles = function(self)
     for obst,val in pairs(obstacles) do
-		if val then obst:destroy() end
-	end
-	obstacles = {}
-	profile.left = StairsProfile()
-	profile.right = StairsProfile()
+			if val then obst:destroy() end
+		end
+		obstacles = {}
+		profile.left = StairsProfile()
+		profile.right = StairsProfile()
   end
   
   return self
@@ -510,8 +525,7 @@ function FrameItem(name, w, h)
 		tex.bb.rel_hpy = 1
 			tex.bb.x, tex.bb.y = self.width/2, self.height	
 	end
-	self:onRequestLayOut()
-  
+ 
   return self
 end
 

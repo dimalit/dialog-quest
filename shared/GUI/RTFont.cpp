@@ -171,7 +171,7 @@ bool RTFont::IsFontCode(const char *pText, FontStateStack *pState)
 
 void RTFont::MeasureText( rtRectf *pRectOut, const string &text, float scale /*= 1.0f*/, int firstLineDecrement )
 {
-	MeasureText(pRectOut, &text[0], text.length(), scale);
+	MeasureText(pRectOut, &text[0], text.length(), scale, firstLineDecrement);
 }
 
 CL_Vec2f RTFont::MeasureText( const string &text, float scale /*= 1.0f*/, int firstLineDecrement )

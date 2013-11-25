@@ -12,9 +12,9 @@ getmetatable(Buttons).__call = function(_,conf)
 	local self = CompositeItem()
 	self.id = "scene"
 	self.width = screen_width - Buttons.margin*2
-	self.rel_hpx, self.rel_hpy = 0, 0
 	self.height = screen_height - Buttons.margin*2
 	-- self.x, self.y = Buttons.margin, Buttons.margin
+	-- TODO: bad to restrict own x, y	
 	self:restrict(Expr(self, "x"), "==", Expr(Buttons.margin))
 	self:restrict(Expr(self, "y"), "==", Expr(Buttons.margin))
 	self:restrict(Expr(self, "width"), "==", Expr(self.width))
@@ -193,7 +193,6 @@ ButtonsElement = function(button_text, label_text, sound)
 	-- place both
 	if button_present and label_present then
 		button = TextButton{button_text, Buttons.button_anim,  shrink=true, padding=5, freeScale=true}	
-		button.width = 1000000
 		
 		right_label = TextBoxItem(label_text)
 		right_label.width = 1000000
@@ -222,7 +221,6 @@ ButtonsElement = function(button_text, label_text, sound)
 	-- place only button
 	elseif button_present then
 			button = TextButton{button_text, Buttons.button_anim,  shrink=true, padding=5, freeScale=true}		
-			button.width = 1000000
 	
 			self:add(button)
 			self:link(button, 0, 0, self, 0, 0)

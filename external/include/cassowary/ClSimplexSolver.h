@@ -18,6 +18,7 @@
 #endif
 
 #include <stack>
+#include <map>
 #include "Cassowary.h"
 #include "ClSolver.h"
 #include "ClTableau.h"
@@ -613,6 +614,9 @@ class ClSimplexSolver : public ClSolver, public ClTableau {
   // to the # of constraints as in _stkCedcns.top()
   stack<int> _stkCedcns;
 
+  // when edited one var and now editing another - previous one may change back
+  // so we remember all vars that were edited (only in GetExternalVars)
+  std::map<ClVariable, double> externally_edited;
 };
 
 #ifndef CL_NO_IO

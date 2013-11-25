@@ -19,6 +19,10 @@ public:
 	int operator()(float x1, float width) const;
 	void operator+=(float w);
 	void setInterval(float x1, float width, float val);
+	void clear(){
+		vx.clear();
+		vy.clear();
+	}
 	StairsProfile shifted(float dx) const;
 private:
 	std::vector<float> vx, vy;

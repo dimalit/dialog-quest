@@ -142,7 +142,7 @@ private:
 	void change_vars_to_cached(ClLinearExpression::ClVarToCoeffMap& terms);
 
 	struct CompareVarsUnderPtr{
-		bool operator()(const LuaClVariable* left, const LuaClVariable* right){
+		bool operator()(const LuaClVariable* left, const LuaClVariable* right) const{
 			return *left < *right;
 		}
 	};

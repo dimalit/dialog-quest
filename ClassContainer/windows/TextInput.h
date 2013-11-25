@@ -11,6 +11,16 @@ public:
 	TextInputItem(int width, eFont font=FONT_SMALL);
 	~TextInputItem();
 
+	// I know my size better: ignore
+	virtual void setWidth(float w){
+		if(getParent())
+			getParent()->requestLayOut();
+	}
+	virtual void setHeight(float h){
+		if(getParent())
+			getParent()->requestLayOut();
+	}
+
 	void setText(std::string txt){
 		component->GetVar("text")->Set(txt);
 	}
