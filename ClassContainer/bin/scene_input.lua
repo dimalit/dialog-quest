@@ -42,7 +42,7 @@ getmetatable(Input).__call = function(_,conf)
 	self:restrict(Expr(self, "width"), "==", Expr(self.width))
 	self:restrict(Expr(self, "height"), "==", Expr(self.height))				-- TODO: add special function a-la "keep value"?
 	
-	self.background = TextureItem("", screen_width, screen_height)
+	self.background = TextureItem("", screen_width+40, screen_height+40)
 	self.background.rel_hpx, self.background.rel_hpy = self.x/self.background.width, self.y/self.background.height
 	self:add(self.background)	
 	
@@ -58,6 +58,15 @@ getmetatable(Input).__call = function(_,conf)
 	self:link(self.description, 1, nil, self, 1, nil)
 	self:link(self.description, nil, 0, self.title, nil, 1)		
 
+	local bottom_side = WordsPlacement()
+	bottom_side.id = "bottom_side"
+		self:add(bottom_side)
+	self:link(bottom_side, 0, 1, self, 0, 1)
+	self:link(bottom_side, 1, 1, self, 1, 1)	
+	-- link height
+	self:restrict(Expr(bottom_side, "height"), "==", (Expr(self, "y")+Expr(self, "height")-Expr(self.description, "y")-Expr(self.description, "height"))*Expr(Input.bottom_ratio))
+	self:restrict(Expr(bottom_side, "height"), ">=", Expr(80))
+	
 	self.columns = {}
 	local all_drops = {}				-- needed for movers!
 	local all_words = {}
@@ -73,8 +82,10 @@ getmetatable(Input).__call = function(_,conf)
 		-- align edges
 		self:link(col, 0, nil, self, 1/Input.num_columns*(i-1), nil)
 		self:link(col, 1, nil, self, 1/Input.num_columns*i, nil)
-		-- bottom
-		self:link(col, nil, 1, self, nil, 1, 0, -Input.margin)
+		-- link bottom to bottom side
+		--self:link(col, nil, 1, self, nil, 1, 0, -Input.margin)
+		self:link(col, nil, 1, bottom_side, nil, 0)
+		
 		
 		col.elements = {}
 		
@@ -120,12 +131,6 @@ getmetatable(Input).__call = function(_,conf)
 		table.insert(self.columns, col)
 	end -- for columns
 	
-	local bottom_side = WordsPlacement()
-	bottom_side.id = "bottom_side"
-		self:add(bottom_side)
-	self:link(bottom_side, 0, 1, self, 0, 1)
-	self:link(bottom_side, 1, 1, self, 1, 1)	
-	
 	local check_finish = function()
 		dropped_movers_cnt = 0
 		local right_cnt = 0
@@ -143,13 +148,13 @@ getmetatable(Input).__call = function(_,conf)
 	self.onRequestLayOut = function(...)
 		if old_onRequestLayout then old_onRequestLayout(unpack(arg)) end
 
-		--adjust bottom_side
-		local total_h = bottom_side.bottom - self.description.bottom
-		local bot = total_h * Input.bottom_ratio
-		if bot < 80 then bot = 80 end
-		if math.abs(bottom_side.height-bot) >= 0.5 then
-			bottom_side.height = bot
-		end
+		--adjust bottom_side: not needed because of Cassowary
+		-- local total_h = bottom_side.bottom - self.description.bottom
+		-- local bot = total_h * Input.bottom_ratio
+		-- if bot < 80 then bot = 80 end
+		-- if math.abs(bottom_side.height-bot) >= 0.5 then
+			-- bottom_side.height = bot
+		-- end
 		
 		-- user callback
 		-- HACK: call only if we didn't begin moving
@@ -180,7 +185,7 @@ getmetatable(Input).__call = function(_,conf)
 		
 		print("bottom:", left, right, top, bottom)
 
-		local placed_movers = {}		
+		local placed_movers = {}
 
 		local conflicts_with_placed = function(mover)
 			local res = false
@@ -189,16 +194,25 @@ getmetatable(Input).__call = function(_,conf)
 				if intersects(mover, m) then return false end
 			end
 			return true
-		end  
+		end
 		
+		local x = left + 20
+		local y = top + 20
 		for _,mover in pairs(all_words)
 		do
 			if right-left-mover.width > 0 then
-				repeat
-					mover.y = top + rand()*(bottom-top-mover.height)
-					mover.x = left + rand()*(right-left-mover.width)
-					print("trying", mover.x, mover.y, mover.width, mover.height)
-				until conflicts_with_placed(mover, placed_movers)
+				-- repeat
+					-- mover.y = top + rand()*(bottom-top-mover.height)
+					-- mover.x = left + rand()*(right-left-mover.width)
+					-- print("trying", mover.x, mover.y, mover.width, mover.height)
+				-- until conflicts_with_placed(mover, placed_movers)
+				mover.x, mover.y = x, y
+				x = x + mover.width + 20
+				if x > right then x, y = 20, y + 40 end			-- wrap
+				if mover.right > right-20 then							-- place again
+					mover.x, mover.y = x, y
+					x = x + mover.width + 20					
+				end
 				table.insert(placed_movers, mover)
 			end -- if not too wide
 		end -- for mover

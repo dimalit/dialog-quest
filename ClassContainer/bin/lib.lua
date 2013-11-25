@@ -1096,7 +1096,8 @@ function DropArea(item)
 		if obj.parent then obj.parent:remove(obj) end
 		item.parent:add(obj)
     -- move to new x,y
-    obj.x = item.x; obj.y = item.y
+    obj.x = item.x - item.hpx + item.width/2 + obj.hpx - obj.width/2
+		obj.y = item.y - item.hpy + item.height/2 + obj.hpy - obj.height/2
     -- attach new objects to each other
     self.object = obj
     obj.drop = self

@@ -138,7 +138,9 @@ struct hash<ClVariable> {
 // Compare two double-s approximately, since equality is no good
 inline bool ClApprox(double a, double b)
 {
-  const double epsilon = 1.0e-8;
+  //!!!const double epsilon = 1.0e-8;
+  // we had difference in 6-th digit after dot
+  const double epsilon = 1.0e-4;
   if (a > b) {
     return (a - b) < epsilon;
   } else {
