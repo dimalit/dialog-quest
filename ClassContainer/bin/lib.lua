@@ -252,8 +252,11 @@ function TextButton(...)
 	image_item.x, image_item.y = 0, 0
 	self:link(text_item, 0, 0, self, 0, 0, padding, padding)
 	self:link(text_item, 1, nil, self, 1, nil, -padding)
-	self:link(self, nil, 1, text_item, nil, 1, 0, padding)
 	self:link(image_item, 0, 0, self, 0, 0)	
+
+	if text ~= "" then					-- link self to text only if not empty!
+		self:link(self, nil, 1, text_item, nil, 1, 0, padding)
+	end
 
 	--  set self width as initial. BAD
 	--self.width = 80--text_item.width + padding*2
@@ -265,6 +268,12 @@ function TextButton(...)
 		-- adjust text w from self
 		-- TODO Hangs here!
 --		text_item.width = self.width - padding*2
+		if text_item.text == "" then
+			image_item.scaleX	= 1.0
+			image_item.scaleY	= 1.0
+			self.width = image_item.width
+			return
+		end
 		
 		-- adjust image from self
 		local required_width = self.width

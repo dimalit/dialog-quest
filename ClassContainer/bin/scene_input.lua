@@ -42,9 +42,10 @@ getmetatable(Input).__call = function(_,conf)
 	self:restrict(Expr(self, "width"), "==", Expr(self.width))
 	self:restrict(Expr(self, "height"), "==", Expr(self.height))				-- TODO: add special function a-la "keep value"?
 	
-	self.background = TextureItem("", screen_width+40, screen_height+40)
-	self.background.rel_hpx, self.background.rel_hpy = self.x/self.background.width, self.y/self.background.height
-	self:add(self.background)	
+	self.background = TextureItem("", screen_width, screen_height)
+	--self.background.rel_hpx, self.background.rel_hpy = self.x/self.background.width, self.y/self.background.height
+	self:add(self.background)
+	self:link(self.background, 0, 0, self, 0, 0, -Input.margin, -Input.margin)
 	
 	self.title = TextItem("self.title")
 	self.title.id = "title"

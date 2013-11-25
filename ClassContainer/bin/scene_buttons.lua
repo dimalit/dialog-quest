@@ -21,11 +21,12 @@ getmetatable(Buttons).__call = function(_,conf)
 	self:restrict(Expr(self, "height"), "==", Expr(self.height))				-- TODO: add special function a-la "keep value"?
 
 	self.background = TextureItem("", screen_width, screen_height)
-	self.background.rel_hpx, self.background.rel_hpy = Buttons.margin/self.background.width, Buttons.margin/self.background.height
-	self.background.x, self.background.y = 0, 0
+	-- self.background.rel_hpx, self.background.rel_hpy = Buttons.margin/self.background.width, Buttons.margin/self.background.height
+	-- self.background.x, self.background.y = 0, 0
 	self:add(self.background)
 	--TODO: For some misterious reason this would fail on absence of __eq:
 	--self:link(self.background, 0, 0, self, 0, 0, -Buttons.margin, -Buttons.margin)
+	self:link(self.background, 0, 0, self, 0, 0, -Buttons.margin, -Buttons.margin)
 	
 	self.title = TextItem("self.title")
 	self.title.id = "title"

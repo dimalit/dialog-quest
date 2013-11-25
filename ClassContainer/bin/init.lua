@@ -53,16 +53,6 @@ test_input = function()
 	scene.onFinish = function()
 		scene.visible = false
 		root:remove(scene)
-		test_basket()
-	end
-end
-
-test_basket = function()
-	SoundEffect("audio/enter.wav"):play()
-	dofile("test_basket.lua")
-	scene.onFinish = function()
-		scene.visible = false
-		root:remove(scene)
 		test_baloons()
 	end
 end
@@ -73,7 +63,17 @@ test_baloons = function()
 	scene.onFinish = function()
 		scene.visible = false
 		root:remove(scene)
+--		test_basket()		
 		print("The end!")
+	end
+end
+
+test_basket = function()
+	SoundEffect("audio/enter.wav"):play()
+	dofile("test_basket.lua")
+	scene.onFinish = function()
+		scene.visible = false
+		root:remove(scene)
 	end
 end
 
@@ -88,10 +88,10 @@ test_mosaic = function()
 end
 
 -- run it!
---test_buttons()
+test_buttons()
 --test_1_1()
 --test_explain_rel()
-test_input()
+--test_input()
 --test_basket();
 --test_baloons()
 --test_mosaic()
