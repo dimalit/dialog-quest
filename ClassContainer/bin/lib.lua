@@ -488,7 +488,86 @@ function FlowLayout(w, indent)
   end
   
   return self
-end -- FlowLayoutItem
+end -- FlowLayout
+
+TableLayout = function(nrows, ncols)
+	local self = CompositeItem()
+	self.id = "table"
+	self.rows = {}
+	self.columns = {}
+	
+	-- create rows
+	for i=1,nrows do
+		local it = ScreenItem()
+		it.id = "row"..i
+		self:add(it)
+		it.debugDrawBox = true
+		-- align left and right
+		self:link(it, 0, nil, self, 0, nil, 2, nil)
+		self:link(it, 1, nil, self, 1, nil, -2, nil)
+		-- align to prev
+		if i == 1 then
+			self:link(it, nil, 0, self, nil, 0, nil, 2)		-- self top
+		else
+			self:link(it, nil, 0, self.rows[i-1], nil, 1, nil, 2)	-- prev bot
+		end
+		if i==nrows then
+			self:link(it, nil, 1, self, nil, 1, nil, -2)						-- self bot
+		end
+		-- add it!
+		table.insert(self.rows, it)
+	end
+	
+	-- create cols
+	for i=1,ncols do
+		local it = ScreenItem()
+		it.id = "col"..i
+		self:add(it)
+		it.debugDrawBox = true
+		-- align top and bot
+		self:link(it, nil, 0, self, nil, 0, nil, 2)
+		self:link(it, nil, 1, self, nil, 1, nil, -2)
+		-- align to prev
+		if i == 1 then
+			self:link(it, 0, nil, self, 0, nil, 2, nil)						-- self left
+		else
+			self:link(it, 0, nil, self.columns[i-1], 1, nil, 2, nil)	-- prev right
+		end
+		if i==ncols then
+			self:link(it, 1, nil, self, 1, nil, -2, nil)						-- self right
+		end
+		-- add it!
+		table.insert(self.columns, it)		
+	end	
+	
+	local old_add = self.add
+	self.add = function(_, item, row, col)
+		assert(item ~= nil)
+		assert(row>=1 and row<=nrows)
+		assert(col>=1 and col<=ncols)
+		old_add(self, item)
+		self:link(item, nil, 0, self.rows[row], nil, 0)
+		self:link(item, 0, nil, self.columns[col], 0, nil)
+		-- restrict rows and columns dimensions
+		self:restrict(Expr(item, "height"), "<=", Expr(self.rows[row], "height"))
+		self:restrict(Expr(item, "width"), "<=", Expr(self.columns[col], "width"))
+	end
+	
+	local old_onRequestLayOut = self.onRequestLayOut
+	self.onRequestLayOut = function(...)	
+		if old_onRequestLayOut then old_onRequestLayOut(unpack(arg)) end
+		
+		-- for i=1,nrows do
+			-- self.rows[i].height = self.height / nrows
+		-- end
+		
+		-- for i=1,ncols do
+			-- self.columns[i].width = self.width / ncols
+		-- end		
+	end	
+	
+	return self
+end
 
 function FrameItem(name, w, h)
   local self = CompositeItem()

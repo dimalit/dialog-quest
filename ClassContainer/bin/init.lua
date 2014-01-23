@@ -1,3 +1,4 @@
+--dofile("test_table.lua")
 --dofile("test_input_element.lua")
 --dofile("test_buttons_element.lua")
 --dofile("test_text_button.lua")
@@ -88,9 +89,10 @@ test_mosaic = function()
 end
 
 -- run it!
-test_buttons()
+--test_buttons()
+
 --test_1_1()
---test_explain_rel()
+test_explain_rel()
 --test_input()
 --test_basket();
 --test_baloons()
