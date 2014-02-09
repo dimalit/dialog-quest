@@ -69,6 +69,7 @@ public:
 
   string Name() const { assert(pclv); return pclv->Name(); }
 
+  Number PendingValue() const { assert(pclv); return pclv->Value(); }			// !!! if changed externally
   Number Value() const { assert(pclv); return pclv->Value(); }
   int IntValue() const { assert(pclv); return pclv->IntValue(); }
   void SetValue(Number Value) 
@@ -140,7 +141,7 @@ inline bool ClApprox(double a, double b)
 {
   //!!!const double epsilon = 1.0e-8;
   // we had difference in 6-th digit after dot
-  const double epsilon = 1.0e-4;
+  const double epsilon = 1.0e-3;
   if (a > b) {
     return (a - b) < epsilon;
   } else {

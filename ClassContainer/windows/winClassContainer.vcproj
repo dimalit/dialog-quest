@@ -206,7 +206,7 @@
 				AdditionalOptions="/d1reportSingleClassLayoutconstruct_aux"
 				Optimization="0"
 				AdditionalIncludeDirectories=".;&quot;$(BOOST_ROOT)&quot;;..\source;..\..\shared;..\..\shared\win\;&quot;..\..\shared\ClanLib-2.0\Sources&quot;;..\..\shared\win\include;..\..\shared\FliteTTS\include;..\..\shared\Irrlicht\include;..\..\trunk\dq_project;..\..\external\include"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_USE_32BIT_TIME_T;C_GL_MODE;_SECURE_SCL=0;_NO_DEBUG_HEAP=1;RT_JPG_SUPPORT"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_USE_32BIT_TIME_T;C_GL_MODE;_SECURE_SCL=0;RT_JPG_SUPPORT"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
@@ -220,6 +220,7 @@
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="4"
+				ShowIncludes="false"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"

@@ -2,6 +2,12 @@
 #ifndef MathUtils_h__
 #define MathUtils_h__
 
+// !!! for debug Heap was on
+#pragma push_macro("free")
+#pragma push_macro("malloc")
+#undef free
+#undef malloc
+
 #include "Math/rtRect.h"
 #include "Math/rtPlane.h"
 #include "CRandom.h"
@@ -54,4 +60,8 @@ void TurnAngleToward_Degrees(float *angle,float target,float amount);	// rotates
 CL_Vec3f LerpVector(const CL_Vec3f &vOriginal, const CL_Vec3f &Target, float f_percent);
 CL_Vec2f RotateGUIPoint(CL_Vec2f vPos, CL_Rectf r, float rotation, CL_Vec2f destRectSize = CL_Vec2f(0,0)); //used for calculating screen positions for a splitscreen mode
 CL_Rectf RotateGUIRect(CL_Rectf vRect, CL_Rectf inputRect, float angle, CL_Vec2f destRectSize = CL_Vec2f(0,0)); //used for calculating screen positions for a splitscreen mode
+
+#pragma pop_macro("free")
+#pragma pop_macro("malloc")
+
 #endif // MathUtils_h__

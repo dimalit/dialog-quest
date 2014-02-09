@@ -44,6 +44,8 @@ LuaClVariable::LuaClVariable(const luabind::object& obj, const std::string& key)
 		lua_pushnumber(L, this->obj_ref);					// -1
 		lua_settable(L, -3);								// obj->ref table
 	}// else
+
+	value_in_table = PendingValue();
 }
 
 LuaCassowary::LuaCassowary(void){
@@ -56,6 +58,9 @@ LuaCassowary::~LuaCassowary(void){
 }
 
 void LuaCassowary::solve(){
+
+//	solver.PrintOnVerbose(cout);
+
 	bool log = true;//((unsigned)this&0xffff) == 0x8dc0;
 	ostrstream ostr;	
 	ostream& cout = log ? ::cout : ostr;
@@ -68,9 +73,9 @@ void LuaCassowary::solve(){
 		// 1 add stays to whom we haven't yet
 		// by doing it here (in render handler we assure that we use the latest var values)
 
-		for(std::map<LuaClVariable*, double, CompareVarsUnderPtr>::iterator it = cl_vars.begin(); it != cl_vars.end(); ++it){
+		for(std::map<LuaClVariable*, bool, CompareVarsUnderPtr>::iterator it = cl_vars.begin(); it != cl_vars.end(); ++it){
 			
-			if(it->second == 0.0)
+			if(it->second == false)			// already there
 				continue;
 
 			// add stay 1.0 - 1.5
@@ -80,23 +85,25 @@ void LuaCassowary::solve(){
 
 			ClConstraint* pcn;
 			// specially for self width and height
-			if(cl_stays.find(lv) == cl_stays.end()){
+//			if(cl_stays.find(lv) == cl_stays.end()){
 				//strength *= it->second;			// !!!
 				pcn = new ClStayConstraint(ClVariable(lv), ClsWeak(), strength);
-			}
-			else{
-				assert(false);
-				strength = 1.0;
-				strength *= it->second;
-				ClVariable var(lv);
-				pcn = new ClStayConstraint(var, ClsStrong(), strength);			// weaker then real external edit
-				//solver.AddEditVar(
-			}
+//			}
+			//else{
+			//	assert(false);
+			//	strength = 1.0;
+			//	strength *= it->second;
+			//	ClVariable var(lv);
+			//	pcn = new ClStayConstraint(var, ClsStrong(), strength);			// weaker then real external edit
+			//	//solver.AddEditVar(
+			//}
 
 			solver.AddConstraint(pcn);
-			cout << *lv << " = " << lv->Value() << " (" << strength << ")" << endl;
+			cout << *lv << " = " << lv->Value() << " weak (" << strength << ")" << endl;
 
-			it->second = 0.0;
+			it->second = false;
+
+//			cout << solver << endl;
 
 		}// for
 
@@ -113,6 +120,7 @@ void LuaCassowary::solve(){
 	// else read new values and solve
 	try{
 		solver.GetExternalVariables();
+		cout << solver << endl;
 	}catch(ExCLError& ex){
 		cout << ex.description() << endl;
 	}catch(...){
@@ -129,7 +137,7 @@ void LuaCassowary::addEquation(luabind::object info1,
 	ostream& cout = log ? ::cout : ostr;
 
 //	cout << "\tbegin link" << endl;
-	cout << this << ":" << endl;
+//	cout << this << ":" << endl;
 
 	// input1
 	luabind::object obj1 = info1[1];
@@ -159,7 +167,7 @@ void LuaCassowary::change_vars_to_cached(ClLinearExpression::ClVarToCoeffMap& te
 			assert(lv);
 		// add if absent
 		if(cl_vars.find(lv) == cl_vars.end() && it->second != 0.0){
-			cl_vars[lv] = 1.0;
+			cl_vars[lv] = true;
 			++it;
 		}
 		// take if present
@@ -192,7 +200,7 @@ void LuaCassowary::maximize(const LuaClLinearExpression& expr){
 	solver.AddConstraint(eq);
 
 	// print
-	cout << expr.expr << " -> MAX" << endl;
+	cout << expr.expr << " -> MAX (weak)" << endl;
 	need_resolve = true;
 }
 
@@ -207,7 +215,7 @@ void LuaCassowary::minimize(const LuaClLinearExpression& expr){
 	solver.AddConstraint(eq);
 
 	// print
-	cout << expr.expr << " -> MIN" << endl;
+	cout << expr.expr << " -> MIN (weak)" << endl;
 	need_resolve = true;
 }
 
@@ -241,34 +249,40 @@ void LuaCassowary::addConstraint(const LuaClLinearExpression& left, string op_si
 	}// if inequality
 
 	
-	cout << left.expr << op_sign << right.expr << endl;
+	cout << left.expr << op_sign << right.expr << " required ";
+	if(op_sign=="==")
+		cout << "1.0" << endl;
+	else
+		cout << "2.0" << endl;
+
 	need_resolve = true;
 }
 
-void LuaCassowary::addExternalStay(luabind::object obj, std::string key){
-	// create or get from cache
-	LuaClVariable* lv = new LuaClVariable(obj, key);
-	// add if absent
-	if(cl_vars.find(lv) == cl_vars.end()){
-		cl_vars[lv] = 1.0;
-	}
-	// take if present
-	else{
-		LuaClVariable* tmp = lv;
-		lv = cl_vars.find(lv)->first;
-		delete tmp;
-	}
-
-	// add stay
-	cl_stays.insert(lv);
-
-	//ClVariable var(lv);
-	//solver.AddStay(var, ClsWeak(), 2.0);
-	//cl_vars[lv] = true;
-	//cout << var << " = " << var.Value() << endl;
-
-	//need_resolve = true;
-}
+//void LuaCassowary::addExternalStay(luabind::object obj, std::string key){
+//	// create or get from cache
+//	LuaClVariable* lv = new LuaClVariable(obj, key);
+//	// add if absent
+//	if(cl_vars.find(lv) == cl_vars.end()){
+//		cl_vars[lv] = 1.0;
+//	}
+//	// take if present
+//	else{
+//		LuaClVariable* tmp = lv;
+//		lv = cl_vars.find(lv)->first;
+//		delete tmp;
+//	}
+//
+//	// add stay
+//	cl_stays.insert(lv);
+//	cout << "Adde stay: " << *lv << std::endl;
+//
+//	//ClVariable var(lv);
+//	//solver.AddStay(var, ClsWeak(), 2.0);
+//	//cl_vars[lv] = true;
+//	//cout << var << " = " << var.Value() << endl;
+//
+//	//need_resolve = true;
+//}
 
 //void LuaCassowary::editVar(luabind::object obj, std::string key){
 //	double val = luabind::object_cast<double>(obj[key]);
@@ -339,7 +353,7 @@ void LuaCassowary::luabind(lua_State* L){
 		.def("minimize", &LuaCassowary::minimize)
 		.def("addEquation", &LuaCassowary::addEquation)
 		.def("addConstraint", &LuaCassowary::addConstraint)
-		.def("addExternalStay", &LuaCassowary::addExternalStay)
+//		.def("addExternalStay", &LuaCassowary::addExternalStay)
 //		.def("editVar", &LuaCassowary::editVar)
 //		.def("editPoint", &LuaCassowary::editPoint)
 		

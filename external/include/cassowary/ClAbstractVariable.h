@@ -130,6 +130,7 @@ public:
     return !(cl1 == cl2);
     }
 
+  virtual Number PendingValue() const { return Value(); }			// !!! if changed externally
   virtual Number Value() const { return 0; }
   virtual int IntValue() const { return 0; }
 

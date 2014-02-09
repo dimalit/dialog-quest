@@ -222,7 +222,13 @@ else
 	{
 		return true;
 	}
-	
+
+//	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_CHECK_ALWAYS_DF);
+
+	// uncomment and see: really works!
+	//int* buf = new int[10];
+	//buf[10]=10;
+
 	if (!BaseApp::Init()) return false;
 
 

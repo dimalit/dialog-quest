@@ -18,11 +18,22 @@ friend class LuaCassowary;
 public:
 	LuaClVariable(const luabind::object& obj, const std::string& key);
 	virtual void SetName(string const &Name){assert(0 && "I know my name better.");}
-	virtual double Value() const {
+
+	// return value obtained from Lua but not in the simplex table
+	// TODO: This was experimental and probably is unneeded
+	// TODO: Find why Cassowary fucks my Edit vars!! (table 3x3)
+	virtual double PendingValue() const {
 		lua_rawgeti(L, LUA_REGISTRYINDEX, obj_ref);
 		luabind::object obj(luabind::from_stack(L, -1));
-		assert(_finite(luabind::object_cast<double>(obj[key])));
-		return luabind::object_cast<double>(obj[key]);
+		double val = luabind::object_cast<double>(obj[key]);
+		assert(_finite(val));
+		return val;
+	}
+
+	// get value as in the table
+	virtual double Value() const {
+//		assert((float)value_in_table == (float)PendingValue()); fails in GetExternalVars
+		return value_in_table;
 	}
 	virtual int IntValue() const {
 		return int(Value() + 0.5);
@@ -33,6 +44,7 @@ public:
 		luabind::object obj(luabind::from_stack(L, -1));
 		std::cout << "Setting " << *this << " = " << val << std::endl;
 		obj[key] = val;
+		value_in_table = val;
 	}
 	virtual void ChangeValue(double val){
 		assert(_finite(val));
@@ -40,6 +52,7 @@ public:
 		luabind::object obj(luabind::from_stack(L, -1));
 		std::cout << "Changing " << *this << " = " << val << std::endl;
 		obj[key] = val; 
+		value_in_table = val;
 	}
 
 	bool operator<(const LuaClVariable& right) const{
@@ -56,6 +69,7 @@ private:
 	int obj_ref;
 	std::string key;
 	lua_State* L;
+	double value_in_table;
 };
 
 class LuaClLinearExpression{
@@ -133,7 +147,7 @@ public:
 	void minimize(const LuaClLinearExpression& expr);
 	void maximize(const LuaClLinearExpression& expr);
 	void addConstraint(const LuaClLinearExpression& left, string op_sign, const LuaClLinearExpression& right);
-	void addExternalStay(luabind::object obj, std::string key);
+//	void addExternalStay(luabind::object obj, std::string key);
 private:
 	ClSimplexSolver solver;
 	bool need_resolve;
@@ -148,9 +162,9 @@ private:
 	};
 
 	// if somebody wants to add existing var - take it from here
-	// also remember stay strength coef for this var
+	// true means it is new and should be made stay
 	// if == 0 - do not add it in solve()
 	// if > 0 - mult strength by it 
-	std::map<LuaClVariable*, double, CompareVarsUnderPtr> cl_vars;
-	std::set<LuaClVariable*, CompareVarsUnderPtr> cl_stays;					// who stays with strength=2.0 (self width and height)
+	std::map<LuaClVariable*, bool, CompareVarsUnderPtr> cl_vars;
+//	std::set<LuaClVariable*, CompareVarsUnderPtr> cl_stays;					// who stays with strength=2.0 (self width and height)
 };
