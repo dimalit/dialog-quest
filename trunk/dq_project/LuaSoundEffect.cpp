@@ -1,11 +1,14 @@
 #include "PlatformPrecomp.h"
 
 #include "LuaSoundEffect.h"
+
+#include "App.h"
+
 #include <luabind/luabind.hpp>
 
 void LuaSoundEffect::Callback::operator()(){
 	if(eff->onFinish_cb)
-		luabind::call_function<void>(eff->onFinish_cb, eff);
+		luabind::call_function<void>(L, eff->onFinish_cb, eff);
 }
 
 void LuaSoundEffect::play_4(luabind::object volume, luabind::object pan, luabind::object pitch, luabind::object loop){

@@ -144,7 +144,7 @@ void UserInputDispatcher::onChar(int chr, input_state state){
 
 	luabind::object global_char_callback = luabind::globals(L)["global_char_callback"];
 	if(global_char_callback){
-		luabind::call_function<void>(global_char_callback, chr);
+		luabind::call_function<void>(L, global_char_callback, chr);
 	}
 
 	if(char_focus_target){

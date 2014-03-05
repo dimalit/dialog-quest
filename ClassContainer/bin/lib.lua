@@ -96,6 +96,22 @@ local function inherit(...)
 	return mt
 end
 
+-------------- multithreading ---------
+function wait_for(obj, proc)
+	local thread = coroutine.running()
+	obj[proc] = function()
+		coroutine.resume(thread)
+	end
+	coroutine.yield()
+end
+
+-- for blocked operations in init.lua
+-- for some strange reason it doesn't work with built-in dofile
+-- HACK!
+dofile = function(f)
+	return loadfile(f)()
+end
+
 -------------- geometry ---------------
 
 function dist(x1,y1,x2,y2)
@@ -496,6 +512,44 @@ TableLayout = function(nrows, ncols)
 	self.rows = {}
 	self.columns = {}
 	
+	local equalize_columns, equalize_rows = false, false
+	local rows_fixed = {}
+	local columns_fixed = {}
+	
+	self.equalizeRows = function(_, arg)
+		if arg==nil then arg = true end
+		equalize_rows = arg
+		self:requestLayOut()
+	end
+	self.getEqualizeRows = function()
+		return equalize_rows
+	end
+	self.equalizeColumns = function(_, arg)
+		if arg==nil then arg = true end
+		equalize_columns = arg
+		self:requestLayOut()
+	end
+	self.getEqualizeColumns = function()
+		return equalize_columns
+	end
+	
+	self.fixRow = function(_, row, h)
+		rows_fixed[row] = h
+		self:requestLayOut()
+	end
+	self.unfixRow = function(_, row)
+		rows_fixed[row] = nil
+		self:requestLayOut()
+	end
+	self.fixColumn = function(_, col, w)
+		columns_fixed[col] = w
+		self:requestLayOut()
+	end
+	self.unfixColumn = function(_, col)
+		columns_fixed[col] = nil
+		self:requestLayOut()
+	end	
+	
 	local elements = {}				-- 2d array of keys + hspan + vspan
 											-- spanned cells are ignored when computing widths/heights
 	
@@ -505,20 +559,7 @@ TableLayout = function(nrows, ncols)
 		it.id = "row"..i
 		it.rel_hpx, it.rel_hpy = 0, 0
 		self:add(it)
-		it.debugDrawBox = true
-		-- -- align left and right
-		-- self:link(it, 0, nil, self, 0, nil, 2, nil)
-		-- self:link(it, 1, nil, self, 1, nil, -2, nil)
-		-- -- align to prev
-		-- if i == 1 then
-			-- self:link(it, nil, 0, self, nil, 0, nil, 2)		-- self top
-		-- else
-			-- self:link(it, nil, 0, self.rows[i-1], nil, 1, nil, 2)	-- prev bot
-		-- end
-		-- if i==nrows then
-			-- self:link(it, nil, 1, self, nil, 1, nil, -2)						-- self bot
-		-- end
-		-- add it!
+--		it.debugDrawBox = true
 		table.insert(self.rows, it)
 		table.insert(elements, {})			-- add rows to matrix
 		for j=1,ncols do table.insert(elements[i], {}) end
@@ -530,25 +571,12 @@ TableLayout = function(nrows, ncols)
 		it.id = "col"..i
 		it.rel_hpx, it.rel_hpy = 0, 0		
 		self:add(it)
-		it.debugDrawBox = true
-		-- -- align top and bot
-		-- self:link(it, nil, 0, self, nil, 0, nil, 2)
-		-- self:link(it, nil, 1, self, nil, 1, nil, -2)
-		-- -- align to prev
-		-- if i == 1 then
-			-- self:link(it, 0, nil, self, 0, nil, 2, nil)						-- self left
-		-- else
-			-- self:link(it, 0, nil, self.columns[i-1], 1, nil, 2, nil)	-- prev right
-		-- end
-		-- if i==ncols then
-			-- self:link(it, 1, nil, self, 1, nil, -2, nil)						-- self right
-		-- end
-		-- add it!
+--		it.debugDrawBox = true
 		table.insert(self.columns, it)
 	end	
 	
 	local old_add = self.add
-	self.add = function(_, item, row, col, hspan, vspan)
+	self.add = function(_, item, row, col, vspan, hspan)
 		assert(item ~= nil)
 		assert(row>=1 and row<=nrows)
 		assert(col>=1 and col<=ncols)
@@ -557,18 +585,21 @@ TableLayout = function(nrows, ncols)
 		old_add(self, item)
 		elements[row][col][item] = true
 		elements[row][col].hspan = hspan
-		elements[row][col].vspan = hspan
-		-- -- link 0,0
-		self:link(item, nil, 0, self.rows[row], nil, 0)
-		self:link(item, 0, nil, self.columns[col], 0, nil)
-		-- -- restrict rows and columns dimensions
-		-- self:restrict(Expr(item, "height"), "<=", Expr(self.rows[row], "height"))
-		-- self:restrict(Expr(item, "width"), "<=", Expr(self.columns[col], "width"))
+		elements[row][col].vspan = vspan
+	end
+
+	self.getSpans = function(_, r, c)
+		return elements[r][c].vspan, elements[r][c].hspan
 	end
 	
 	local old_onRequestLayOut = self.onRequestLayOut
 	self.onRequestLayOut = function(...)	
 		if old_onRequestLayOut then old_onRequestLayOut(unpack(arg)) end
+		
+		local padding = 10
+		
+		local max_max_h = 0
+		local max_max_w = 0
 		
 		self.rows[1].y = 0
 		
@@ -578,17 +609,24 @@ TableLayout = function(nrows, ncols)
 			for j=1,ncols do
 				for k,_ in pairs(elements[i][j]) do
 					if elements[i][j].vspan~=1 then break end			-- ignore spanned				
-					if type(k)~="string" and k.height > max_h then max_h = k.height end	-- string for hspan and vspan
+					if type(k)~="string" and k.height+2*padding > max_h then max_h = k.height+2*padding end	-- string for hspan and vspan
 				end -- for elements
 			end -- cols
+
+			-- if fixed
+			if rows_fixed[i] ~= nil then
+				max_h = rows_fixed[i]
+			end
 			
 			-- apply
-			self.rows[i].height = max_h
-			if i~=1 then self.rows[i].y = self.rows[i-1].bottom end			
+			if not equalize_rows then
+				self.rows[i].height = max_h
+				if i~=1 then self.rows[i].y = self.rows[i-1].bottom end
+			else
+				max_max_h = max(max_h, max_max_h)
+			end
 		end -- rows
 		
-		self.height = self.rows[nrows].bottom;
-
 		self.columns[1].x = 0
 		
 		-- for cols
@@ -597,15 +635,39 @@ TableLayout = function(nrows, ncols)
 			for i=1,nrows do
 				for k,_ in pairs(elements[i][j]) do
 					if elements[i][j].hspan~=1 then break end			-- ignore spanned
-					if type(k)~="string" and k.width > max_w then max_w = k.width end
+					if type(k)~="string" and k.width+2*padding > max_w then max_w = k.width+2*padding end
 				end -- for elements
 			end -- rows
 			
+			-- if fixed
+			if columns_fixed[j] ~= nil then
+				max_w = columns_fixed[j]
+			end
+			
 			-- apply
-			self.columns[j].width = max_w
-			if j~=1 then self.columns[j].x = self.columns[j-1].right end			
+			if not equalize_columns then
+				self.columns[j].width = max_w
+				if j~=1 then self.columns[j].x = self.columns[j-1].right end				
+			else
+				max_max_w = max(max_w, max_max_w)
+			end
 		end -- cols
-	
+
+		if equalize_columns then
+			for j=1,ncols do
+				self.columns[j].width = max_max_w
+				if j~=1 then self.columns[j].x = self.columns[j-1].right end
+			end
+		end
+
+		if equalize_rows then
+			for i=1,nrows do
+				self.rows[i].height = max_max_h
+				if i~=1 then self.rows[i].y = self.rows[i-1].bottom end				
+			end
+		end		
+		
+		self.height = self.rows[nrows].bottom;		
 		self.width = self.columns[ncols].right;
 		
 		-- make grid
@@ -616,32 +678,151 @@ TableLayout = function(nrows, ncols)
 		for j=1,ncols do
 			self.columns[j].y = 0
 			self.columns[j].height = self.height
-		end				
+		end
+
+		-- move elements
+		for i=1,nrows do
+			for j=1,ncols do
+				for k,_ in pairs(elements[i][j]) do
+					if type(k)~="string" then					-- TODO Remove "hspan" and "vspan" strings from here
+						k.x = padding + self.columns[j].left + k.hpx
+						k.y = padding + self.rows[i].top + k.hpy
+					end
+				end -- for elements
+			end -- cols
+		end -- rows		
 	end	
 	
 	return self
 end
 
 function  Table(rows, cols, data)
-	local self = TableLayout(rows, cols)
+	local self = CompositeItem()
 	
-	-- if data~=nil then
-		-- for i=1,rows do
-			-- for j=1,cols do
-				-- local item = data[i][j]
-				-- if type(item)~="userdata" then item = TextItem(tostring(item)) end
-				
-				-- -- find spans
-				-- local vspan=1
-				-- for d=1,#data do if i+d>rows or data[i+d][j]~=nil then vspan=d; break; end; end
-				-- local hspan=1
-				-- for d=1,#data[i] do if j+d>cols or data[i][j+d]~=nil then hspan=d; break; end; end
+	local lay = TableLayout(rows, cols)
+	lay.rel_hpx, lay.rel_hpy = 0, 0
+	lay.x, lay.y = 0, 0	
+	self:add(lay)
+	
+	local frame
+	local cell_frames = {}
+	local cell_frames_path
+	
+	-- local funcs
+	local create_cell_frames
+	local resize_cell_frames
+	
+	self.setFrame = function(_, path)
+		if path ~= nil then
+			frame = FrameItem(path, self.width, self.height)
+			self:add(frame)
+			frame.rel_hpx, frame.rel_hpy = 0, 0
+			frame.x, frame.y = 0, 0
+		elseif frame ~= nil then
+			self:remove(frame)
+			frame = nil
+		end
+		
+		self:requestLayOut()
+	end
+	
+	self.setCellFrames = function(_, path)
+		cell_frames_path = path
+		create_cell_frames()
+	end
+	
+	create_cell_frames = function()
+	
+		for i=1,#cell_frames do
+			for j,v in pairs(cell_frames[i]) do
+				self:remove(v)
+			end -- for j
+		end -- for i
 
-				-- self:add(item, i, j, vspan, hspan)
-			-- end -- cols			
-		-- end -- rows	
-	-- end -- if data
+		cell_frames = {}
+		if cell_frames_path == nil then return end
+		
+		print("creating");
+		for i=1,#lay.rows do
+			table.insert(cell_frames, {})
+			for j=1,#lay.columns do
+				if data[i][j] ~= nil then
+					local f = FrameItem(cell_frames_path, 20, 20)
+					f.rel_hpx, f.rel_hpy = 0, 0
+					self:add(f)
+					cell_frames[i][j] = f
+				end -- if
+			end -- for j
+		end -- for i
+		
+		resize_cell_frames()
+	end	
 	
+	resize_cell_frames = function()
+		for i=1,#cell_frames do
+			for j,v in pairs(cell_frames[i]) do
+				if data[i][j] ~= nil then
+					local vspan, hspan = lay:getSpans(i, j)
+					local h = 0
+					for d=1,vspan do h = h + lay.rows[i-1+d].height end
+					local w = 0
+					for d=1,hspan do w = w + lay.columns[j-1+d].width end
+					
+					v.x, v.width = lay.columns[j].left, w
+					v.y, v.height = lay.rows[i].top, h
+				end -- if
+			end -- for j
+		end -- for i
+	end	
+
+	if data~=nil then
+		for i=1,rows do
+			for j=1,cols do
+				local item = data[i][j]
+				if type(item)~="userdata" and type(item)~="nil" then item = TextItem(tostring(item)) end
+				
+				-- find spans
+				local vspan=1
+				for d=1,#data do if i+d>rows or data[i+d][j]~=nil then vspan=d; break; end; end
+				local hspan=1
+				for d=1,#data[i] do if j+d>cols or data[i][j+d]~=nil then hspan=d; break; end; end
+				
+				if item~=nil then
+					lay:add(item, i, j, vspan, hspan)
+				end
+			end -- cols
+			table.insert(cell_frames, {})
+		end -- rows	
+		
+		create_cell_frames()
+	end -- if data
+	
+	local old_onRequestLayOut = self.onRequestLayOut
+	self.onRequestLayOut = function(...)	
+		if old_onRequestLayOut then old_onRequestLayOut(unpack(arg)) end
+		
+		self.width = lay.width
+		self.height = lay.height
+		
+		if frame ~= nil then
+			frame.width = self.width
+			frame.height = self.height
+		end
+		
+		resize_cell_frames()
+		
+	end
+	
+	-- composition!
+	self.equalizeRows = function(_, arg) lay.equalizeRows(lay, arg) end
+	self.getEqualizeRows = function() return lay.getEqualizeRows(lay) end
+	self.equalizeColumns = function(_, arg) lay.equalizeColumns(lay, arg)	end
+	self.getEqualizeColumns = function() return lay.getEqualizeColumns(lay)	end
+	self.fixRow = function(_, row, h) lay.fixRow(lay, row, h)	end
+	self.unfixRow = function(_, row) lay.unfixRow(lay, row)	end
+	self.fixColumn = function(_, col, w) lay.fixColumn(lay, col, w) end
+	self.unfixColumn = function(_, col) lay.unfixColumn(lay, col) end		
+
 	return self
 end
 

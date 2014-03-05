@@ -112,6 +112,6 @@ private:
 	luabind::object onFinish_cb;
 	virtual void onFinish(){
 		if(onFinish_cb)
-			luabind::call_function<void>(onFinish_cb, this);
+			luabind::call_function<void>(L, onFinish_cb, this);
 	}
 };

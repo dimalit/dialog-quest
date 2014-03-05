@@ -179,27 +179,40 @@ getmetatable(Input).__call = function(_,conf)
 	end	 -- add_words
 	
 	self.placeWordsRandomly = function(_)
+		if #all_words==0 then return end
+	
 		local left = bottom_side.left
 		local right = bottom_side.right
 		local top = bottom_side.top
 		local bottom = bottom_side.bottom
-		
-		print("bottom:", left, right, top, bottom)
 
-		local placed_movers = {}
+--		local placed_movers = {}
 
-		local conflicts_with_placed = function(mover)
-			local res = false
-			for _, m in ipairs(placed_movers) do
-				-- TODO Measure DISTANCE - not just overlapping
-				if intersects(mover, m) then return false end
-			end
-			return true
-		end
+		-- local conflicts_with_placed = function(mover)
+			-- local res = false
+			-- for _, m in ipairs(placed_movers) do
+				-- -- TODO Measure DISTANCE - not just overlapping
+				-- if intersects(mover, m) then return false end
+			-- end
+			-- return true
+		-- end
 		
 		local x = left + 20
 		local y = top + 20
-		for _,mover in pairs(all_words)
+		
+		-- put movers into temp_array and shuffle them
+		local temp_array = {}
+		local random_array = random_permutation(#all_words)
+		for i=1,#random_array do
+			local j = random_array[i]
+			table.insert(temp_array, all_words[j])
+		end		
+		
+		local lines = {}					-- for later centering
+		table.insert(lines, {})
+		
+		-- put on screen
+		for _,mover in ipairs(temp_array)
 		do
 			if right-left-mover.width > 0 then
 				-- repeat
@@ -208,15 +221,49 @@ getmetatable(Input).__call = function(_,conf)
 					-- print("trying", mover.x, mover.y, mover.width, mover.height)
 				-- until conflicts_with_placed(mover, placed_movers)
 				mover.x, mover.y = x, y
+				table.insert(lines[#lines], mover)
 				x = x + mover.width + 20
-				if x > right then x, y = 20, y + 40 end			-- wrap
+				if x > right then														-- wrap
+					x, y = 20, y + 40
+					table.insert(lines, {})
+				end
 				if mover.right > right-20 then							-- place again
 					mover.x, mover.y = x, y
-					x = x + mover.width + 20					
+					table.remove(lines[#lines-1])
+					table.insert(lines[#lines], mover)
+					x = x + mover.width + 20
 				end
-				table.insert(placed_movers, mover)
+				--table.insert(placed_movers, mover)
 			end -- if not too wide
 		end -- for mover
+		
+		if #lines[1]==0 then return end					-- too narrow
+		
+		-- center them
+		local t = lines[1][1].top
+		local b
+			if #lines[#lines] > 0 then
+				b = lines[#lines][1].bottom
+			else
+				b = lines[#lines-1][#lines[#lines-1]]
+			end
+		local vert_delta = (t-top + bottom-b)/2 - (t-top)
+		
+		for i=1,#lines do
+		
+			if #lines[i]==0 then break end
+			
+			local l = lines[i][1].left - left
+			local r = right - lines[i][#lines[i]].right
+			local delta = (l+r)/2 - (l-left)
+			for j=1, #lines[i] do
+				-- TODO: Why move() doesn't wor here!?
+				--lines[i][j]:move(delta, vert_delta)
+				lines[i][j].x = lines[i][j].x + delta
+--				lines[i][j].y = lines[i][j].y + vert_delta
+			end
+		end
+		
 	end -- placeWordsRandomly	
 	
 	return self

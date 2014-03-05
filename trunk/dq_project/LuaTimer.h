@@ -1,6 +1,10 @@
 #pragma once
-#include <luabind/luabind.hpp>
+
 #include "timer.h"
+
+#include "App.h"
+
+#include <luabind/luabind.hpp>
 
 class LuaTimer;
 
@@ -23,6 +27,6 @@ private:
 	// call lua
 	luabind::object cb;
 	void fire(){
-		if(cb) luabind::call_function<void>(cb, this);
+		if(cb) luabind::call_function<void>(L, cb, this);
 	}
 };

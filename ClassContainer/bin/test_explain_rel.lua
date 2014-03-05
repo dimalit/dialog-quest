@@ -24,19 +24,24 @@ scene.content:link(p1, 0, nil, scene.content, 0, nil, -1, -1)
 scene.content:link(p1, 1, nil, scene.content, 1, nil, -2, -2)
 scene.content:link(p1, nil, 0, scene.content, nil, 0, -3, -3)
 
-t = TableLayout(4,3)
-	t:add(TextItem("once"), 1, 1)
-	t:add(TextItem("upon"), 1, 2)
-	t:add(TextItem("a"), 1, 3)
-	t:add(TextItem("time"), 2, 1)
-	t:add(TextItem("there"), 2, 2)
-	t:add(TextItem("was"), 2, 3)
-	t:add(TextItem("a"), 3, 1)
-	t:add(TextItem("little"), 3, 2)
-	t:add(TextItem("but"), 3, 3)
-	t:add(TextItem("proud"), 4, 1)
-	t:add(TextItem("kingdom"), 4, 2)
-	t:add(TextItem("et cetera"), 4, 3)
+t = Table(5, 5, 
+	{
+		{"",             "Продукты", nil,    "Хозтовары", nil},
+		{"",             "мясо",     "рыба", "большие",   "маленькие"},
+		{"январь",       1.1,        0.7,    0.4,         0.3},
+		{"февраль\nмарт",1.2,        0.6,    0.4,         0.3},
+		{"всего",        2.3,        1.2,    0.8,         0.6},
+	}
+)
+
+t:setFrame("interface/frame_glow")
+t:setCellFrames("interface/frame")
+
+t:equalizeRows(false)
+t:equalizeColumns(false)
+--t:fixRow(1, 40)
+t:fixColumn(2, 120)
+
 scene.content:add(t)
 scene.content:link(t, 0.5, nil, scene.content, 0.5, nil)
 scene.content:link(t, nil, 0, p1, nil, 1, nil, Explain.paragraph_interval)
@@ -64,6 +69,10 @@ scene.content:link(p2, 1, nil, p1, 1, nil)
 	-- -- i:rel_y(30)
 	-- scene.content:link(i, 0.5, 0, p2, 0.75, 1, 0, 50)
 	
-scene.debugDrawBox = true
+scene.debugDrawBox = false
 	
 scene:start()
+
+wait_for(scene, "onFinish")
+scene.visible = false
+root:remove(scene)

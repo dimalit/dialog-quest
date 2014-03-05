@@ -41,4 +41,8 @@ scene.afterLayOut = function(self)
 	scene:placeWordsRandomly()
 end
 
-scene.debugDrawBox = true
+--scene.debugDrawBox = true
+
+wait_for(scene, "onFinish")
+scene.visible = false
+root:remove(scene)

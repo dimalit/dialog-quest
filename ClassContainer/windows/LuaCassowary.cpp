@@ -120,7 +120,7 @@ void LuaCassowary::solve(){
 	// else read new values and solve
 	try{
 		solver.GetExternalVariables();
-		cout << solver << endl;
+		//cout << solver << endl;
 	}catch(ExCLError& ex){
 		cout << ex.description() << endl;
 	}catch(...){

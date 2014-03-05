@@ -37,4 +37,8 @@ scene.columns[3]
 	:add{"", "- Мне тоже приятно познакомиться.", "audio/ding.wav"}
 
 
-scene.debugDrawBox = true	
+--scene.debugDrawBox = true	
+
+wait_for(scene, "onFinish")
+scene.visible = false
+root:remove(scene)
