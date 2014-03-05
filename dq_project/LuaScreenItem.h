@@ -50,32 +50,32 @@ private:
 	virtual void onMove(Variant* v){
 		ScreenItem::onMove(v);
 		if(onMove_cb)
-			luabind::call_function<void>(onMove_cb, this);
+			luabind::call_function<void>(L, onMove_cb, this);
 	}
 
 	virtual void onDrag(float dx, float dy){
 		if(onDrag_cb)
-			luabind::call_function<void>(onDrag_cb, this, dx, dy);
+			luabind::call_function<void>(L, onDrag_cb, this, dx, dy);
 	}
 	virtual void onDbClick(){
 		if(onDbClick_cb)
-			luabind::call_function<void>(onDbClick_cb, this);
+			luabind::call_function<void>(L, onDbClick_cb, this);
 	}
 	virtual void onDragStart(){
 		if(onDragStart_cb)
-			luabind::call_function<void>(onDragStart_cb, this);
+			luabind::call_function<void>(L, onDragStart_cb, this);
 	}
 	virtual void onDragEnd(){
 		if(onDragEnd_cb)
-			luabind::call_function<void>(onDragEnd_cb, this);
+			luabind::call_function<void>(L, onDragEnd_cb, this);
 	}
 	virtual void onChar(int chr){
 		if(onChar_cb)
-			luabind::call_function<void>(onChar_cb, this, chr);
+			luabind::call_function<void>(L, onChar_cb, this, chr);
 	}
 	virtual void onFocusLose(){
 		if(onFocusLose_cb)
-			luabind::call_function<void>(onFocusLose_cb, this);
+			luabind::call_function<void>(L, onFocusLose_cb, this);
 	}
 protected:
 		virtual void destroy(){

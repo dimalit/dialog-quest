@@ -8,6 +8,8 @@
 #include <luabind/adopt_policy.hpp>
 #include <luabind/dependency_policy.hpp>
 
+int rec_depth = 0;
+
 CompositeItem* root_item(){
 	static LuaCompositeItem* root = 0;
 	if(!root){
@@ -40,6 +42,11 @@ LuaCompositeItem* LuaScreenItem::getParent(){
 }
 
 void LuaCompositeItem::doLayOutIfNeeded(){
+	//for(int i=0; i<rec_depth; i++)
+	//	cout << "\t";
+	//cout << this << " enter " << this->getAbsoluteLeft() << " " << this->getAbsoluteTop() << " " << this->getWidth() << " " << this->getHeight() << std::endl;
+	//rec_depth++;
+
 	moving_children_now = true;			// if child wants to re-layout I will do it now (see below)
 	
 	// ignore this recursion if we in either case will call it later
@@ -51,7 +58,7 @@ void LuaCompositeItem::doLayOutIfNeeded(){
 		moving_children_now = true;
 		while(need_lay_out){		
 				need_lay_out = false;
-				luabind::call_function<void>(onRequestLayOut_cb, this);			// this may raise need_lay_out again!
+				luabind::call_function<void>(L, onRequestLayOut_cb, this);			// this may raise need_lay_out again!
 		}// while
 
 		if(need_lay_out_children)
@@ -68,6 +75,11 @@ void LuaCompositeItem::doLayOutIfNeeded(){
 	}
 
 	need_lay_out = false;				// if no user layout handler
+
+	//rec_depth--;
+	//for(int i=0; i<rec_depth; i++)
+	//	cout << "\t";
+	//cout << this << " leave " << this->getAbsoluteLeft() << " " << this->getAbsoluteTop() << " " << this->getWidth() << " " << this->getHeight() << std::endl;
 }
 
 //LuaCompositeItem* LuaCompositeItem::add(luabind::object child){
