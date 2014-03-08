@@ -9,7 +9,7 @@ root:add(scene)
 
 scene.background.texture = "interface/menu_bg.rttex"
 
-scene.title.text = "Buttons"
+scene.title.text = "Buttons scene"
 -- TextBoxItem(text, width, font)
 -- width = always 0
 -- font: 0=times, 1=trajan, 3=phonetic
@@ -35,7 +35,7 @@ scene.columns[2]
 	-- :add{"bat", " - летуча€ мышь", "audio/ding.wav"}
 	-- :add{"hat", " - шл€па", "audio/ding.wav"}
 
---scene.debugDrawBox = true	
+scene.debugDrawBox = true	
 
 wait_for(scene, "onFinish")
 scene.visible = false

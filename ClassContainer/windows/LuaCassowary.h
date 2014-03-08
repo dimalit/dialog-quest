@@ -153,7 +153,7 @@ private:
 	bool need_resolve;
 	typedef std::pair<luabind::object, std::string> obj_key;
 	
-	void change_vars_to_cached(ClLinearExpression::ClVarToCoeffMap& terms);
+	void change_vars_to_cached_and_remove_zeros(ClLinearExpression::ClVarToCoeffMap& terms);
 
 	struct CompareVarsUnderPtr{
 		bool operator()(const LuaClVariable* left, const LuaClVariable* right) const{

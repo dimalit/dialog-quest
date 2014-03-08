@@ -81,7 +81,7 @@ void LuaCassowary::solve(){
 			// add stay 1.0 - 1.5
 			LuaClVariable* lv = it->first;
 
-			double strength = lv->key=="width" || lv->key=="height" ? 1000.0 : 1.0;
+			double strength = lv->key=="width" || lv->key=="height" ? 100.0 : 1.0;
 
 			ClConstraint* pcn;
 			// specially for self width and height
@@ -161,17 +161,24 @@ void LuaCassowary::addEquation(luabind::object info1,
 //	cout << "\tend link" << endl;
 }
 
-void LuaCassowary::change_vars_to_cached(ClLinearExpression::ClVarToCoeffMap& terms){
+void LuaCassowary::change_vars_to_cached_and_remove_zeros(ClLinearExpression::ClVarToCoeffMap& terms){
 	for(ClLinearExpression::ClVarToCoeffMap::iterator it = terms.begin(); it != terms.end();){
 		LuaClVariable* lv = dynamic_cast<LuaClVariable*>(it->first.get_pclv());
 			assert(lv);
+
+		// remove if zero
+		if(it->second == 0.0){
+			terms.erase(it++);
+			continue;
+		}
+
 		// add if absent
-		if(cl_vars.find(lv) == cl_vars.end() && it->second != 0.0){
+		if(cl_vars.find(lv) == cl_vars.end()){
 			cl_vars[lv] = true;
 			++it;
 		}
 		// take if present
-		else if(it->second != 0.0){
+		else{
 			// if it was dependent - leave it so
 			double coef = it->second;
 
@@ -183,9 +190,7 @@ void LuaCassowary::change_vars_to_cached(ClLinearExpression::ClVarToCoeffMap& te
 			terms[var] = coef;
 
 			it = next;
-		}
-		else
-			++it;
+		} // else
 	}// for
 }
 
@@ -193,7 +198,7 @@ void LuaCassowary::maximize(const LuaClLinearExpression& expr){
 	
 	// get from cache vars
 	ClLinearExpression::ClVarToCoeffMap& terms = const_cast<ClLinearExpression::ClVarToCoeffMap&>(expr.expr.Terms());
-	change_vars_to_cached(terms);
+	change_vars_to_cached_and_remove_zeros(terms);
 
 	// maximize
 	ClLinearEquation eq(expr.expr, ClLinearExpression(1000000.0), ClsWeak());
@@ -208,7 +213,7 @@ void LuaCassowary::minimize(const LuaClLinearExpression& expr){
 	
 	// get from cache vars
 	ClLinearExpression::ClVarToCoeffMap& terms = const_cast<ClLinearExpression::ClVarToCoeffMap&>(expr.expr.Terms());
-	change_vars_to_cached(terms);
+	change_vars_to_cached_and_remove_zeros(terms);
 
 	// minimize
 	ClLinearEquation eq(expr.expr, ClLinearExpression(-1000000.0), ClsWeak());
@@ -224,8 +229,8 @@ void LuaCassowary::addConstraint(const LuaClLinearExpression& left, string op_si
 	// get from cache vars
 	ClLinearExpression::ClVarToCoeffMap& terms_r = const_cast<ClLinearExpression::ClVarToCoeffMap&>(right.expr.Terms());
 	ClLinearExpression::ClVarToCoeffMap& terms_l = const_cast<ClLinearExpression::ClVarToCoeffMap&>(left.expr.Terms());
-	change_vars_to_cached(terms_r);
-	change_vars_to_cached(terms_l);
+	change_vars_to_cached_and_remove_zeros(terms_r);
+	change_vars_to_cached_and_remove_zeros(terms_l);
 
 	if(op_sign=="=="){
 		ClLinearEquation eq(left.expr, right.expr);
@@ -249,7 +254,7 @@ void LuaCassowary::addConstraint(const LuaClLinearExpression& left, string op_si
 	}// if inequality
 
 	
-	cout << left.expr << op_sign << right.expr << " required ";
+	cout << this << ":\t " << left.expr << op_sign << right.expr << " required ";
 	if(op_sign=="==")
 		cout << "1.0" << endl;
 	else

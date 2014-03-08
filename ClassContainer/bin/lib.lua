@@ -233,7 +233,7 @@ function TextButton(...)
 	
 	local self = CompositeItem()
 	self.id="TextButton"
-	self.width = 1000000					-- max: full line length
+	self.width = 137					-- max: full line length
 		
 	local image_item = nil
 	if image then
@@ -247,10 +247,10 @@ function TextButton(...)
 			self:add(image_item)			
 		end
 	end
-	image_item.id = "image_item"
+	image_item.id = "but_image_item"
 
 	local text_item = TextBoxItem(text)
-	text_item.id = "text_item"
+	text_item.id = "but_text_item"
 	self:add(text_item)
 	text_item.rel_hpx, text_item.rel_hpy = 0, 0
 	
@@ -1168,7 +1168,7 @@ CompositeItem = function(...)
 	
 	self.onRequestLayOut = function()
 		solver:solve()								-- updates vars in, solve and updates out
--- when solving and changing width, item man change its height
+-- when solving and changing width, item may change its height
 -- will solve again with no difference otherwise
 --!!!		self.need_lay_out = false			-- will be raised again by child
 --		print("set to false")
