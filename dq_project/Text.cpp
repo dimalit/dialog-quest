@@ -15,12 +15,12 @@ TextItem::~TextItem()
 }
 
 // TODO: think about enums in Lua and here (don't want to use Proton's enums!)
-TextBoxItem::TextBoxItem(std::string txt, float width, eAlignment align, eFont font)
+TextBoxItem::TextBoxItem(std::string txt, eAlignment align, eFont font)
 {
 	component = new TextBoxRenderComponent();
 	entity->AddComponent(component);
 
-	entity->GetVar("size2d")->Set(width, 0);
+//	entity->GetVar("size2d")->Set(width, 0);
 	component->GetVar("text")->Set(txt);
 	CL_Vec2f h = entity->GetVar("size2d")->GetVector2();
 	component->GetVar("textAlignment")->Set((uint32)align);
@@ -86,11 +86,9 @@ void LuaTextBoxItem::setRightObstacles(const LuaStairsProfile& p){
 }
 
 LuaTextBoxItem::LuaTextBoxItem(std::string txt)
-	:TextBoxItem(txt, 0, ALIGNMENT_UPPER_LEFT){}
-LuaTextBoxItem::LuaTextBoxItem(std::string txt, float width)
-	:TextBoxItem(txt, width, ALIGNMENT_UPPER_LEFT){}
-LuaTextBoxItem::LuaTextBoxItem(std::string txt, float width, eFont font)
-	:TextBoxItem(txt, width, ALIGNMENT_UPPER_LEFT, font){}
+	:TextBoxItem(txt, ALIGNMENT_UPPER_LEFT){}
+LuaTextBoxItem::LuaTextBoxItem(std::string txt, eFont font)
+	:TextBoxItem(txt, ALIGNMENT_UPPER_LEFT, font){}
 
 void LuaTextBoxItem::luabind(lua_State* L){
 
@@ -115,8 +113,7 @@ void LuaTextBoxItem::luabind(lua_State* L){
 				luabind::value("FONT_TIMES_14", FONT_TIMES_14)
 			]
 			.def(luabind::constructor<std::string>())
-			.def(luabind::constructor<std::string, float>())
-			.def(luabind::constructor<std::string, float, eFont>())
+			.def(luabind::constructor<std::string, eFont>())
 			.property("text", &LuaTextBoxItem::getText, &LuaTextBoxItem::setText)
 			.property("font", &LuaTextBoxItem::getFont, &LuaTextBoxItem::setFont)
 			.property("scale", &LuaTextBoxItem::getScale, &LuaTextBoxItem::setScale)
