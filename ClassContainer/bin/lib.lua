@@ -1,34 +1,8 @@
--------------- general ----------------
-function max(a, b)
-  if a > b then return a
-  else return b end
-end
-
-function min(a, b)
-  if a > b then return b
-  else return a end
-end
-
-function copy_table(t)
-  local u = { }
-  for k, v in pairs(t) do u[k] = v end
-  return setmetatable(u, getmetatable(t))
-end
-
-function load_config(path)
-  local cfg = {_G = _G}
-  local f = loadfile(path)
-  setfenv(f, cfg)
-  f()
-  cfg._G = nil
-  return cfg
-end
-
--------------- classes ----------------
+-------------- system things ----------------
 
 -- arg = base OBJECTS
 -- resulting mt will redirect all access to them
--- when accessing lubinded function it will also convert 1-st argument appropriately
+-- when accessing luabinded function it will also convert 1-st argument appropriately
 -- when writing to inexistant property - will write to ALL base objects!
 local function inherit(...)
   local mt = {}
@@ -96,7 +70,6 @@ local function inherit(...)
 	return mt
 end
 
--------------- multithreading ---------
 function wait_for(obj, proc)
 	local thread = coroutine.running()
 	obj[proc] = function()
@@ -112,47 +85,9 @@ dofile = function(f)
 	return loadfile(f)()
 end
 
--------------- geometry ---------------
+------------- Lua-aware wrappers for native classes -----------------
 
-function dist(x1,y1,x2,y2)
-	return math.sqrt(math.pow(x2-x1,2)+math.pow(y2-y1,2))
-end
-
--- test point x,y against line equation
-function line_sign(p1, p2, p)
-  return (p2.x - p1.x)*(p.y - p1.y) - (p.x - p1.x)*(p2.y - p1.y)
-end
-
--- for every edge this point must give the same sign as own point
-function polygon_test_point(pol, poi)
-  -- check sign of own point
-  local inner_sign = line_sign( p1[0], p1[1], p1[2] )
-  
-  -- check other edges
-  for i = 1, #pol
-  do
-	local next = i + 1
-	if next > #pol then next = 1 end
-	if line_sign(pol[i], pol[next], poi) ~= inner_sign then return false end
-  end
-  return true
-end
-
--- check convex polygons intersection
--- if at least one point is inside - then true
-function polygon_intersection(p1, p2)
-  -- check other's sign
-  for i = 1, #p2
-  do
-	if polygon_test_point(p1, p2[i]) then return true end
-  end
-  return false
-end
-
--------- Lua classes -----------
-
-------------- wrappers for native classes -----------------
-
+-- CompositeItem with children and parent
 -- TODO "children" and "parent" must be write protected!
 local old_CompositeItem = CompositeItem
 CompositeItem = function(...)
@@ -200,6 +135,189 @@ do
 	root.rel_hpx, root.rel_hpy = 0, 0
 	root.x, root.y = 0, 0
 	old_root:add(root)
+end
+
+-- CompositeItem with Cassowary
+local old_CompositeItem = CompositeItem
+CompositeItem = function(...)
+	local self = old_CompositeItem(unpack(arg))
+	local solver = Cassowary()
+	
+	-- make 2.0-strength Stay on them, so inner vals were prefereble to change
+	-- TODO: No id at this moment - so var will have partial name
+	-- solver:addExternalStay(self, "width")
+	-- solver:addExternalStay(self, "height")
+	
+	-- add our own stuff
+	local links = {}				-- array of link_obj
+
+	-- move patient to needed point right now, before any solving
+	local adjust_linkk = function(patient, px, py, nurse, nx, ny, dx, dy)
+		local max_delta = 0
+
+		assert(patient.parent==nurse or nurse.parent==patient or patient.parent==nurse.parent)
+			-- both nils or both non-nils!
+		assert(((nx==nil) == (px==nil)) and ((ny==nil) == (py==nil)))
+		-- TODO: Bad to create two identical parts for x and y...
+					
+		if nx ~= nil then
+		local tx = nurse.left+nurse.width*nx + dx		-- target
+			-- if nurse.id=="content" then print("nurse tx", nurse.left, nurse.width, nx, dx) end
+			-- if patient.id=="content" then print("patient tx", nurse.left, nurse.width, nx, dx) end
+			if patient.parent==nurse then tx=tx-nurse.left end	-- left=0 if i am parent
+		-- if 0
+		if px==0 then
+			assert(nurse.parent~=patient)				-- left edje of parent cannot depend on child
+			-- if patient.right - tx >= 0 then
+				-- local delta = (patient.right - tx - patient.width)
+				-- if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
+				-- patient.width = patient.width + delta
+				-- if patient.drop=="drop" then print(debug.traceback("", 1)) end
+			-- end
+			local delta = (tx-patient.left)
+			if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
+			patient.x = patient.x + delta
+		-- if 1
+		elseif px==1 then
+			if nurse.parent~=patient then
+				if tx - patient.left >= 0 then
+					local delta = (tx - patient.left - patient.width)
+					if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
+--print("return", max_delta)			
+					patient.width = patient.width + delta
+--print("return", max_delta)								
+				end
+				local delta = (tx-patient.right)
+				if math.abs(delta) > max_delta then max_delta = math.abs(delta) end				
+				patient.x = patient.x + delta
+			else
+				if tx >=0 then
+					local delta = (tx-patient.width)
+					if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
+					patient.width = patient.width + delta
+				end
+			end
+		-- else just move
+		else
+			assert(nurse.parent~=patient)												-- parent pos cannot depend on child
+			local sx = patient.left+patient.width*px				-- source			
+			local delta = (tx-sx)
+			if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
+			patient.x = patient.x + delta
+		end
+		end -- if nx ~= nil
+		
+		if ny ~= nil then
+		local ty = nurse.top+nurse.height*ny + dy		-- target
+			if patient.parent==nurse then ty=ty-nurse.top end	-- left=0 if i am parent
+		-- if 0
+		if py==0 then
+			assert(nurse.parent~=patient)				-- left edje of parent cannot depend on child
+			-- if patient.bottom - ty >= 0 then
+				-- local delta = (patient.bottom - ty - patient.height)
+				-- if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
+				-- patient.height = patient.height + delta
+			-- end
+			local delta = (ty-patient.top)
+			if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
+			patient.y = patient.y + delta
+		-- if 1
+		elseif py==1 then
+			if nurse.parent~=patient then
+				if ty - patient.top >= 0 then
+					local delta = (ty - patient.top - patient.height)
+					if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
+					patient.height = patient.height + delta
+				end
+				local delta = (ty-patient.bottom)
+				if math.abs(delta) > max_delta then max_delta = math.abs(delta) end				
+				patient.y = patient.y + delta
+			else
+				if ty >=0 then
+					local delta = (ty-patient.height)
+					if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
+					patient.height = patient.height + delta
+				end
+			end
+		-- else just move
+		else
+			assert(nurse.parent~=patient)												-- parent pos cannot depend on child
+			local sy = patient.top+patient.height*py				-- source			
+			local delta = (ty-sy)
+			if math.abs(delta) > max_delta then max_delta = math.abs(delta) end			
+			patient.y = patient.y + delta
+		end
+		end -- if ny ~= nil
+
+		return max_delta
+	end -- adjust_link
+	
+	self.link = function(_, patient, px, py, nurse, nx, ny, dx, dy)
+		if dx == nil then dx = 0 end
+		if dy == nil then dy = 0 end
+		
+		-- move anchor to top-left for all
+		patient.rel_hpx, patient.rel_hpy = 0, 0
+		nurse.rel_hpx, nurse.rel_hpy = 0, 0
+	
+		--bad idea! adjust_link(patient, px, py, nurse, nx, ny, dx, dy)
+	
+		-- nurse is parent
+		if nurse == patient.parent then
+		  -- TODO remove other solver functions and do nicer: nurse x*0
+			if px ~= nil then	solver:addEquation({patient, "x", 1, "width", px}, {nurse, "x", 0, "width", nx}, dx) end
+			if py ~= nil then	solver:addEquation({patient, "y", 1, "height", py}, {nurse, "y", 0, "height", ny}, dy) end
+		-- patient is parent
+		elseif patient == nurse.parent then
+			assert(px ~= 0 and py ~= 0)			-- cannot link top-left of parent to child!
+			if px ~= nil then	solver:addEquation({patient, "x", 0, "width", px}, {nurse, "x", 1, "width", nx}, dx) end
+			if py ~= nil then	solver:addEquation({patient, "y", 0, "height", py}, {nurse, "y", 1, "height", ny}, dy) end
+		-- both inside container
+		else
+			if px ~= nil then solver:addEquation({patient, "x", 1, "width", px}, {nurse, "x", 1, "width", nx}, dx) end
+			if py ~= nil then	solver:addEquation({patient, "y", 1, "height", py}, {nurse, "y", 1, "height", ny}, dy) end
+		end -- if
+		
+		self:requestLayOut()
+		return self
+	end -- link()
+	
+	self.restrict = function(_, left, op, right)
+		solver:addConstraint(left, op, right)
+	end
+
+	self.maximize = function(_, expr)
+		solver:maximize(expr)
+	end
+	self.minimize = function(_, expr)
+		solver:minimize(expr)
+	end	
+	
+	-- TODO: think again about "growing" and "shrinking" containers as in GTK
+	
+	self.onRequestLayOut = function()
+		solver:solve()								-- updates vars in, solve and updates out
+-- when solving and changing width, item may change its height
+-- will solve again with no difference otherwise
+--!!!		self.need_lay_out = false			-- will be raised again by child
+--		print("set to false")
+		do return end	-- our overloaded child should use editVar/editPoint!
+	end
+	
+	return self
+end -- CompositeItem:__init
+
+-- override root again!
+do
+	local old_root = root
+	root = CompositeItem()
+	root.rel_hpx, root.rel_hpy = 0, 0
+	root.x, root.y = 0, 0
+	root.width, root.height = old_root.width, old_root.height
+	old_root:add(root)
+	root.id = "root"
+	root:link(root, 0, 0, old_root, 0, 0)
+	root:link(root, 1, 1, old_root, 0, 0, old_root.width, old_root.height)
 end
 
 ------------- ..Items ----------------
@@ -372,6 +490,60 @@ function TextButton(...)
 	return res
 end
 
+function FrameItem(...)
+	if type(arg[1])=="table" then arg = arg[1] end				-- allow call with () too
+	local name = arg[1]
+	
+  local self = CompositeItem()
+	self.width = arg.width or 0
+	self.height = arg.height or 0
+  
+  local tex = {
+	c1 = ImageItem(name.."_c1.rttex"),
+	c2 = ImageItem(name.."_c2.rttex"),
+	c3 = ImageItem(name.."_c3.rttex"),
+	c4 = ImageItem(name.."_c4.rttex"),
+	bl = TextureItem(name.."_bl.rttex", 4, self.height-8),
+	br = TextureItem(name.."_br.rttex", 4, self.height-8),
+	bt = TextureItem(name.."_bt.rttex", self.width-8,  4),
+	bb = TextureItem(name.."_bb.rttex", self.width-8,  4)
+  }
+	
+  -- TODO: Implement add(array)
+  self:add(tex.c1):add(tex.c2):add(tex.c3):add(tex.c4):add(tex.bl):add(tex.br):add(tex.bt):add(tex.bb)	
+	self.tex = tex
+	
+	-- will be called on resize
+	self.onRequestLayOut = function(_)
+		tex.bl.height = self.height-8
+		tex.br.height = self.height-8
+		tex.bt.width  = self.width-8
+		tex.bb.width  = self.width-8
+	
+		tex.c1.rel_hpx, tex.c1.rel_hpy = 0, 0
+			tex.c1.x, tex.c1.y = 0, 0
+		tex.c2.rel_hpx, tex.c2.rel_hpy = 1, 0
+			tex.c2.x, tex.c2.y = self.width, 0
+		tex.c3.rel_hpx, tex.c3.rel_hpy = 1, 1
+			tex.c3.x, tex.c3.y = self.width, self.height	
+		tex.c4.rel_hpx, tex.c4.rel_hpy = 0, 1
+			tex.c4.x, tex.c4.y = 0, self.height	
+			
+		tex.bl.rel_hpx = 0
+			tex.bl.x, tex.bl.y = 0, self.height/2	
+		tex.br.rel_hpx = 1
+			tex.br.x, tex.br.y = self.width, self.height/2	
+		tex.bt.rel_hpy = 0
+			tex.bt.x, tex.bt.y = self.width/2, 0	
+		tex.bb.rel_hpy = 1
+			tex.bb.x, tex.bb.y = self.width/2, self.height	
+	end
+ 
+  return self
+end
+
+---------- Layouts -------------
+
 function FlowLayout(w, indent)
 	if w == nil then w = 0 end
 	if indent==nil then indent = 0 end
@@ -506,7 +678,7 @@ function FlowLayout(w, indent)
   return self
 end -- FlowLayout
 
-TableLayout = function(nrows, ncols)
+function TableLayout(nrows, ncols)
 	local self = CompositeItem()
 	self.id = "table"
 	self.rows = {}
@@ -696,7 +868,7 @@ TableLayout = function(nrows, ncols)
 	return self
 end
 
-function  Table(rows, cols, data)
+function Table(rows, cols, data)
 	local self = CompositeItem()
 	
 	local lay = TableLayout(rows, cols)
@@ -714,7 +886,7 @@ function  Table(rows, cols, data)
 	
 	self.setFrame = function(_, path)
 		if path ~= nil then
-			frame = FrameItem(path, self.width, self.height)
+			frame = FrameItem(path)
 			self:add(frame)
 			frame.rel_hpx, frame.rel_hpy = 0, 0
 			frame.x, frame.y = 0, 0
@@ -747,7 +919,7 @@ function  Table(rows, cols, data)
 			table.insert(cell_frames, {})
 			for j=1,#lay.columns do
 				if data[i][j] ~= nil then
-					local f = FrameItem(cell_frames_path, 20, 20)
+					local f = FrameItem(cell_frames_path)
 					f.rel_hpx, f.rel_hpy = 0, 0
 					self:add(f)
 					cell_frames[i][j] = f
@@ -826,513 +998,27 @@ function  Table(rows, cols, data)
 	return self
 end
 
-function FrameItem(name, w, h)
-  local self = CompositeItem()
-  self.width, self.height = w, h
+----------- added behavior ----------
+
+function PackAsButton(view)
+  local item = SimpleItem()
+  item.view = view
+  local self = {}
+  self.item = item
+  setmetatable(self, inherit(item, view))
   
-  local tex = {
-	c1 = ImageItem(name.."_c1.rttex"),
-	c2 = ImageItem(name.."_c2.rttex"),
-	c3 = ImageItem(name.."_c3.rttex"),
-	c4 = ImageItem(name.."_c4.rttex"),
-	bl = TextureItem(name.."_bl.rttex", 4, self.height-8),
-	br = TextureItem(name.."_br.rttex", 4, self.height-8),
-	bt = TextureItem(name.."_bt.rttex", self.width-8,  4),
-	bb = TextureItem(name.."_bb.rttex", self.width-8,  4)
-  }
-	
-  -- TODO: Implement add(array)
-  self:add(tex.c1):add(tex.c2):add(tex.c3):add(tex.c4):add(tex.bl):add(tex.br):add(tex.bt):add(tex.bb)	
-	self.tex = tex
-	
-	-- will be called on resize
-	self.onRequestLayOut = function(_)
-		tex.bl.height = self.height-8
-		tex.br.height = self.height-8
-		tex.bt.width  = self.width-8
-		tex.bb.width  = self.width-8
-	
-		tex.c1.rel_hpx, tex.c1.rel_hpy = 0, 0
-			tex.c1.x, tex.c1.y = 0, 0
-		tex.c2.rel_hpx, tex.c2.rel_hpy = 1, 0
-			tex.c2.x, tex.c2.y = self.width, 0
-		tex.c3.rel_hpx, tex.c3.rel_hpy = 1, 1
-			tex.c3.x, tex.c3.y = self.width, self.height	
-		tex.c4.rel_hpx, tex.c4.rel_hpy = 0, 1
-			tex.c4.x, tex.c4.y = 0, self.height	
-			
-		tex.bl.rel_hpx = 0
-			tex.bl.x, tex.bl.y = 0, self.height/2	
-		tex.br.rel_hpx = 1
-			tex.br.x, tex.br.y = self.width, self.height/2	
-		tex.bt.rel_hpy = 0
-			tex.bt.x, tex.bt.y = self.width/2, 0	
-		tex.bb.rel_hpy = 1
-			tex.bb.x, tex.bb.y = self.width/2, self.height	
-	end
- 
+  item.onDragStart = function(item)
+    view:over(true)
+  end
+  item.onDragEnd = function(item)
+    view:over(false)
+    if self.onClick then self:onClick() end
+  end
+  
   return self
 end
 
----------- Layouts -------------
--- NOTE We need Luabind-inheritance from this class
--- so we must re-use obj and not make new self
--- NOTE It is not vail anymore
-function MakeLayoutAgent(self)
-
-	if self.rel_x ~= nil then
-		print("Warning: attempt of repeated MakeLayoutAgent")
-		return self
-	end
-	
-	local cord = {
-		rel_x = self.x,
-		rel_y = self.y
-	}
-	
-	local pos_origin, pos_origin_xr, pos_origin_yr
-	local width_origin, width_ratio
-	local height_origin, height_ratio
-	
-	local dependents = {}	
-
-	local old_onmove = self.onMove
-	self.onMove = function(_)
-		if old_onmove then old_onmove(self) end
-		for dep,_ in pairs(dependents) do
-			dep:updateLocation(self)
-		end
-	end
-	
-	self.updateLocation = function(_, origin)
-		-- print("------------------------------")
-		-- print(type(pos_origin), class_info(pos_origin).name)
-		-- print_table(class_info(pos_origin).methods)
-		-- print(class_info(origin).name)
-		-- print_table(class_info(origin).methods)
-		
-		-- update position
-		if origin==pos_origin then
-			self.gx = origin.gx - origin.hpx + origin.width*pos_origin_xr  + cord.rel_x
-			self.gy = origin.gy - origin.hpy + origin.height*pos_origin_yr + cord.rel_y
-		end
-		-- update width
-		if origin==width_origin then
-			self.width = origin.width * width_ratio
-		end
-		-- update height
-		if origin==height_origin then
-			self.height = origin.height * height_ratio
-		end
-	end
-	
-	self.setLocationOrigin = function(_, ref_obj, xr, yr)
-		if pos_origin then pos_origin:removeDependent(self) end
-		pos_origin, pos_origin_xr, pos_origin_yr = ref_obj, xr, yr
-		if pos_origin then
-			pos_origin:addDependent(self)
-			self:updateLocation(pos_origin)
-		else
-			self.x, self.y = cord.rel_x, cord.rel_y	-- if nil
-		end		
-	end
-	self.setWidthOrigin = function(_, ref_obj, ratio)
-		if width_origin then width_origin:removeDependent(self) end
-		if ratio==nil then ratio = 1 end
-		width_origin = ref_obj
-		width_ratio = ratio
-		if width_origin then
-			width_origin:addDependent(self)
-			self:updateLocation(width_origin)
-		end
-	end
-	self.setHeightOrigin = function(_, ref_obj, ratio)
-		if height_origin then height_origin:removeDependent(self) end
-		if ratio==nil then ratio = 1 end
-		height_origin = ref_obj
-		height_ratio = ratio		
-		if height_origin then
-			height_origin:addDependent(self)
-			self:updateLocation(height_origin)
-		end	
-	end
-	
-	self.addDependent = function(_, dep)
-		dependents[dep] = true
-	end
-	self.removeDependent = function(_, dep)
-		dependents[dep] = nil
-	end
-
-	self.rel_x = function(_, x)
-		if x~=nil then
-			cord.rel_x = x
-			if pos_origin~=nil then
-				self:updateLocation(pos_origin)
-			else
-				self.x = x
-			end
-		else
-			return cord.rel_x
-		end
-	end
-
-	self.rel_y = function(_, y)
-		if y~=nil then
-			cord.rel_y = y
-			if pos_origin~=nil then
-				self:updateLocation(pos_origin)
-			else
-				self.y = y
-			end
-		else
-			return cord.rel_y
-		end
-	end	
-	-- no return - we just change self!
-end -- MakeLayoutAgent
-
-local old_CompositeItem = CompositeItem
-CompositeItem = function(...)
-	local self = old_CompositeItem(unpack(arg))
-	local solver = Cassowary()
-	
-	-- make 2.0-strength Stay on them, so inner vals were prefereble to change
-	-- TODO: No id at this moment - so var will have partial name
-	-- solver:addExternalStay(self, "width")
-	-- solver:addExternalStay(self, "height")
-	
-	-- add our own stuff
-	local links = {}				-- array of link_obj
-
-	-- move patient to needed point right now, before any solving
-	local adjust_linkk = function(patient, px, py, nurse, nx, ny, dx, dy)
-		local max_delta = 0
-
-		assert(patient.parent==nurse or nurse.parent==patient or patient.parent==nurse.parent)
-			-- both nils or both non-nils!
-		assert(((nx==nil) == (px==nil)) and ((ny==nil) == (py==nil)))
-		-- TODO: Bad to create two identical parts for x and y...
-					
-		if nx ~= nil then
-		local tx = nurse.left+nurse.width*nx + dx		-- target
-			-- if nurse.id=="content" then print("nurse tx", nurse.left, nurse.width, nx, dx) end
-			-- if patient.id=="content" then print("patient tx", nurse.left, nurse.width, nx, dx) end
-			if patient.parent==nurse then tx=tx-nurse.left end	-- left=0 if i am parent
-		-- if 0
-		if px==0 then
-			assert(nurse.parent~=patient)				-- left edje of parent cannot depend on child
-			-- if patient.right - tx >= 0 then
-				-- local delta = (patient.right - tx - patient.width)
-				-- if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
-				-- patient.width = patient.width + delta
-				-- if patient.drop=="drop" then print(debug.traceback("", 1)) end
-			-- end
-			local delta = (tx-patient.left)
-			if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
-			patient.x = patient.x + delta
-		-- if 1
-		elseif px==1 then
-			if nurse.parent~=patient then
-				if tx - patient.left >= 0 then
-					local delta = (tx - patient.left - patient.width)
-					if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
---print("return", max_delta)			
-					patient.width = patient.width + delta
---print("return", max_delta)								
-				end
-				local delta = (tx-patient.right)
-				if math.abs(delta) > max_delta then max_delta = math.abs(delta) end				
-				patient.x = patient.x + delta
-			else
-				if tx >=0 then
-					local delta = (tx-patient.width)
-					if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
-					patient.width = patient.width + delta
-				end
-			end
-		-- else just move
-		else
-			assert(nurse.parent~=patient)												-- parent pos cannot depend on child
-			local sx = patient.left+patient.width*px				-- source			
-			local delta = (tx-sx)
-			if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
-			patient.x = patient.x + delta
-		end
-		end -- if nx ~= nil
-		
-		if ny ~= nil then
-		local ty = nurse.top+nurse.height*ny + dy		-- target
-			if patient.parent==nurse then ty=ty-nurse.top end	-- left=0 if i am parent
-		-- if 0
-		if py==0 then
-			assert(nurse.parent~=patient)				-- left edje of parent cannot depend on child
-			-- if patient.bottom - ty >= 0 then
-				-- local delta = (patient.bottom - ty - patient.height)
-				-- if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
-				-- patient.height = patient.height + delta
-			-- end
-			local delta = (ty-patient.top)
-			if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
-			patient.y = patient.y + delta
-		-- if 1
-		elseif py==1 then
-			if nurse.parent~=patient then
-				if ty - patient.top >= 0 then
-					local delta = (ty - patient.top - patient.height)
-					if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
-					patient.height = patient.height + delta
-				end
-				local delta = (ty-patient.bottom)
-				if math.abs(delta) > max_delta then max_delta = math.abs(delta) end				
-				patient.y = patient.y + delta
-			else
-				if ty >=0 then
-					local delta = (ty-patient.height)
-					if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
-					patient.height = patient.height + delta
-				end
-			end
-		-- else just move
-		else
-			assert(nurse.parent~=patient)												-- parent pos cannot depend on child
-			local sy = patient.top+patient.height*py				-- source			
-			local delta = (ty-sy)
-			if math.abs(delta) > max_delta then max_delta = math.abs(delta) end			
-			patient.y = patient.y + delta
-		end
-		end -- if ny ~= nil
-
-		return max_delta
-	end -- adjust_link
-	
-	self.link = function(_, patient, px, py, nurse, nx, ny, dx, dy)
-		if dx == nil then dx = 0 end
-		if dy == nil then dy = 0 end
-		
-		-- move anchor to top-left for all
-		patient.rel_hpx, patient.rel_hpy = 0, 0
-		nurse.rel_hpx, nurse.rel_hpy = 0, 0
-	
-		--bad idea! adjust_link(patient, px, py, nurse, nx, ny, dx, dy)
-	
-		-- nurse is parent
-		if nurse == patient.parent then
-		  -- TODO remove other solver functions and do nicer: nurse x*0
-			if px ~= nil then	solver:addEquation({patient, "x", 1, "width", px}, {nurse, "x", 0, "width", nx}, dx) end
-			if py ~= nil then	solver:addEquation({patient, "y", 1, "height", py}, {nurse, "y", 0, "height", ny}, dy) end
-		-- patient is parent
-		elseif patient == nurse.parent then
-			assert(px ~= 0 and py ~= 0)			-- cannot link top-left of parent to child!
-			if px ~= nil then	solver:addEquation({patient, "x", 0, "width", px}, {nurse, "x", 1, "width", nx}, dx) end
-			if py ~= nil then	solver:addEquation({patient, "y", 0, "height", py}, {nurse, "y", 1, "height", ny}, dy) end
-		-- both inside container
-		else
-			if px ~= nil then solver:addEquation({patient, "x", 1, "width", px}, {nurse, "x", 1, "width", nx}, dx) end
-			if py ~= nil then	solver:addEquation({patient, "y", 1, "height", py}, {nurse, "y", 1, "height", ny}, dy) end
-		end -- if
-		
-		self:requestLayOut()
-		return self
-	end -- link()
-	
-	self.restrict = function(_, left, op, right)
-		solver:addConstraint(left, op, right)
-	end
-
-	self.maximize = function(_, expr)
-		solver:maximize(expr)
-	end
-	self.minimize = function(_, expr)
-		solver:minimize(expr)
-	end	
-	
-	self.old_link = function(_, patient, px, py, nurse, nx, ny, dx, dy)
-		if dx == nil then dx = 0 end
-		if dy == nil then dy = 0 end
-		link_obj = {
-			nurse = nurse,
-			patient = patient,
-			px = px,
-			py = py,
-			nx = nx,
-			ny = ny,
-			dx = dx,
-			dy = dy
-		}
-		table.insert(links,link_obj)
-		self:requestLayOut()
-	end
-	
-	-- TODO: think again about "growing" and "shrinking" containers as in GTK
-	
-	self.onRequestLayOut = function()
-		solver:solve()								-- updates vars in, solve and updates out
--- when solving and changing width, item may change its height
--- will solve again with no difference otherwise
---!!!		self.need_lay_out = false			-- will be raised again by child
---		print("set to false")
-		do return end	-- our overloaded child should use editVar/editPoint!
---		print ("laying out", self.id)
-		local max_delta
-		local cnt = 0
-		repeat
-			cnt = cnt + 1
-			max_delta = 0
-			for i,link in ipairs(links) do
-				delta = adjust_link(link)
-				if delta > max_delta then max_delta = delta end
-			end
---			print(max_delta)
---			if max_delta >= 0.5 then
---				self.need_lay_out = true
---			end
-		until max_delta < 0.5
-		-- needed if later "manual" lay-outer moves something 
-		self.need_lay_out = false
---		print("Iterations:", cnt)
-	end
-	
-	return self
-end -- CompositeItem:__init
-
--- override root again!
-do
-	local old_root = root
-	root = CompositeItem()
-	root.rel_hpx, root.rel_hpy = 0, 0
-	root.x, root.y = 0, 0
-	root.width, root.height = old_root.width, old_root.height
-	old_root:add(root)
-	root.id = "root"
-	root:link(root, 0, 0, old_root, 0, 0)
-	root:link(root, 1, 1, old_root, 0, 0, old_root.width, old_root.height)
-end
-
--- TODO: spacing is not dynamic - if you change it later on - nothing happens!
--- height can be nil which means automatic
-VBox = function(width, use_height)
-	local self = ScreenItem()
-	self.width = width
-	if use_height~=nil then self.height=use_height end
-	self.spacing = 0
-	
-	local items = {}
-	
-	-- resize and move all children
-	self.onMove = function(_)
-		local width = self.width
-			local item_height = nil
-			if use_height~=nil and #items>0 then item_height = (self.height-self.spacing*(#items-1)) / #items end
-		-- re-align!
-		local y = self.top
-		for i, obj in ipairs(items) do
-			obj.rel_hpx, obj.rel_hpy = 0, 0
-			obj.width = width
-			if item_height~=nil then obj.height = item_height end
-			obj.x = self.left
-			obj.y = y
-			y = y + obj.height + self.spacing
-		end
-		if use_height==nil then
-			local h = y-self.top-self.spacing
-			if h < 0 then h = 0 end
-			self.height = h
-		end
-	end
-	
-	self.add = function(_, obj, pos)
-		if pos==nil then
-			table.insert(items, obj)
-		else
-			table.insert(items, pos, obj)
-		end
-		self.parent:add(obj)
-		self:onMove()
-		return self
-	end
-	
-	self.remove = function(_, obj)
-		local pos = 0
-		for pos=1,#items do
-			if items[pos]==obj then
-				table.remove(items, pos)
-				self.parent:remove(obj)
-				self:onMove()
-				return
-			end
-		end
-	end
-	
-	return self
-end
-
--- width can be nil!
-HBox = function(use_width, height)
-	-- height is mandatory!
-	if height==nil then
-		height=use_width
-		use_width=nil
-	end
-
-	local self = ScreenItem()
-	self.height = height
-	if use_width~=nil then self.width=use_width end
-	self.spacing = 0
-	
-	local items = {}
-	
-	-- resize and move all children
-	self.onMove = function(_)
-		local height = self.height
-			local item_width = nil
-			if use_width~=nil and #items>0 then item_width=(self.width-self.spacing*(#items-1))/#items end
-		-- re-align!
-		local x = self.left
-		for i, obj in ipairs(items) do
-			obj.rel_hpx, obj.rel_hpy = 0, 0
-			obj.height = height
-			if item_width~=nil then obj.width=item_width end
-			obj.x = x
-			obj.y = self.top
-			x = x + obj.width + self.spacing
-		end		
-		if use_width==nil then
-			local w = x-self.left-self.spacing
-			if w < 0 then w = 0 end
-			self.width = w
-		end
-	end
-	
-	self.add = function(_, obj, pos)
-		if pos==nil then
-			table.insert(items, obj)
-		else
-			table.insert(items, pos, obj)
-		end
-		self.parent:add(obj)
-		self:onMove()
-		return self
-	end
-	
-	self.remove = function(_, obj)
-		local pos = 0
-		for pos=1,#items do
-			if items[pos]==obj then
-				table.remove(items, pos)
-				self.parent:remove(obj)
-				self:onMove()
-				return
-			end
-		end
-	end
-	
-	return self
-end
-
----------- MakeMover -----------
-
-function MakeMover(self)
+function MakeFrameFlyer(self)
   self.timer = Timer(function(t)
     local dt = t.elapsed
     -- check screen out
@@ -1361,17 +1047,7 @@ function MakeMover(self)
   return self
 end
 
------------ DropArea & Mover ----------
-
-function TwoStateAnimation(a, b, c, d)
-	if b==nil then
-		return TwoStateAnimation1(a)
-	else
-		return TwoStateAnimation4(a, b, c, d)
-	end
-end
-
-function TwoStateAnimation1(anim)
+local function TwoStateAnimation1(anim)
   assert(anim.num_frames >= 2)
   -- THINK can't call stop before attaching to Entity:
   --anim:stop()
@@ -1388,7 +1064,7 @@ function TwoStateAnimation1(anim)
   return anim
 end
 
-function TwoStateAnimation4(i1, i2)
+local function TwoStateAnimation4(i1, i2)
   local self = CompositeItem()
   self:add(i1):add(i2)
   
@@ -1405,13 +1081,23 @@ function TwoStateAnimation4(i1, i2)
     elseif arg==false
     then
 		i1.visible, i2.visible = true, false
+		print (self.width, self.height, i2.width, i2.height,	i2.x, i2.y, i2.hpx, i2.hpy)		
 		self.width, self.height = i1.width, i1.height
 		i1.x, i1.y = i1.hpx, i1.hpy
+		print (self.width, self.height, i2.width, i2.height,	i2.x, i2.y, i2.hpx, i2.hpy)		
     else
       return i2.visible
     end
   end
   return self
+end
+
+function TwoStateAnimation(a, b, c, d)
+	if b==nil then
+		return TwoStateAnimation1(a)
+	else
+		return TwoStateAnimation4(a, b, c, d)
+	end
 end
 
 function DropArea(item)
@@ -1463,7 +1149,7 @@ function DropArea(item)
   return self
 end
 
-find_drop = function(drops, obj)
+local find_drop = function(drops, obj)
   -- find intersections and min dist
   local min_d, min_drop
   for name,drop in pairs(drops)
@@ -1478,7 +1164,7 @@ find_drop = function(drops, obj)
   return min_drop
 end
 
-onDrag = function(drops, obj)
+highlightDropOnDrag = function(drops, obj)
   for name,drop in pairs(drops)
   do
     -- uncheck all
@@ -1491,7 +1177,7 @@ onDrag = function(drops, obj)
   end
 end
 
-onDrop = function(drops, obj)
+takeOnDrop = function(drops, obj)
   local over = find_drop(drops, obj)
   if over then
     over:take(obj)
@@ -1503,8 +1189,8 @@ end
 
 -- NOTE: We make composition with item to not to exhibit
 -- its onDrag etc. Instead we use our "outer" handlers.
-function Mover(item)
-  item = MakeMover(item)
+function PackAsDragDrop(item)
+  item = MakeFrameFlyer(item)
 
   local self = {
     item = item,
@@ -1558,28 +1244,74 @@ function Mover(item)
   -- redirect some keys to parent
   setmetatable(self, inherit(item))
   return self
-end -- Mover
+end -- PackAsDragDrop
 
-------------- button ------------------
-Button = function(view)
-  local item = SimpleItem()
-  item.view = view
-  local self = {}
-  self.item = item
-  setmetatable(self, inherit(item, view))
+-------------- useful stuff ----------------
+
+function max(a, b)
+  if a > b then return a
+  else return b end
+end
+
+function min(a, b)
+  if a > b then return b
+  else return a end
+end
+
+function copy_table(t)
+  local u = { }
+  for k, v in pairs(t) do u[k] = v end
+  return setmetatable(u, getmetatable(t))
+end
+
+function load_config(path)
+  local cfg = {_G = _G}
+  local f = loadfile(path)
+  setfenv(f, cfg)
+  f()
+  cfg._G = nil
+  return cfg
+end
+
+-------------- geometry ---------------
+
+function dist(x1,y1,x2,y2)
+	return math.sqrt(math.pow(x2-x1,2)+math.pow(y2-y1,2))
+end
+
+-- test point x,y against line equation
+function line_sign(p1, p2, p)
+  return (p2.x - p1.x)*(p.y - p1.y) - (p.x - p1.x)*(p2.y - p1.y)
+end
+
+-- for every edge this point must give the same sign as own point
+function polygon_test_point(pol, poi)
+  -- check sign of own point
+  local inner_sign = line_sign( p1[0], p1[1], p1[2] )
   
-  item.onDragStart = function(item)
-    view:over(true)
+  -- check other edges
+  for i = 1, #pol
+  do
+	local next = i + 1
+	if next > #pol then next = 1 end
+	if line_sign(pol[i], pol[next], poi) ~= inner_sign then return false end
   end
-  item.onDragEnd = function(item)
-    view:over(false)
-    if self.onClick then self:onClick() end
+  return true
+end
+
+-- check convex polygons intersection
+-- if at least one point is inside - then true
+function polygon_intersection(p1, p2)
+  -- check other's sign
+  for i = 1, #p2
+  do
+	if polygon_test_point(p1, p2[i]) then return true end
   end
-  
-  return self
+  return false
 end
 
 -------- debug functions ----------
+
 function print_table(t, shift)
   if not t then print("nil") return end
 
@@ -1616,5 +1348,4 @@ function getupvalues(f)
 end
 
 ----------- initialization ------------
---dofile("make_layout_agents.lua")
 dofile("scene.lua")

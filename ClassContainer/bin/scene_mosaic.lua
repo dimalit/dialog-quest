@@ -227,7 +227,7 @@ getmetatable(Mosaic.Task).__call = function(_, task)
 		local permut = random_permutation(#task.lines)
 		for i = 1, #permut do
 			local line = task.lines[permut[i]]
-			local mover = take(drops, Mover(TextItem(line[3])))
+			local mover = take(drops, PackAsDragDrop(TextItem(line[3])))
 			self:add(mover)
 			table.insert(movers, mover)
 			
@@ -254,13 +254,13 @@ getmetatable(Mosaic.Task).__call = function(_, task)
 		-- generate labels, buttons and places
 		for k, line in pairs(task.lines)
 		do
-			local button = Button(TwoStateAnimation(Animation(load_config("Start.anim"))))
+			local button = PackAsButton(TwoStateAnimation(Animation(load_config("Start.anim"))))
 			button.x, button.y = screen_width / 2, 0
 			self:add(button)
 			local twostate = TwoStateAnimation(
 			  -- TODO: Here 10 was Mosaic.margin. How to use it here?
-				FrameItem("interface/frame", max_mover_width + 10, 30),
-				FrameItem("interface/frame_glow", max_mover_width + 10, 30)
+				FrameItem("interface/frame"),--, max_mover_width + 10, 30),
+				FrameItem("interface/frame_glow")--, max_mover_width + 10, 30)
 			)	  
 			local drop_dst = DropArea(twostate)
 			self:add(drop_dst)

@@ -51,9 +51,9 @@ scene.tasks:add(task)
 
 scene.description:addItems({
 	TextBoxItem("Here is a long long description of the scene as a whole. It consists of multiple 'tasks' each with its own words "),
-	Button(TwoStateAnimation(Animation(load_config("Start.anim")))),
+	PackAsButton(TwoStateAnimation(Animation(load_config("Start.anim")))),
 	TextBoxItem(" Short text"),
-	Button(TwoStateAnimation(Animation(load_config("Start.anim"))))
+	PackAsButton(TwoStateAnimation(Animation(load_config("Start.anim"))))
 });
   
 scene.description

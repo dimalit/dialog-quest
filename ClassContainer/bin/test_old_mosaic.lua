@@ -8,9 +8,9 @@ scene.title = "Title"
 --scene.description = "Here is a long long description of the scene as a whole. It consists of multiple 'tasks' each with its ow words."
 scene.description = {
 	TextBoxItem("Here is a long long description of the scene as a whole. It consists of multiple 'tasks' each with its ow words "),
-	Button(TwoStateAnimation(Animation(load_config("Start.anim")))),
+	PackAsButton(TwoStateAnimation(Animation(load_config("Start.anim")))),
 	TextBoxItem(" Short text"),
-	Button(TwoStateAnimation(Animation(load_config("Start.anim"))))
+	PackAsButton(TwoStateAnimation(Animation(load_config("Start.anim"))))
 };
 
 scene.description.obstacles = {

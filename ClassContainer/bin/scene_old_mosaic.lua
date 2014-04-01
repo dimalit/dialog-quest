@@ -129,7 +129,7 @@ Mosaic = function(conf)
 	local permut = random_permutation(#task.lines)
 	for i = 1, #permut do
 	  local line = task.lines[permut[i]]
-	  local mover = take(drops, Mover(Text(line[3])), r0, 0)
+	  local mover = take(drops, PackAsDragDrop(Text(line[3])), r0, 0)
 		root:add(mover)
 	  table.insert(movers, mover)
 	  
@@ -158,15 +158,15 @@ Mosaic = function(conf)
 	local dy = assignment.height * self.line_interval
 	for k, line in pairs(task.lines)
 	do
-	  local button = Button(TwoStateAnimation(Animation(load_config("Start.anim"))), screen_width / 2, y)
+	  local button = PackAsButton(TwoStateAnimation(Animation(load_config("Start.anim"))), screen_width / 2, y)
 		root:add(button)
 		if k==1 then			-- first button is aligned by top
 			button.y = button.y + button.height/2
 			y = y + button.height/2
 		end
 	  local twostate = TwoStateAnimation(
-		FrameItem("interface/frame", max_mover_width + self.margin/2, 30),
-	    FrameItem("interface/frame_glow", max_mover_width + self.margin / 2, 30)
+		FrameItem("interface/frame"),--, max_mover_width + self.margin/2, 30),
+	    FrameItem("interface/frame_glow")--, max_mover_width + self.margin / 2, 30)
 	  )	  
 	  local drop_dst = DropArea(twostate)
 		root:add(drop_dst)

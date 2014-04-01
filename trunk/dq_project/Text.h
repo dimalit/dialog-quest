@@ -40,7 +40,7 @@ private:
 class TextBoxItem: virtual public ScreenItem
 {
 public:
-	TextBoxItem(std::string txt, float width, eAlignment align, eFont font=FONT_SMALL);
+	TextBoxItem(std::string txt, eAlignment align, eFont font=FONT_SMALL);
 	~TextBoxItem();
 
 	void setText(std::string txt){component->GetVar("text")->Set(txt);}
@@ -106,9 +106,8 @@ class LuaStairsProfile;
 
 class LuaTextBoxItem: public TextBoxItem, public LuaScreenItem{
 public:
-	LuaTextBoxItem::LuaTextBoxItem(std::string txt);
-	LuaTextBoxItem(std::string txt, float width);
-	LuaTextBoxItem(std::string txt, float width, eFont font);
+	LuaTextBoxItem(std::string txt);
+	LuaTextBoxItem(std::string txt, eFont font);
 	static void luabind(lua_State* L);
 
 	const LuaStairsProfile getLeftObstacles() const;
@@ -116,6 +115,6 @@ public:
 	void setLeftObstacles(const LuaStairsProfile& p);
 	void setRightObstacles(const LuaStairsProfile& p);
 private:
-	LuaTextBoxItem(const LuaTextItem&):TextBoxItem("", 0, ALIGNMENT_UPPER_LEFT){assert(false);}
+	LuaTextBoxItem(const LuaTextItem&):TextBoxItem("", ALIGNMENT_UPPER_LEFT){assert(false);}
 	LuaTextBoxItem& operator=(const LuaTextBoxItem&){assert(false);}
 };

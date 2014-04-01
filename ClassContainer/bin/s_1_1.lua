@@ -10,13 +10,13 @@ root:add(scene)
 scene.background.texture = "interface/menu_bg.rttex"
 
 scene.title.text = "`b 1.1"
--- TextBoxItem(text, width, font)
+-- TextBoxItem(text, font)
 -- width = always 0
 -- font: 0=times, 1=trajan, 3=phonetic
 -- NOTE: Center alignment doesn't work yet!
 
 scene.description
-	:addItem(TextBoxItem("`b Послушайте диалог-знакомство. Проговаривайте за дикторами каждую фразу, подражая интонации. ", 0, 0))
+	:addItem(TextBoxItem("`b Послушайте диалог-знакомство. Проговаривайте за дикторами каждую фразу, подражая интонации. ", 0))
 	
 
 scene.columns[1]

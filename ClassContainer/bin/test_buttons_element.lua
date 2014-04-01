@@ -6,7 +6,7 @@ i.id="i"
 -- line = CompositeItem()
 -- line.id="ButtonsElement"
 
--- t1 = TextBoxItem("declare functions for tests", 200)
+-- t1 = TextBoxItem("declare functions for tests")
 -- t1.id="right_label"
 -- line:add(t1)
 -- line:link(t1, 0, 0, line, 0, 0, 2, 2)

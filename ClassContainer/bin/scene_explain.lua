@@ -24,7 +24,7 @@ getmetatable(Explain).__call = function(_,conf)
 	self:add(self.paragraphs)
 	self.paragraphs:setLocationOrigin(self.title, 0.5, 1)
 	
-	self.agree_button = Button(TwoStateAnimation(Animation(load_config("Start.anim"))))
+	self.agree_button = PackAsButton(TwoStateAnimation(Animation(load_config("Start.anim"))))
 	self.agree_button.hpy_relative = 1
 	self.agree_button.x = self.width / 2
 	self.agree_button.y = self.height

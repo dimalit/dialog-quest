@@ -45,7 +45,7 @@
 -- -- t:add(TextItem("kingdom"), 4, 2)
 -- -- t:add(TextItem("et cetera"), 4, 3)
 
--- -- local f = FrameItem("interface/frame_glow", 10, 10)
+-- -- local f = FrameItem("interface/frame_glow")
 -- -- t:add( f , 2, 2)
 -- -- t:link(f, nil, 1, t.rows[2], nil, 1)
 -- -- t:link(f, 1, nil, t.columns[2], 1, nil)

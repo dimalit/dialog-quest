@@ -13,15 +13,15 @@ scene.background.texture = "interface/menu_bg.rttex"
 
 scene.title.text = "Input"
 scene.title.scale = 1.5
--- TextBoxItem(text, width, font)
+-- TextBoxItem(text font)
 -- width = always 0
 -- font: 0=times, 1=trajan, 3=phonetic
 -- NOTE: Center alignment doesn't work yet!
-local t2 = TextBoxItem("оставался очень коротким.", 0, 0)
+local t2 = TextBoxItem("оставался очень коротким.", 0)
 t2.scale = 2.0
 scene.description
-	:addItem(TextBoxItem("Нажми на каждое слово и послушай, как они произносятся. Повтори их за диктором. Следи, чтобы звук", 0, 0))
-	:addItem(TextBoxItem(" [x] ", 0, 3))
+	:addItem(TextBoxItem("Нажми на каждое слово и послушай, как они произносятся. Повтори их за диктором. Следи, чтобы звук", 0))
+	:addItem(TextBoxItem(" [x] ", 3))
 	:addItem(t2)
 	:addItem(VoiceTextItem("ding"))
 
@@ -41,7 +41,15 @@ scene.afterLayOut = function(self)
 	scene:placeWordsRandomly()
 end
 
---scene.debugDrawBox = true
+--------------------------------------
+dummy = TextItem("Hello")
+root:add(dummy)
+dummy.x, dummy.y = 200, 200
+dummy.onDragEnd = function()
+	dummy.x = dummy.x + 1
+end
+--------------------------------------
+scene.debugDrawBox = true
 
 wait_for(scene, "onFinish")
 scene.visible = false

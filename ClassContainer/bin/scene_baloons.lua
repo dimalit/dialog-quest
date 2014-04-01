@@ -118,7 +118,7 @@ getmetatable(Baloons).__call = function()
 		if speed==nil then speed = self.launch_speed end
 	
 		local b = table.remove(self.baloons, 1)		
-		local obj = MakeMover(Baloons.Baloon(b.text, b.image))
+		local obj = MakeFrameFlyer(Baloons.Baloon(b.text, b.image))
 			self:add(obj)
 		obj.y = screen_height
 		
@@ -205,7 +205,7 @@ getmetatable(Baloons).__call = function()
 	
 		local baloons = {}
 		for _,b in ipairs(self.baloons) do
-			local obj = MakeMover(Baloons.Baloon(b.text, b.image))
+			local obj = MakeFrameFlyer(Baloons.Baloon(b.text, b.image))
 			self:add(obj)
 			table.insert(baloons, obj)
 			

@@ -11,10 +11,10 @@ end
 
 local take = function(drops, w)
   w.onDrag = function(obj, dx, dy)
-    onDrag(drops, w)
+    highlightDropOnDrag(drops, w)
   end
   w.onDragEnd = function()
-		onDrop(drops, w)
+		takeOnDrop(drops, w)
   end
   return w
 end
@@ -167,7 +167,7 @@ getmetatable(Input).__call = function(_,conf)
 	-- movers
 	self.addWords = function(_, words)
 		for i,w in ipairs(words) do
-			local item = take(all_drops, Mover(TextButton{w, Input.mover_bk_image, shrink=true, freeScale=true, padding=5}))
+			local item = take(all_drops, PackAsDragDrop(TextButton{w, Input.mover_bk_image, shrink=true, freeScale=true, padding=5}))
 			self:add(item)
 			local old_handler = item.onDragEnd
 			item.onDragEnd = function(...)
@@ -282,14 +282,14 @@ InputElement = function(phonetic_text, answer)
 	self.input = TextInputItem(input_w)
 	self.input.id="input"
 	self.drop = DropArea(TwoStateAnimation(
-																					FrameItem(Input.drop_frame, drop_w, 40),
-																					FrameItem(Input.drop_frame_active, drop_w, 40)
+																					FrameItem{Input.drop_frame},--, width=drop_w, height=40},
+																					FrameItem{Input.drop_frame_active}--, width=drop_w, height=40}
 																					)
 												)
 	self.drop.id="drop"
 	self:add(self.text):add(self.input):add(self.drop)
 
-	-- padder to slign texts from different rows
+	-- padder to align texts from different rows
 	self.text_padder = ScreenItem()
 	self.text_padder.id = "padder"
 	self:add(self.text_padder)

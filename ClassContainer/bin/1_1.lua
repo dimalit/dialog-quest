@@ -10,14 +10,14 @@ root:add(scene)
 scene.background.texture = "interface/128.rttex"
 
 scene.title.text = "Buttons"
--- TextBoxItem(text, width, font)
+-- TextBoxItem(text, font)
 -- width = always 0
 -- font: 0=times, 1=trajan, 3=phonetic
 -- NOTE: Center alignment doesn't work yet!
 scene.description
-	:addItem(TextBoxItem("Нажми на каждое слово и послушай, как они произносятся. Повтори их за диктором. Следи, чтобы звук", 0, 0))
-	:addItem(TextBoxItem(" [x] ", 0, 3))
-	:addItem(TextBoxItem("оставался очень коротким.", 0, 0))
+	:addItem(TextBoxItem("Нажми на каждое слово и послушай, как они произносятся. Повтори их за диктором. Следи, чтобы звук", 0))
+	:addItem(TextBoxItem(" [x] ", 3))
+	:addItem(TextBoxItem("оставался очень коротким.", 0))
 
 scene.columns[1]
 	:add{"man", " - мужчина", "audio/ding.wav"}

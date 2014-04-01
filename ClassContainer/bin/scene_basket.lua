@@ -128,7 +128,7 @@ getmetatable(Basket).__call = function(_,conf)
 	
 	local add_words = function(words_, side)
 		for i,w in ipairs(words_) do
-			local item = Mover(TextItem(w))
+			local item = PackAsDragDrop(TextItem(w))
 			self:add(item)
 			table.insert(words[side], item)
 			table.insert(all_words, item)
