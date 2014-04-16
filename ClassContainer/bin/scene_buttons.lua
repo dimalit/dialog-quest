@@ -19,8 +19,9 @@ getmetatable(Buttons).__call = function(_,conf)
 	self:restrict(Expr(self, "y"), "==", Expr(Buttons.margin))
 	self:restrict(Expr(self, "width"), "==", Expr(self.width))
 	self:restrict(Expr(self, "height"), "==", Expr(self.height))				-- TODO: add special function a-la "keep value"?
-
+	
 	self.background = TextureItem("", screen_width, screen_height)
+	self.background.id = "back"
 	-- self.background.rel_hpx, self.background.rel_hpy = Buttons.margin/self.background.width, Buttons.margin/self.background.height
 	-- self.background.x, self.background.y = 0, 0
 	self:add(self.background)
@@ -47,8 +48,9 @@ getmetatable(Buttons).__call = function(_,conf)
 	self.rows = {}					-- dummy items for alignment
 	
 	for i=1,Buttons.num_columns do
-		local it = ScreenItem()
+		local it = CompositeItem()
 		it.id = "col_"..i
+		it.rigid_width, it.rigid_height = false, true
 		self:add(it)
 		it.debugDrawColor = 0xff0000ff
 		
@@ -109,7 +111,7 @@ getmetatable(Buttons).__call = function(_,conf)
 			-- all are equal to 1st and greater then their maximums
 			self:restrict(Expr(it, "width"), "==", Expr(self.columns[1], "width"))
 			-- distribute evenly: my distance to prev equals to 1st distance to 0
-			-- se also below for last element
+			-- see also below for last element
 			local prev = self.columns[#self.columns]
 			self:restrict(Expr(it, "x")-Expr(prev, "x")-Expr(prev, "width"), "==", Expr(self.columns[1], "x"))
 		end
@@ -154,8 +156,8 @@ getmetatable(Buttons).__call = function(_,conf)
 		-- FrameItem(Buttons.button_up_frame, self.agree_button_label.width+10, self.agree_button_label.height+10),
 		-- FrameItem(Buttons.button_down_frame, self.agree_button_label.width+10, self.agree_button_label.height+10)
 	-- )	
-	self.agree_button = TextButton{"Мне понятно", Buttons.button_anim, shrink=true}
-	self.agree_button.width, self.agree_button.height = 160, 30
+	self.agree_button = TextButton{"Мне понятно", Buttons.button_anim, shrink=true, one_line=true}
+	--self.agree_button.width, self.agree_button.height = 163.333, 30
 		--self.agree_button.x = self.width / 2
 	 --self.agree_button.y = self.height - self.agree_button.height/2
 	self:add(self.agree_button)
@@ -179,7 +181,7 @@ end
 
 ButtonsElement = function(button_text, label_text, sound)
 	local self = CompositeItem()
-	self.width = 2000000
+	self.rigid_width = true			-- should obey outer commands but can also influence them!
 	self.debugDrawColor = 0x00ffffff
 	self.id = "ButtonsElement"
 
@@ -196,7 +198,6 @@ ButtonsElement = function(button_text, label_text, sound)
 		button = TextButton{button_text, Buttons.button_anim,  shrink=true, padding=5, freeScale=true}	
 		
 		right_label = TextBoxItem(label_text)
-		right_label.width = 1000000
 		right_label.id="right_label"	
 		
 		self:add(button)
@@ -222,7 +223,6 @@ ButtonsElement = function(button_text, label_text, sound)
 	-- place only button
 	elseif button_present then
 			button = TextButton{button_text, Buttons.button_anim,  shrink=true, padding=5, freeScale=true}		
-	
 			self:add(button)
 			self:link(button, 0, 0, self, 0, 0)
 			self:link(self, nil, 1, button, nil, 1)
@@ -230,7 +230,6 @@ ButtonsElement = function(button_text, label_text, sound)
 	-- place only label
 	elseif label_present then
 		right_label = TextBoxItem(label_text)
-		right_label.width = 1000000
 		right_label.id="right_label"		
 	
 		self:add(right_label)
@@ -251,6 +250,9 @@ ButtonsElement = function(button_text, label_text, sound)
 	self.onRequestLayOut = function(...)
 		-- use auto lay-out
 		if old_onRequestLayOut then old_onRequestLayOut(unpack(arg)) end
+
+		print "Correcting:"
+--		self.solver:beginEdit()		
 		-- correct it
 		if button~=nil and right_label~=nil then
 			local w1 = button.oneLineWidth
@@ -263,10 +265,14 @@ ButtonsElement = function(button_text, label_text, sound)
 				else
 					right_label.width = self.width - w1 - 5
 				end
+--				self.solver:suggestValue(right_label, "width")
 			else
 				button.width = self.width / 2
 				right_label.x = button.right + 5
-				right_label.width = self.width - right_label.left			
+				right_label.width = self.width - right_label.left
+--				self.solver:suggestValue(button, "width")
+--				self.solver:suggestValue(right_label, "x")
+--				self.solver:suggestValue(right_label, "width")
 			end
 		elseif button~=nil then
 				if(button.oneLineWidth <= self.width) then
@@ -274,15 +280,15 @@ ButtonsElement = function(button_text, label_text, sound)
 				else
 					button.width = self.width
 				end
+--				self.solver:suggestValue(button, "width")
 		elseif right_label~=nil then
 				if(right_label.oneLineWidth <= self.width) then
 					right_label.width = right_label.oneLineWidth
 				else
 					right_label.width = self.width
 				end
+--				self.solver:suggestValue(right_label, "width")
 		end
-		
-		if old_onRequestLayOut then old_onRequestLayOut(unpack(arg)) end
 		
 		-- shrink if needed
 		local right = 0
@@ -290,9 +296,15 @@ ButtonsElement = function(button_text, label_text, sound)
 		if right_label~=nil then right = right_label.right end
 		if self.width > right then
 			self.width = right
+--			self.solver:suggestValue(self, "width")
 		end
 		
-		print(self.left, self.top, self.width, self.height)
+		print(button.width, right_label.width)		
+--		self.solver:endEdit()
+		self.solver:getExternalVariables()
+--		if old_onRequestLayOut then old_onRequestLayOut(unpack(arg)) end
+		
+		-- print(self.left, self.top, self.width, self.height)
 		-- button.x, button.y = button.hpx, button.hpy
 	-- --	left_label.x, left_label.y = button.x, button.y
 		-- right_label.y = button.y
@@ -301,6 +313,17 @@ ButtonsElement = function(button_text, label_text, sound)
 		-- self.height = button.height
 	end
 
+	local old_adjustSize = self.adjustSize
+	self.adjustSize = function(...)
+		old_adjustSize(unpack(arg))
+		local w1, w2 = 0, 0
+		if button ~= nil then w1 = button.oneLineWidth end
+		if right_label ~= nil then w2 = right_label.oneLineWidth end
+		self.width = w1+5+w2						-- TODO: because right label layout is computed manually!!
+		print("--adjustSize", self.id, self.width)
+		return false, false
+	end
+	
 	return self
 end
 

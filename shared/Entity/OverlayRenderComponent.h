@@ -67,6 +67,7 @@ private:
 	void OnRender(VariantList *pVList);
 	void OnFileNameChanged(Variant *pDataObject);
 	void OnScaleChanged(Variant *pDataObject);
+	void OnSizeChanged(Variant *pDataObject);
 	void SetupAnim(VariantList *pVList);
 
 	CL_Vec2f *m_pPos2d;

@@ -46,6 +46,9 @@ void TextBoxRenderComponent::OnAdd(Entity *pEnt)
 	m_pLastLineEndX = &GetVarWithDefault("lastLineEndX", Variant(0.0f))->GetFloat();
 	m_pLastLineEndY = &GetVarWithDefault("lastLineEndY", Variant(0.0f))->GetFloat();
 	m_pOneLineWidth = &GetVarWithDefault("oneLineWidth", Variant(0.0f))->GetFloat();
+	
+	m_pOneLineMode = &GetVarWithDefault("oneLineMode", uint32(0))->GetUINT32();
+	GetVar("oneLineMode")->GetSigOnChanged()->connect(1, boost::bind(&TextBoxRenderComponent::OnOneLineModeChanged, this, _1));
 
 	m_pText = &GetVar("text")->GetString(); //local to us
 	GetVar("text")->GetSigOnChanged()->connect(1, boost::bind(&TextBoxRenderComponent::OnTextChanged, this, _1));
@@ -68,9 +71,14 @@ void TextBoxRenderComponent::OnRemove()
 	EntityComponent::OnRemove();
 }
 
+void TextBoxRenderComponent::OnOneLineModeChanged(Variant *pDataObject){
+	if(*m_pOneLineMode){
+		GetParent()->GetVar("size2d")->Set(*m_pOneLineWidth, 0);
+	}
+}
+
 void TextBoxRenderComponent::OnSizeChanged(Variant *pDataObject){
-	// begin stretching if very wide
-	if(m_pSize2d->x >= *m_pOneLineWidth){
+	if(*m_pOneLineMode && m_pSize2d->x != *m_pOneLineWidth){
 		m_pSize2d->x = *m_pOneLineWidth;
 	}
 	OnTextChanged(NULL);
@@ -83,10 +91,10 @@ void TextBoxRenderComponent::OnTextChanged(Variant *pDataObject)
 	GetBaseApp()->GetFont(eFont(*m_pFontID))->MeasureText(&one_line_rect, *m_pText, *m_pFontScale, *m_pFirstLineDecrement);
 
 	// stretch if width was exactly as one line width
-	if(*m_pOneLineWidth == m_pSize2d->x){
-		// set explicitly
-		m_pSize2d->x = one_line_rect.GetWidth();
-	}
+	//if(*m_pOneLineWidth == m_pSize2d->x){
+	//	// set explicitly
+	//	m_pSize2d->x = one_line_rect.GetWidth();
+	//}
 
 	//we need to breakdown the text and convert it into word wrapped lines in our deque
 	m_lines.clear();

@@ -86,6 +86,14 @@ void OverlayRenderComponent::OnScaleChanged(Variant *pDataObject)
 	UpdateSizeVar();
 }
 
+void OverlayRenderComponent::OnSizeChanged(Variant *pDataObject)
+{
+	if (m_pTex && m_pTex->IsLoaded()){
+		m_pScale2d->x = m_pSize2d->x / m_pTex->GetFrameWidth();
+		m_pScale2d->y = m_pSize2d->y / m_pTex->GetFrameHeight();
+	}
+}
+
 void OverlayRenderComponent::OnAdd(Entity *pEnt)
 {
 	EntityComponent::OnAdd(pEnt);
@@ -112,12 +120,13 @@ void OverlayRenderComponent::OnAdd(Entity *pEnt)
 	
 	GetVarWithDefault("frameSize2d", Variant(0.0f, 0.0f));
 
-	//any post var data you want to send, must send it before the Init
+	//any post var data you want to send, must send t before the Init
 	GetFunction("SetupAnim")->sig_function.connect(1, boost::bind(&OverlayRenderComponent::SetupAnim, this, _1));
 
 	//if "fileName" is set, we'll know about it here
 	GetVar("fileName")->GetSigOnChanged()->connect(boost::bind(&OverlayRenderComponent::OnFileNameChanged, this, _1));
 	pEnt->GetVar("scale2d")->GetSigOnChanged()->connect(boost::bind(&OverlayRenderComponent::OnScaleChanged, this, _1));
+	GetParent()->GetVar("size2d")->GetSigOnChanged()->connect(boost::bind(&OverlayRenderComponent::OnSizeChanged, this, _1));
 	
 	//register ourselves to render if the parent does
 	GetParent()->GetFunction("OnRender")->sig_function.connect(1, boost::bind(&OverlayRenderComponent::OnRender, this, _1));

@@ -25,9 +25,9 @@ CompositeItem* root_item(){
 		root->acquireEntity(e);
 
 		// do layout from root before render
-		GetBaseApp()->m_sig_render.connect(
-			boost::bind(std::mem_fun(&CompositeItem::_specialEntryForRenderSignal), root_item()),			
-			boost::signals::at_front);
+		//GetBaseApp()->m_sig_render.connect(
+		//	boost::bind(std::mem_fun(&CompositeItem::_specialEntryForRenderSignal), root_item()),			
+		//	boost::signals::at_front);
 	}
 	return root;
 }
@@ -41,31 +41,37 @@ LuaCompositeItem* LuaScreenItem::getParent(){
 	return ret;
 }
 
-void LuaCompositeItem::doLayOutIfNeeded(){
-	//for(int i=0; i<rec_depth; i++)
-	//	cout << "\t";
-	//cout << this << " enter " << this->getAbsoluteLeft() << " " << this->getAbsoluteTop() << " " << this->getWidth() << " " << this->getHeight() << std::endl;
-	//rec_depth++;
+void LuaCompositeItem::adjustLayout(){
+	if(moving_children_now)			// ignore recursive calls from Draw()
+		return;
 
-	moving_children_now = true;			// if child wants to re-layout I will do it now (see below)
+	moving_children_now = true;		// if child wants to re-layout I will do it now (see below)
 	
-	// ignore this recursion if we in either case will call it later
-	if(need_lay_out_children && !(need_lay_out && onRequestLayOut_cb))
-		lay_out_children();
+	// 1 request sizes from fully non-rigid and semi-rigid children
 
 	int counter = 0;
 	while(need_lay_out && onRequestLayOut_cb){
-		moving_children_now = true;
-		while(need_lay_out){		
-				need_lay_out = false;
-				luabind::call_function<void>(L, onRequestLayOut_cb, this);			// this may raise need_lay_out again!
-		}// while
-
-		if(need_lay_out_children)
-			lay_out_children();			// recurse (lay fixed children)
+		need_lay_out = false;
+		luabind::call_function<void>(L, onRequestLayOut_cb, this);			// this may raise need_lay_out again!
 		counter++;
 	}//while
 	
+	// already layed-out if there is no procedure for it
+	if(!onRequestLayOut_cb)
+		need_lay_out = false;
+	assert(!need_lay_out);
+
+	// 5 lay out inside children after all
+	// do it with non-rigid too because they could just get size without re-layouting on adjustSize
+
+	if(need_lay_out_children){
+		for(std::set<ScreenItem*>::iterator i = children.begin(); i != children.end(); ++i){
+			CompositeItem* c = dynamic_cast<CompositeItem*>(*i);
+			if(c)// && c->getRigidWidth() && c->getRigidHeight())
+				c->adjustLayout();
+		}// for
+	}
+
 	moving_children_now = false;
 
 	// TODO: Find why it doesn't want to use suggested value!!!
@@ -73,13 +79,6 @@ void LuaCompositeItem::doLayOutIfNeeded(){
 		cout << "WARNING: Counter = " << counter << std::endl;
 		assert(counter <= 5);
 	}
-
-	need_lay_out = false;				// if no user layout handler
-
-	//rec_depth--;
-	//for(int i=0; i<rec_depth; i++)
-	//	cout << "\t";
-	//cout << this << " leave " << this->getAbsoluteLeft() << " " << this->getAbsoluteTop() << " " << this->getWidth() << " " << this->getHeight() << std::endl;
 }
 
 //LuaCompositeItem* LuaCompositeItem::add(luabind::object child){
@@ -203,8 +202,10 @@ void LuaCompositeItem::luabind(lua_State* L){
 		.def("remove", (LuaCompositeItem* (LuaCompositeItem::*)(LuaScreenItem*))&LuaCompositeItem::remove)
 //		.def("remove", (LuaCompositeItem* (LuaCompositeItem::*)(luabind::object))&LuaCompositeItem::remove)
 		.def_readwrite("onRequestLayOut", &LuaCompositeItem::onRequestLayOut_cb)
+		.def_readwrite("onRequestSize", &LuaCompositeItem::onRequestSize_cb)
 		.def("requestLayOut", &LuaCompositeItem::requestLayOut)
 		.def_readwrite("need_lay_out", &LuaCompositeItem::need_lay_out)
+		.def_readonly("need_lay_out_children", &LuaCompositeItem::need_lay_out_children)
 
 		.def(luabind::self == luabind::other<LuaScreenItem&>())				// remove operator ==
 	];

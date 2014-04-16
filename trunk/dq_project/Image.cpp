@@ -1,6 +1,7 @@
 #include "PlatformPrecomp.h"
 #include "Image.h"
 #include <luabind/operator.hpp>
+#include <luabind/out_value_policy.hpp>
 
 ImageItem::ImageItem()
 {
@@ -34,8 +35,8 @@ void LuaImageItem::luabind(lua_State* L){
 			.property("height", &LuaImageItem::getHeight)
 			.property("frameWidth", &LuaImageItem::getFrameWidth)
 			.property("frameHeight", &LuaImageItem::getFrameHeight)
-			.property("scaleX", &LuaImageItem::getScaleX, &LuaImageItem::setScaleX)
-			.property("scaleY", &LuaImageItem::getScaleY, &LuaImageItem::setScaleY)
+			//.property("scaleX", &LuaImageItem::getScaleX, &LuaImageItem::setScaleX)
+			//.property("scaleY", &LuaImageItem::getScaleY, &LuaImageItem::setScaleY)
 			.def(luabind::self == luabind::other<LuaImageItem&>())		// remove operator ==
 	];
 }

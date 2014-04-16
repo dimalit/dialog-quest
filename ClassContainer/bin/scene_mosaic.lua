@@ -30,7 +30,7 @@ getmetatable(Mosaic).__call = function(_,conf)
   -- show general description
   self.title = TextItem("self.title")
 	self:add(self.title)
-  self.description = FlowLayout(self.width-Mosaic.margin*2);
+  self.description = FlowLayout()--!!!self.width-Mosaic.margin*2);
 	self:add(self.description)
   self.description.rel_hpy = 0
 

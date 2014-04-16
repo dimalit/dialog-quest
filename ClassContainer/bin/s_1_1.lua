@@ -15,10 +15,11 @@ scene.title.text = "`b 1.1"
 -- font: 0=times, 1=trajan, 3=phonetic
 -- NOTE: Center alignment doesn't work yet!
 
+local tb = TextBoxItem("`b Послушайте диалог-знакомство. Проговаривайте за дикторами каждую фразу, подражая интонации. ", 0)
+tb.id = "TextBox"
 scene.description
-	:addItem(TextBoxItem("`b Послушайте диалог-знакомство. Проговаривайте за дикторами каждую фразу, подражая интонации. ", 0))
+	:addItem(tb)
 	
-
 scene.columns[1]
 	:add{"`b -Hello", "", "audio/ding.wav"}
 	:add{"`b -	Pleased to meet you, Anna.", "", "audio/ding.wav"}
@@ -37,7 +38,7 @@ scene.columns[3]
 	:add{"", "- Мне тоже приятно познакомиться.", "audio/ding.wav"}
 
 
---scene.debugDrawBox = true	
+scene.debugDrawBox = true	
 
 wait_for(scene, "onFinish")
 scene.visible = false

@@ -57,6 +57,7 @@ private:
 	void DrawTextNormal(CL_Vec2f vPos);
 	void DrawTextType(CL_Vec2f vPos);
 	void OnTextAlignmentChanged(Variant *pDataObject);
+	void OnOneLineModeChanged(Variant *pDataObject);
 	CL_Vec2f *m_pPos2d;
 	CL_Vec2f *m_pSize2d;
 	CL_Vec2f *m_pEnclosedSize2d;
@@ -81,6 +82,7 @@ private:
 	float *m_pFirstLineDecrement;			// start not from x=0
 	const float *m_pLastLineEndX, *m_pLastLineEndY;
 	float *m_pOneLineWidth;
+	uint32 *m_pOneLineMode;
 
 public:
 	const StairsProfile& getLeftObstacles() const{

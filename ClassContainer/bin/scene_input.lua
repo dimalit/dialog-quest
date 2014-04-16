@@ -43,6 +43,7 @@ getmetatable(Input).__call = function(_,conf)
 	self:restrict(Expr(self, "height"), "==", Expr(self.height))				-- TODO: add special function a-la "keep value"?
 	
 	self.background = TextureItem("", screen_width, screen_height)
+	self.background.id = "back"
 	--self.background.rel_hpx, self.background.rel_hpy = self.x/self.background.width, self.y/self.background.height
 	self:add(self.background)
 	self:link(self.background, 0, 0, self, 0, 0, -Input.margin, -Input.margin)
@@ -75,8 +76,8 @@ getmetatable(Input).__call = function(_,conf)
 	
 	for i=1,Input.num_columns do
 		local col = CompositeItem()
-		self:add(col)
 		col.id = "col"..(#self.columns+1)
+		self:add(col)
 		
 		-- align top
 		self:link(col, nil, 0, self.description, nil, 1, 0, Input.margin)
@@ -86,7 +87,6 @@ getmetatable(Input).__call = function(_,conf)
 		-- link bottom to bottom side
 		--self:link(col, nil, 1, self, nil, 1, 0, -Input.margin)
 		self:link(col, nil, 1, bottom_side, nil, 0)
-		
 		
 		col.elements = {}
 		
@@ -276,14 +276,13 @@ InputElement = function(phonetic_text, answer)
 	local drop_w = 80
 
 	-- invent poperties  also
-	
 	self.text = TextItem("["..phonetic_text.."]", 3)
 	self.text.id="text"
 	self.input = TextInputItem(input_w)
 	self.input.id="input"
 	self.drop = DropArea(TwoStateAnimation(
-																					FrameItem{Input.drop_frame},--, width=drop_w, height=40},
-																					FrameItem{Input.drop_frame_active}--, width=drop_w, height=40}
+																					FrameItem{Input.drop_frame, width=drop_w, height=40},
+																					FrameItem{Input.drop_frame_active, width=drop_w, height=40}
 																					)
 												)
 	self.drop.id="drop"

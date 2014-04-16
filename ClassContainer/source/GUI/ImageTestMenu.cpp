@@ -122,7 +122,14 @@ Entity * ImageTestMenuCreate(Entity *pParentEnt)
 		return 0;
 	}
 //	lua_pcall(L, 0, LUA_MULTRET, -2);
-	lua_resume(T, 0);
+	int res = lua_resume(T, 0);
+	if(res != 0 && res != LUA_YIELD){
+		const char* msg = lua_tostring(T,-1);			// doesn't work
+		if(msg)
+			std::cout << msg << std::endl;
+		luaL_dostring(T, "print(debug.traceback(\"\", 2))");
+		exit(1);
+	}
 
 //	luaL_dostring(
 //	L,

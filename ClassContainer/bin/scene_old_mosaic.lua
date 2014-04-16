@@ -34,7 +34,7 @@ Mosaic = function(conf)
   local title = TextItem("self.title", screen_width/2, 0)
 	root:add(title)
   title.y = self.margin + title.height
-  local description = FlowLayout(screen_width-self.margin*2, screen_width/2, 0);
+  local description = FlowLayout()--!!!screen_width-self.margin*2, screen_width/2, 0);
 	root:add(description)
   description.hpy_relative = 0
   description.y = title.y + title.height/2	

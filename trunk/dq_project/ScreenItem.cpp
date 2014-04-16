@@ -22,8 +22,8 @@ ScreenItem::ScreenItem()
 	entity = new Entity("ScreenItem");
 	setVisible(1);
 
-	setWidth(20.0f); setHeight(20.0f);			// for convergence
-	orig_width = orig_height = 20.0f;			// no handler yet!!
+	setWidth(0.0f); setHeight(0.0f);			// in some places it means "no value"
+	orig_width = orig_height = 0.0f;			// no handler yet!!
 
 	setHotSpotRelativeX(0.5f);
 	setHotSpotRelativeY(0.5f);
@@ -155,7 +155,7 @@ void ScreenItem::setParent(CompositeItem* p){
 }
 
 void ScreenItem::OnSizeChange(Variant* /*NULL*/){
-	static int cnt = 0;
+//	static int cnt = 0;
 //	cout << ++cnt << endl;
 	CL_Vec2f new_size = entity->GetVar("size2d")->GetVector2();
 
@@ -194,37 +194,49 @@ CompositeItem::CompositeItem():ScreenItem(){
 
 void CompositeItem::requestLayOut(){
 	need_lay_out = true;
-	// if we aren't laying out right now - mark all parents
+	if(moving_children_now)
+		return;
 	CompositeItem* p = getParent();
-	if(!moving_children_now && p){
-		p->requestLayOutChildren();
-		// find somebody who is moving children or go to the very top
-		//while(i && !i->moving_children_now){
-		//	i->need_lay_out_children = true;
-		//	i = i->getParent();
-		//}
-	}// if
+	if(!p)
+		return;
+
+	p->requestLayOutChildren();
+
+	//// if parent is laying out right now - we do it right now as well - BAD
+	//if(p->moving_children_now){
+	//	adjustLayout();
+	//	assert(need_lay_out == false);
+	//	return;
+	//}
+	//// or schedule to the future
+	//if(!moving_children_now){
+	//	p->requestLayOutChildren();
+	//}// if
 }
 
 void CompositeItem::requestLayOutChildren(){
+//	assert(!moving_children_now);		// children should watch this!
 	// will lay them out
 	need_lay_out_children = true;
 	// but parent will ask us to do it
 	CompositeItem* p = getParent();
-	if(!moving_children_now && p)
-		p->requestLayOutChildren();
+	if(!p)
+		return;
+	
+	// TODO: will assert if parent is moving children: why did he change my child?
+	p->requestLayOutChildren();
 }
 
 void CompositeItem::lay_out_children(){
 	need_lay_out_children = false;
 	for(std::set<ScreenItem*>::iterator i = children.begin(); i != children.end(); ++i){
 		CompositeItem* c = dynamic_cast<CompositeItem*>(*i);
-		if(c)c->doLayOutIfNeeded();
+		if(c)c->adjustLayout();
 	}// for
 	assert(!need_lay_out_children);
 }
 
-void CompositeItem::doLayOutIfNeeded(){
+void CompositeItem::adjustLayout(){
 	if(need_lay_out_children)
 		lay_out_children();
 	need_lay_out = false;

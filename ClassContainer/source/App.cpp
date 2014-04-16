@@ -343,6 +343,8 @@ void App::Draw()
 {
 	PROFILE_FUNC();
 
+	root_item()->_specialEntryForRenderSignal();	// call it before clear - to see the frame!
+
 //	std::cout << "begin render" << std::endl;
 	PrepareForGL();
 //	glClearColor(0.6,0.6,0.6,1);

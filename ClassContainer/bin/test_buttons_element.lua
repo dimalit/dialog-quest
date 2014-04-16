@@ -1,4 +1,5 @@
 i = CompositeItem()
+i.rigid_width, i.rigid_height = true, true
 i.id="i"
 
 ---------------------------------------------------

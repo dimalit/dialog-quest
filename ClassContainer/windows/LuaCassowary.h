@@ -147,10 +147,20 @@ public:
 	void minimize(const LuaClLinearExpression& expr);
 	void maximize(const LuaClLinearExpression& expr);
 	void addConstraint(const LuaClLinearExpression& left, string op_sign, const LuaClLinearExpression& right);
-//	void addExternalStay(luabind::object obj, std::string key);
+	void addExternalStay(luabind::object obj, std::string key);
+
+	void beginEdit();
+	void suggestValue(luabind::object obj, std::string key);
+	void endEdit();
+
+	void getExternalVariables();
+
 private:
 	ClSimplexSolver solver;
 	bool need_resolve;
+	std::map<LuaClVariable*, double> edit_list;
+	bool edit_mode;
+
 	typedef std::pair<luabind::object, std::string> obj_key;
 	
 	void change_vars_to_cached_and_remove_zeros(ClLinearExpression::ClVarToCoeffMap& terms);
@@ -162,9 +172,7 @@ private:
 	};
 
 	// if somebody wants to add existing var - take it from here
-	// true means it is new and should be made stay
-	// if == 0 - do not add it in solve()
-	// if > 0 - mult strength by it 
+	// true means it should be made stay weak
 	std::map<LuaClVariable*, bool, CompareVarsUnderPtr> cl_vars;
 //	std::set<LuaClVariable*, CompareVarsUnderPtr> cl_stays;					// who stays with strength=2.0 (self width and height)
 };

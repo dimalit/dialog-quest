@@ -29,12 +29,12 @@ scene.columns[1]
 	:add{"MAN", "alpha"}
 	:add{"FAT", "beta"}
 	:add{"SxD", "gamma"}
-	
+
 scene.columns[2]
 	:add{"m`@a`0p", "delta"}
 	:add{"r`@a`0t", "epsilon"}
 	:add{"t`@a`0n", "dzeta"}
-	
+
 scene:addWords{"dummy", "omega"}
 
 scene.afterLayOut = function(self)
@@ -42,12 +42,12 @@ scene.afterLayOut = function(self)
 end
 
 --------------------------------------
-dummy = TextItem("Hello")
-root:add(dummy)
-dummy.x, dummy.y = 200, 200
-dummy.onDragEnd = function()
-	dummy.x = dummy.x + 1
-end
+-- dummy = TextItem("Hello")
+-- root:add(dummy)
+-- dummy.x, dummy.y = 200, 200
+-- dummy.onDragEnd = function()
+	-- dummy.x = dummy.x + 1
+-- end
 --------------------------------------
 scene.debugDrawBox = true
 

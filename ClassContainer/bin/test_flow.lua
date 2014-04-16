@@ -2,7 +2,7 @@ ti = TextureItem("interface/menu_bg.rttex", 400, 400, 0, 0)
 	ti.hpx_relative, ti.hpy_relative = 0, 0
 	root:add(ti)
 
-c = FlowLayout(400, 200, 0)
+c = FlowLayout(200)--!!!400, 200, 0)
 	c.hpy_relative=0
 --c = CompositeItem(200, 200)
 --	c.width, c.height = 400, 400

@@ -82,7 +82,9 @@ end
 -- for some strange reason it doesn't work with built-in dofile
 -- HACK!
 dofile = function(f)
-	return loadfile(f)()
+	local func, err = loadfile(f)
+	assert(func~=nil, err)
+	return func()
 end
 
 ------------- Lua-aware wrappers for native classes -----------------
@@ -127,7 +129,7 @@ CompositeItem = function(...)
 	return self
 end
 
--- override root also to be CompositeItem!
+-- override root also to be Lua-CompositeItem!
 do
 	local old_root = root
 	root = CompositeItem()
@@ -136,6 +138,16 @@ do
 	root.x, root.y = 0, 0
 	old_root:add(root)
 end
+
+-- make adjustSize function in simple Items - specially for Cassowary
+AnimatedItem.adjustSize = function(_) return true, true end
+TextBoxItem.adjustSize = function(self)
+	self.width = self.oneLineWidth
+	return false, false
+end
+ImageItem.adjustSize = function(_) return true, true end
+TextureItem.adjustSize = function(_) return true, true end
+-- TODO: add here other Items too!
 
 -- CompositeItem with Cassowary
 local old_CompositeItem = CompositeItem
@@ -149,109 +161,7 @@ CompositeItem = function(...)
 	-- solver:addExternalStay(self, "height")
 	
 	-- add our own stuff
-	local links = {}				-- array of link_obj
 
-	-- move patient to needed point right now, before any solving
-	local adjust_linkk = function(patient, px, py, nurse, nx, ny, dx, dy)
-		local max_delta = 0
-
-		assert(patient.parent==nurse or nurse.parent==patient or patient.parent==nurse.parent)
-			-- both nils or both non-nils!
-		assert(((nx==nil) == (px==nil)) and ((ny==nil) == (py==nil)))
-		-- TODO: Bad to create two identical parts for x and y...
-					
-		if nx ~= nil then
-		local tx = nurse.left+nurse.width*nx + dx		-- target
-			-- if nurse.id=="content" then print("nurse tx", nurse.left, nurse.width, nx, dx) end
-			-- if patient.id=="content" then print("patient tx", nurse.left, nurse.width, nx, dx) end
-			if patient.parent==nurse then tx=tx-nurse.left end	-- left=0 if i am parent
-		-- if 0
-		if px==0 then
-			assert(nurse.parent~=patient)				-- left edje of parent cannot depend on child
-			-- if patient.right - tx >= 0 then
-				-- local delta = (patient.right - tx - patient.width)
-				-- if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
-				-- patient.width = patient.width + delta
-				-- if patient.drop=="drop" then print(debug.traceback("", 1)) end
-			-- end
-			local delta = (tx-patient.left)
-			if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
-			patient.x = patient.x + delta
-		-- if 1
-		elseif px==1 then
-			if nurse.parent~=patient then
-				if tx - patient.left >= 0 then
-					local delta = (tx - patient.left - patient.width)
-					if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
---print("return", max_delta)			
-					patient.width = patient.width + delta
---print("return", max_delta)								
-				end
-				local delta = (tx-patient.right)
-				if math.abs(delta) > max_delta then max_delta = math.abs(delta) end				
-				patient.x = patient.x + delta
-			else
-				if tx >=0 then
-					local delta = (tx-patient.width)
-					if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
-					patient.width = patient.width + delta
-				end
-			end
-		-- else just move
-		else
-			assert(nurse.parent~=patient)												-- parent pos cannot depend on child
-			local sx = patient.left+patient.width*px				-- source			
-			local delta = (tx-sx)
-			if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
-			patient.x = patient.x + delta
-		end
-		end -- if nx ~= nil
-		
-		if ny ~= nil then
-		local ty = nurse.top+nurse.height*ny + dy		-- target
-			if patient.parent==nurse then ty=ty-nurse.top end	-- left=0 if i am parent
-		-- if 0
-		if py==0 then
-			assert(nurse.parent~=patient)				-- left edje of parent cannot depend on child
-			-- if patient.bottom - ty >= 0 then
-				-- local delta = (patient.bottom - ty - patient.height)
-				-- if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
-				-- patient.height = patient.height + delta
-			-- end
-			local delta = (ty-patient.top)
-			if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
-			patient.y = patient.y + delta
-		-- if 1
-		elseif py==1 then
-			if nurse.parent~=patient then
-				if ty - patient.top >= 0 then
-					local delta = (ty - patient.top - patient.height)
-					if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
-					patient.height = patient.height + delta
-				end
-				local delta = (ty-patient.bottom)
-				if math.abs(delta) > max_delta then max_delta = math.abs(delta) end				
-				patient.y = patient.y + delta
-			else
-				if ty >=0 then
-					local delta = (ty-patient.height)
-					if math.abs(delta) > max_delta then max_delta = math.abs(delta) end
-					patient.height = patient.height + delta
-				end
-			end
-		-- else just move
-		else
-			assert(nurse.parent~=patient)												-- parent pos cannot depend on child
-			local sy = patient.top+patient.height*py				-- source			
-			local delta = (ty-sy)
-			if math.abs(delta) > max_delta then max_delta = math.abs(delta) end			
-			patient.y = patient.y + delta
-		end
-		end -- if ny ~= nil
-
-		return max_delta
-	end -- adjust_link
-	
 	self.link = function(_, patient, px, py, nurse, nx, ny, dx, dy)
 		if dx == nil then dx = 0 end
 		if dy == nil then dy = 0 end
@@ -292,17 +202,70 @@ CompositeItem = function(...)
 	self.minimize = function(_, expr)
 		solver:minimize(expr)
 	end	
-	
+
 	-- TODO: think again about "growing" and "shrinking" containers as in GTK
 	
+	self.adjustSize = function()
+		print("+adjustSize", self.id)
+		local saved = {}
+		
+		-- suggest
+		solver:beginEdit()
+		for ch,_ in pairs(self.children) do
+			local rigid_w, rigid_h = ch:adjustSize()
+			if not rigid_w then
+				solver:suggestValue(ch, "width")
+				table.insert(saved, {ch, "width"})
+			end
+			if not rigid_h then
+				solver:suggestValue(ch, "height")
+				table.insert(saved, {ch, "height"})
+			end
+		end
+		solver:endEdit()
+		
+		-- add weak stays
+		for _,e in ipairs(saved) do
+			solver:addExternalStay(e[1], e[2])
+		end
+		
+		-- return booleans
+		local rigid_w = self.width == 0
+		local rigid_h = self.height == 0
+		print("-adjustSize", self.id, rigid_w, rigid_h)		
+		return rigid_w, rigid_h
+	end
+	
 	self.onRequestLayOut = function()
-		solver:solve()								-- updates vars in, solve and updates out
+	
+		print("+onRequestLayOut", self.id)
+	
+		solver:beginEdit()
+
+		-- add required stays on width and height if rigid
+		-- TODO not sure if ~= 0 will always work: should check what adjustSize returns
+		if self.width ~= 0 then
+			solver:suggestValue(self, "width")
+		end		
+		if self.height ~= 0 then
+			solver:suggestValue(self, "height")
+		end
+
+		solver:endEdit()
+		
+		solver:getExternalVariables()		-- accomodate changed height after changing width of some child
+		
+--		solver:solve()								-- updates vars in, solve and updates out
 -- when solving and changing width, item may change its height
 -- will solve again with no difference otherwise
 --!!!		self.need_lay_out = false			-- will be raised again by child
 --		print("set to false")
+	print("-onRequestLayOut", self.id)
 		do return end	-- our overloaded child should use editVar/editPoint!
 	end
+	
+	-- HACK: for manual onRequesrLayOut. Generally should be private!
+	self.solver = solver
 	
 	return self
 end -- CompositeItem:__init
@@ -318,6 +281,14 @@ do
 	root.id = "root"
 	root:link(root, 0, 0, old_root, 0, 0)
 	root:link(root, 1, 1, old_root, 0, 0, old_root.width, old_root.height)
+	
+	-- new root will call adjustSize before onRequestLayOut
+	local old_onRequestLayOut = root.onRequestLayOut
+	root.onRequestLayOut = function(...)	
+		root:adjustSize()
+		if old_onRequestLayOut then old_onRequestLayOut(unpack(arg)) end
+		root.need_lay_out = false			-- HACK: beacause of adjustSize we had constant grow and shrink - and endless loop
+	end
 end
 
 ------------- ..Items ----------------
@@ -350,25 +321,28 @@ function TextButton(...)
 	local image = arg[2]
 	
 	local self = CompositeItem()
+--	if not arg.one_line then rigid_width = true end
 	self.id="TextButton"
-	self.width = 137					-- max: full line length
 		
 	local image_item = nil
 	if image then
 		if string.sub(image, -5) == ".anim" then
 			image_item = AnimatedItem(load_config(image))
+			image_item.id = "button_animation"
 			self:add(image_item)
 			image_item:stop()			
 		else
 			image_item = ImageItem(image)
+			image_item.id = "button_image"
 			image_item.num_frames = 1					-- HACK: better add it to Image?
 			self:add(image_item)			
 		end
 	end
-	image_item.id = "but_image_item"
 
 	local text_item = TextBoxItem(text)
+	if arg.one_line then text_item.oneLineMode = true end	
 	text_item.id = "but_text_item"
+	text_item.width = 100000					-- max: full line length	
 	self:add(text_item)
 	text_item.rel_hpx, text_item.rel_hpy = 0, 0
 	
@@ -386,7 +360,9 @@ function TextButton(...)
 	image_item.x, image_item.y = 0, 0
 	self:link(text_item, 0, 0, self, 0, 0, padding, padding)
 	self:link(text_item, 1, nil, self, 1, nil, -padding)
-	self:link(image_item, 0, 0, self, 0, 0)	
+	
+	self:link(image_item, 0, 0, self, 0, 0)
+	self:link(image_item, 1, 1, self, 1, 1)
 
 	if text ~= "" then					-- link self to text only if not empty!
 		self:link(self, nil, 1, text_item, nil, 1, 0, padding)
@@ -394,76 +370,6 @@ function TextButton(...)
 
 	--  set self width as initial. BAD
 	--self.width = 80--text_item.width + padding*2
-
-	local old_onRequestLayOut = self.onRequestLayOut
-	self.onRequestLayOut = function(...)
-		if old_onRequestLayOut then old_onRequestLayOut(unpack(arg)) end
-
-		-- adjust text w from self
-		-- TODO Hangs here!
---		text_item.width = self.width - padding*2
-		if text_item.text == "" then
-			image_item.scaleX	= 1.0
-			image_item.scaleY	= 1.0
-			self.width = image_item.width
-			return
-		end
-		
-		-- adjust image from self
-		local required_width = self.width
-		local required_height = self.height
-		
-		--print("image: ", image_item.scaleX, image_item.scaleY, image_item.x, image_item.y, image_item.width, image_item.height)
-		
-		-- HACK: should eliminate this e-comparison!!!		
-		if math.abs(image_item.width - required_width) > 0.01 then		
-			image_item.scaleX = required_width / (image_item.frameWidth)
-		end
-		if math.abs(image_item.height - required_height) > 0.01 then		
-			image_item.scaleY = required_height / (image_item.frameHeight)
-		end
-		
-		--print(self.width, self.height, text_item.x, text_item.y, text_item.width, text_item.height)
-		--print("image: ", image_item.scaleX, image_item.scaleY, image_item.x, image_item.y, image_item.width, image_item.height)
-		return
-	
-		-- local required_width = text_item.width + padding*2
-		-- local required_height = text_item.height + padding*2
-		
-		-- local kx = required_width / (image_item.width  / image_item.scaleX)
-		-- local ky = required_height/ (image_item.height / image_item.scaleY)
-		
-		-- if scaleFree then
-			-- local k = max(kx, ky)
-			-- kx = k
-			-- ky = k
-		-- end
-		
-		-- -- scale up or scale down if enabled
-		-- if kx>1 or shrink then
-			-- -- HACK: should eliminate this e-comparison!!!
-			-- if math.abs(image_item.width - required_width) > 0.01 then
-				-- image_item.scaleX = kx
-			-- end
-		-- else
-			-- image_item.scaleX = 1
-		-- end
-		
-		-- if ky>1 or shrink then
-			-- -- HACK: should eliminate this e-comparison!!!
-			-- if math.abs(image_item.height - required_height) > 0.01 then
-				-- image_item.scaleY = ky
-			-- end
-		-- else
-			-- image_item.scaleY = 1
-		-- end		
-		
-		-- -- set my dimension and positions of children
-		-- self.width = image_item.width
-		-- self.height = image_item.height
-		
-		-- text_item.x, text_item.y = image_item.width/2, image_item.height/2
-	end -- onRequestLayOut
 	
 	self.onDragStart = function()
 		if image_item.num_frames > 1 then
@@ -474,6 +380,14 @@ function TextButton(...)
 	self.onDragEnd = function()
 		image_item.frame = 0
 		if self.onClick then self:onClick() end
+	end
+	
+	self.adjustSize = function()
+		print("+adjustSize", self.id)
+		self.width = 2*padding + text_item.oneLineWidth
+		self.height = 2*padding + text_item.height	-- TODO: better use Cassowary for this!
+		print("-adjustSize", self.id)		
+		return false, false
 	end
 	
 	--add some properties
@@ -497,7 +411,9 @@ function FrameItem(...)
   local self = CompositeItem()
 	self.width = arg.width or 0
 	self.height = arg.height or 0
+--	self.rigid_width, self.rigid_height = true, true
   
+	
   local tex = {
 	c1 = ImageItem(name.."_c1.rttex"),
 	c2 = ImageItem(name.."_c2.rttex"),
@@ -512,7 +428,7 @@ function FrameItem(...)
   -- TODO: Implement add(array)
   self:add(tex.c1):add(tex.c2):add(tex.c3):add(tex.c4):add(tex.bl):add(tex.br):add(tex.bt):add(tex.bb)	
 	self.tex = tex
-	
+
 	-- will be called on resize
 	self.onRequestLayOut = function(_)
 		tex.bl.height = self.height-8
@@ -538,19 +454,18 @@ function FrameItem(...)
 		tex.bb.rel_hpy = 1
 			tex.bb.x, tex.bb.y = self.width/2, self.height	
 	end
- 
+	
   return self
 end
 
 ---------- Layouts -------------
 
-function FlowLayout(w, indent)
-	if w == nil then w = 0 end
+function FlowLayout(indent)
 	if indent==nil then indent = 0 end
   local self = CompositeItem()
-	self.width = w
+--	self.rigid_width = true
   
-	local old_width = w					-- need it when resizing
+	local old_width = self.width					-- need it when resizing
   local items     = {}		-- array
   local obstacles = {}		-- set
 	-- both profiles base on left edge
