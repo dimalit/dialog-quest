@@ -79,8 +79,8 @@ void LuaAnimatedItem::luabind(lua_State* L){
 	luabind::module(L) [
 		luabind::class_<LuaAnimatedItem, LuaScreenItem>("AnimatedItem")
 			.def(luabind::constructor<luabind::object>())
-			.property("scaleX", &LuaAnimatedItem::getScaleX, &LuaAnimatedItem::setScaleX)
-			.property("scaleY", &LuaAnimatedItem::getScaleY, &LuaAnimatedItem::setScaleY)
+			//.property("scaleX", &LuaAnimatedItem::getScaleX, &LuaAnimatedItem::setScaleX)
+			//.property("scaleY", &LuaAnimatedItem::getScaleY, &LuaAnimatedItem::setScaleY)
 			.property("frameWidth", &LuaAnimatedItem::getFrameWidth)
 			.property("frameHeight", &LuaAnimatedItem::getFrameHeight)
 			.property("frame", &LuaAnimatedItem::getFrame, &LuaAnimatedItem::setFrame)

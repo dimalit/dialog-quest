@@ -111,5 +111,6 @@ private:
 	LuaCompositeItem(const LuaCompositeItem&):CompositeItem(){assert(false);}
 	LuaCompositeItem& operator=(const LuaCompositeItem&){assert(false);}
 	luabind::object onRequestLayOut_cb;
-	virtual void doLayOutIfNeeded();
+	luabind::object onRequestSize_cb;
+	virtual void adjustLayout();
 };

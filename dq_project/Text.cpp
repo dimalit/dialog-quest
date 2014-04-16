@@ -123,6 +123,7 @@ void LuaTextBoxItem::luabind(lua_State* L){
 			.property("leftObstacles", &LuaTextBoxItem::getLeftObstacles, &LuaTextBoxItem::setLeftObstacles)
 			.property("rightObstacles", &LuaTextBoxItem::getRightObstacles, &LuaTextBoxItem::setRightObstacles)
 			.property("oneLineWidth", &LuaTextBoxItem::getOneLineWidth)
+			.property("oneLineMode", &LuaTextBoxItem::getOneLineMode, &LuaTextBoxItem::setOneLineMode)
 			//.def("getLeftObstacle", &LuaTextBoxItem::getLeftObstacle)
 			//.def("getRightObstacle", &LuaTextBoxItem::getRightObstacle)
 			//.def("setLeftObstacle", &LuaTextBoxItem::setLeftObstacle)

@@ -216,6 +216,7 @@ private:
 
 class CompositeItem: virtual public ScreenItem{
 	friend class ScreenItem;
+	friend class LuaCompositeItem;
 public:
 	CompositeItem();
 	virtual ~CompositeItem(){
@@ -248,23 +249,24 @@ public:
 	void requestLayOut();
 
 	void _specialEntryForRenderSignal(){
-		doLayOutIfNeeded();
+		adjustLayout();
 	}
 
 protected:
-	// called by children if they want to get doLayOutIfNeeded
+	// called by children if they want to get adjustLayout
 	// not binded to Lua
 	void requestLayOutChildren();
 
-	virtual void doLayOutIfNeeded();
+	virtual void adjustLayout();
 	void lay_out_children();
 
 	bool need_lay_out;
 	bool need_lay_out_children;
 	bool moving_children_now;			// don't need to schedule to next frame!
 
-private:
 	std::set<ScreenItem*> children;
+
+private:
 	// used to prevent invisible Entities from rendering
 	void FilterOnRender(VariantList* pVList){
 		if(!entity->GetVarWithDefault("visible", uint32(1))->GetUINT32())
@@ -272,8 +274,8 @@ private:
 	}
 	// change MY size!
 	virtual void OnSizeChange(Variant* v){
+		requestLayOut();				// maybe change another dimension?
 		ScreenItem::OnSizeChange(v);
-		requestLayOut();
 	}
 };
 

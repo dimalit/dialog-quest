@@ -87,6 +87,12 @@ public:
 	float getOneLineWidth() const{
 		return component->GetVar("oneLineWidth")->GetFloat();
 	}
+	void setOneLineMode(bool m){
+		component->GetVar("oneLineMode")->Set(uint32(m));
+	}
+	bool getOneLineMode() const{
+		return component->GetVar("oneLineMode")->GetUINT32();
+	}
 private:
 	TextBoxRenderComponent* component;
 };
