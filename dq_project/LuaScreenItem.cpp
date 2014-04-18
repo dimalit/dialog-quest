@@ -42,43 +42,20 @@ LuaCompositeItem* LuaScreenItem::getParent(){
 }
 
 void LuaCompositeItem::adjustLayout(){
-	if(moving_children_now)			// ignore recursive calls from Draw()
+
+	// 1 if adjust ONLY children OR there is even no layout callback
+	if(!need_lay_out || !onRequestLayOut_cb){
+		CompositeItem::adjustLayout();
 		return;
+	}
 
-	moving_children_now = true;		// if child wants to re-layout I will do it now (see below)
-	
-	// 1 request sizes from fully non-rigid and semi-rigid children
+	// 2 adjust myself, NOT after children
+	need_lay_out = false;
 
-	int counter = 0;
-	while(need_lay_out && onRequestLayOut_cb){
-		need_lay_out = false;
-		luabind::call_function<void>(L, onRequestLayOut_cb, this);			// this may raise need_lay_out again!
-		counter++;
-	}//while
-	
-	// already layed-out if there is no procedure for it
-	if(!onRequestLayOut_cb)
-		need_lay_out = false;
+	if(onRequestLayOut_cb)
+		luabind::call_function<void>(L, onRequestLayOut_cb, this);		// for now - hope it won't correct cassowary's decisions!
+
 	assert(!need_lay_out);
-
-	// 5 lay out inside children after all
-	// do it with non-rigid too because they could just get size without re-layouting on adjustSize
-
-	if(need_lay_out_children){
-		for(std::set<ScreenItem*>::iterator i = children.begin(); i != children.end(); ++i){
-			CompositeItem* c = dynamic_cast<CompositeItem*>(*i);
-			if(c)// && c->getRigidWidth() && c->getRigidHeight())
-				c->adjustLayout();
-		}// for
-	}
-
-	moving_children_now = false;
-
-	// TODO: Find why it doesn't want to use suggested value!!!
-	if(counter > 3){
-		cout << "WARNING: Counter = " << counter << std::endl;
-		assert(counter <= 5);
-	}
 }
 
 //LuaCompositeItem* LuaCompositeItem::add(luabind::object child){

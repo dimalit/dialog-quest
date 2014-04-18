@@ -249,7 +249,10 @@ public:
 	void requestLayOut();
 
 	void _specialEntryForRenderSignal(){
+		assert(!global_layout_mode);
+		global_layout_mode = true;
 		adjustLayout();
+		global_layout_mode = false;
 	}
 
 protected:
@@ -258,11 +261,10 @@ protected:
 	void requestLayOutChildren();
 
 	virtual void adjustLayout();
-	void lay_out_children();
 
 	bool need_lay_out;
 	bool need_lay_out_children;
-	bool moving_children_now;			// don't need to schedule to next frame!
+	static bool global_layout_mode;			// it's time to do scheduled lay-out
 
 	std::set<ScreenItem*> children;
 

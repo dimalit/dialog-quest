@@ -3,6 +3,8 @@
 
 #include <functional>
 
+bool CompositeItem::global_layout_mode = false;
+
 void draw_item_rect(ScreenItem* item, VariantList*){
 	if(item->getDebugDrawBox())
 		DrawRect(item->getAbsoluteX() - item->getHotSpotX(), item->getAbsoluteY() - item->getHotSpotY(),
@@ -186,59 +188,45 @@ void ScreenItem::onMove(Variant* /*NULL*/){
 CompositeItem::CompositeItem():ScreenItem(){
 	need_lay_out = true;
 	need_lay_out_children = true;
-	moving_children_now = false;
 	// we need to render visibility for children
 	entity->OnFilterAdd();
 	entity->GetFunction("FilterOnRender")->sig_function.connect(boost::bind(&CompositeItem::FilterOnRender, this, _1));
 }
 
 void CompositeItem::requestLayOut(){
-	need_lay_out = true;
-	if(moving_children_now)
-		return;
 	CompositeItem* p = getParent();
-	if(!p)
+
+	if(need_lay_out)						// if there is no sense
 		return;
 
-	p->requestLayOutChildren();
-
-	//// if parent is laying out right now - we do it right now as well - BAD
-	//if(p->moving_children_now){
-	//	adjustLayout();
-	//	assert(need_lay_out == false);
-	//	return;
-	//}
-	//// or schedule to the future
-	//if(!moving_children_now){
-	//	p->requestLayOutChildren();
-	//}// if
+	need_lay_out = true;
+	if(p && !global_layout_mode)
+		p->requestLayOutChildren();
 }
 
 void CompositeItem::requestLayOutChildren(){
-//	assert(!moving_children_now);		// children should watch this!
-	// will lay them out
-	need_lay_out_children = true;
-	// but parent will ask us to do it
 	CompositeItem* p = getParent();
-	if(!p)
-		return;
-	
-	// TODO: will assert if parent is moving children: why did he change my child?
-	p->requestLayOutChildren();
-}
 
-void CompositeItem::lay_out_children(){
-	need_lay_out_children = false;
-	for(std::set<ScreenItem*>::iterator i = children.begin(); i != children.end(); ++i){
-		CompositeItem* c = dynamic_cast<CompositeItem*>(*i);
-		if(c)c->adjustLayout();
-	}// for
-	assert(!need_lay_out_children);
+	if(need_lay_out_children)			// if there is no sense
+		return;
+	need_lay_out_children = true;
+
+	if(p && !global_layout_mode)
+		p->requestLayOutChildren();
 }
 
 void CompositeItem::adjustLayout(){
-	if(need_lay_out_children)
-		lay_out_children();
+	if(need_lay_out_children){
+		need_lay_out_children = false;
+		for(std::set<ScreenItem*>::iterator i = children.begin(); i != children.end(); ++i){
+			CompositeItem* c = dynamic_cast<CompositeItem*>(*i);
+			if(c){
+				c->adjustLayout();
+				assert(!c->need_lay_out);
+			}
+		}// for
+		assert(!need_lay_out_children);
+	}
 	need_lay_out = false;
 }
 
