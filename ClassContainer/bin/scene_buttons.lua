@@ -299,7 +299,7 @@ ButtonsElement = function(button_text, label_text, sound)
 --			self.solver:suggestValue(self, "width")
 		end
 		
-		print(button.width, right_label.width)		
+--		print(button.width, right_label.width)		
 --		self.solver:endEdit()
 		self.solver:getExternalVariables()
 --		if old_onRequestLayOut then old_onRequestLayOut(unpack(arg)) end

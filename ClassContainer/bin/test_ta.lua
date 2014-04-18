@@ -32,13 +32,13 @@ ta22 = TextBoxItem("more some stuff and shorter")
 ta22.id = "ta22"
 i2:add(ta22)
 
-i2:link(ta21, 0, 0, i1, 0, 0, 2, 2)			-- 1st - 0,0 corner
+i2:link(ta21, 0, 0, i2, 0, 0, 2, 2)			-- 1st - 0,0 corner
 i2:link(ta22, 0, 0, ta21, 0, 1, 0, 2)		-- 2nd - under 1st
 
 i2:link(i2, nil, 1, ta22, nil, 1, 2, 2)			-- parent's bottom
 -- TODO: not very convenient! make restrict with right, left?
-i2:restrict(Expr(i2, "width"), ">=", Expr(ta21, "width")+Expr(40))			-- width = max
-i2:restrict(Expr(i2, "width"), ">=", Expr(ta22, "width")+Expr(40))			-- width = max
+i2:restrict(Expr(i2, "width"), ">=", Expr(ta21, "width")+Expr(4))			-- width = max
+i2:restrict(Expr(i2, "width"), ">=", Expr(ta22, "width")+Expr(4))			-- width = max
 
 -- restrict width or not?
 --root:restrict(Expr(i2, "width"), "<=", Expr(200))

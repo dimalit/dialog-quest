@@ -140,7 +140,9 @@ do
 end
 
 -- make adjustSize function in simple Items - specially for Cassowary
+ScreenItem.adjustSize = function(_) return true, true end
 AnimatedItem.adjustSize = function(_) return true, true end
+TextItem.adjustSize = function(_) return false, false end
 TextBoxItem.adjustSize = function(self)
 	self.width = self.oneLineWidth
 	return false, false
@@ -209,9 +211,10 @@ CompositeItem = function(...)
 		print("+adjustSize", self.id)
 		local saved = {}
 		
-		-- suggest
+		-- ask
 		solver:beginEdit()
 		for ch,_ in pairs(self.children) do
+			print(ch.id)
 			local rigid_w, rigid_h = ch:adjustSize()
 			if not rigid_w then
 				solver:suggestValue(ch, "width")
@@ -222,12 +225,25 @@ CompositeItem = function(...)
 				table.insert(saved, {ch, "height"})
 			end
 		end
+		
+		-- adjust
+		-- here we can force child for different size - and he may want to change it!
 		solver:endEdit()
 		
 		-- add weak stays
 		for _,e in ipairs(saved) do
 			solver:addExternalStay(e[1], e[2])
 		end
+		
+		-- ask children again:
+		for ch,_ in pairs(self.children) do
+			if ch.onRequestLayOut then
+				ch:onRequestLayOut()
+			end
+		end		
+		
+		-- TODO Here we sould do loop - until everything gets constant!!
+		solver:getExternalVariables()
 		
 		-- return booleans
 		local rigid_w = self.width == 0
@@ -246,15 +262,21 @@ CompositeItem = function(...)
 		-- TODO not sure if ~= 0 will always work: should check what adjustSize returns
 		if self.width ~= 0 then
 			solver:suggestValue(self, "width")
-		end		
+		end
 		if self.height ~= 0 then
 			solver:suggestValue(self, "height")
 		end
 
-		solver:endEdit()
+		solver:endEdit()		
+		
+		-- ask children again:
+		for ch,_ in pairs(self.children) do
+			if ch.onRequestLayOut then
+				ch:onRequestLayOut()
+			end
+		end			
 		
 		solver:getExternalVariables()		-- accomodate changed height after changing width of some child
-		
 --		solver:solve()								-- updates vars in, solve and updates out
 -- when solving and changing width, item may change its height
 -- will solve again with no difference otherwise
