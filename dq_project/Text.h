@@ -87,6 +87,9 @@ public:
 	float getOneLineWidth() const{
 		return component->GetVar("oneLineWidth")->GetFloat();
 	}
+	float getOneLineHeight() {
+		return GetBaseApp()->GetFont(eFont( getFont() ))->GetLineHeight(getScale());
+	}
 	void setOneLineMode(bool m){
 		component->GetVar("oneLineMode")->Set(uint32(m));
 	}

@@ -31,8 +31,6 @@ void LuaImageItem::luabind(lua_State* L){
 	luabind::module(L) [
 		luabind::class_<LuaImageItem, LuaScreenItem>("ImageItem")
 			.def(luabind::constructor<std::string>())
-			.property("width", &LuaImageItem::getWidth)
-			.property("height", &LuaImageItem::getHeight)
 			.property("frameWidth", &LuaImageItem::getFrameWidth)
 			.property("frameHeight", &LuaImageItem::getFrameHeight)
 			//.property("scaleX", &LuaImageItem::getScaleX, &LuaImageItem::setScaleX)
