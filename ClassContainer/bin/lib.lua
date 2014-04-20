@@ -214,7 +214,6 @@ CompositeItem = function(...)
 		-- ask
 		solver:beginEdit()
 		for ch,_ in pairs(self.children) do
-			print(ch.id)
 			local rigid_w, rigid_h = ch:adjustSize()
 			if not rigid_w then
 				solver:suggestValue(ch, "width")
@@ -237,8 +236,8 @@ CompositeItem = function(...)
 		
 		-- ask children again:
 		for ch,_ in pairs(self.children) do
-			if ch.onRequestLayOut then
-				ch:onRequestLayOut()
+			if ch.adjustLayout then
+				ch:adjustLayout()
 			end
 		end		
 		
@@ -271,8 +270,8 @@ CompositeItem = function(...)
 		
 		-- ask children again:
 		for ch,_ in pairs(self.children) do
-			if ch.onRequestLayOut then
-				ch:onRequestLayOut()
+			if ch.adjustLayout then
+				ch:adjustLayout()
 			end
 		end			
 		
