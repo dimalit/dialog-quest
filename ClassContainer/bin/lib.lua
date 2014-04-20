@@ -22,7 +22,7 @@ local function inherit(...)
 					-- because parents[i][key] may be changed later!
 					local parent_func = parent[key]
 					return function(...)
-						assert(arg[1] == self, "1st arg must be self")
+--!!!						assert(arg[1] == self, "1st arg must be self")	doesn't work with 2-deep inheritance (TextButton->PackAsDragDrop)
 						-- but we change it to appropriate parent
 						return parent_func(parent, unpack(arg, 2))
 					end -- func body
@@ -147,6 +147,7 @@ TextBoxItem.adjustSize = function(self)
 	self.width = self.oneLineWidth
 	return false, false
 end
+TextInputItem.adjustSize = function(_) return false, false end
 ImageItem.adjustSize = function(_) return true, true end
 TextureItem.adjustSize = function(_) return true, true end
 -- TODO: add here other Items too!
@@ -505,6 +506,33 @@ function FlowLayout(indent)
 		end
 	end
 	
+	-- align all in line
+	self.onRequestSize = function()
+		local	self_height = 0												-- will find max
+		local cur_x = profile.left:at(0,1)+indent		-- will add to the right
+		
+		for _,item in ipairs(items) do
+			-- if item
+			if type(item.firstLineDecrement)=="nil" then
+				cur_x = cur_x + item.width
+				self_height = max(self_height, item.height)
+			-- if text
+			else
+				cur_x = cur_x + item.oneLineWidth
+				self_height = max(self_height, item.oneLineHeight)
+			end -- select type
+		end -- for
+		
+		-- check also obstacles
+		for obst,side in pairs(obstacles) do
+			self_height = max(self_height, obst.bottom)
+			cur_x = max(cur_x, obst.right)
+		end
+		
+		self.width, self.height = cur_x, self_height
+		return false, false
+	end
+	
   self.onRequestLayOut = function(_)
 		if self.width==0 then return end
 	
@@ -518,7 +546,7 @@ function FlowLayout(indent)
 					obst:move(dw, 0)
 				end
 			end
-		-- somebody moced!
+		-- somebody moved!
 		else
 			rebuild_profiles()
 		end
@@ -560,7 +588,7 @@ function FlowLayout(indent)
 			end
 		end
 		
-		-- we use tempprary var here because changing self.height will trigger new lay_out()!
+		-- we use temporary var here because changing self.height will trigger new lay_out()!
 		self.height = self_height
   end -- onRequestLayOut
   
@@ -1132,7 +1160,8 @@ function PackAsDragDrop(item)
     item = item,
 		-- can be set outside!
 		ox = x,		-- origin x
-		oy = y		-- origin y		
+		oy = y,		-- origin y		
+		id="DragDrop"
   }
   
   local drop = nil

@@ -265,12 +265,17 @@ void LuaCassowary::addExternalStay(luabind::object obj, std::string key){
 	} // else
 
 	// add stay
-	cl_vars[lv] = false;													// add to cache
+	cl_vars[lv] = false;												// add to cache
 
-	solver.AddStay(lv, ClsWeak(), 1.0);
-	assert(lv->Value() == lv->PendingValue());
+	solver.AddStay(lv, ClsWeak(), 1.0);									
+
 	cout << this << ":\t " << *lv << " = " << lv->Value() << " explicit weak " << std::endl;
 																		// solve will add it as weak when value is ready
+	if((float)lv->Value() != (float)lv->PendingValue()){				// without cast to float comparison fails!!
+		cout << lv->Value()  << " should be " << lv->PendingValue() << endl;
+		assert(lv->Value() == lv->PendingValue());
+	}
+
 	need_resolve = true;		// TODO: need it?
 }
 
