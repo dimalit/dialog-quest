@@ -42,18 +42,28 @@ LuaCompositeItem* LuaScreenItem::getParent(){
 }
 
 void LuaCompositeItem::adjustLayout(){
+	assert(global_layout_mode);
 
 	// 1 if adjust ONLY children OR there is even no layout callback
-	if(!need_lay_out || !onRequestLayOut_cb){
-		CompositeItem::adjustLayout();
-		return;
+	if(need_lay_out_children && (!need_lay_out || !onRequestLayOut_cb)){
+		need_lay_out_children = false;
+		for(std::set<ScreenItem*>::iterator i = children.begin(); i != children.end(); ++i){
+			CompositeItem* c = dynamic_cast<CompositeItem*>(*i);
+			if(c){
+				c->adjustLayout();
+				assert(!c->need_lay_out);
+			}
+		}// for
+		assert(!need_lay_out_children);
+	}// if
+
+	// 2 adjust myself, maybe after children
+	if(need_lay_out){
+		if(onRequestLayOut_cb)
+			luabind::call_function<void>(L, onRequestLayOut_cb, this);		// for now - hope it won't correct cassowary's decisions!
+		// TODO: Generally this sould be before - but there is no "moving_children_now" - so can't prevent from being raised need_lay_out flag
+		need_lay_out = false;
 	}
-
-	// 2 adjust myself, NOT after children
-	need_lay_out = false;
-
-	if(onRequestLayOut_cb)
-		luabind::call_function<void>(L, onRequestLayOut_cb, this);		// for now - hope it won't correct cassowary's decisions!
 
 	assert(!need_lay_out);
 }
@@ -181,6 +191,8 @@ void LuaCompositeItem::luabind(lua_State* L){
 		.def_readwrite("onRequestLayOut", &LuaCompositeItem::onRequestLayOut_cb)
 		.def_readwrite("onRequestSize", &LuaCompositeItem::onRequestSize_cb)
 		.def("requestLayOut", &LuaCompositeItem::requestLayOut)
+		.def("adjustLayout", &LuaCompositeItem::adjustLayout)
+		// TODO: should be readonly: used only once as hack!
 		.def_readwrite("need_lay_out", &LuaCompositeItem::need_lay_out)
 		.def_readonly("need_lay_out_children", &LuaCompositeItem::need_lay_out_children)
 
