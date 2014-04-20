@@ -2,8 +2,8 @@
 -- and add its contents to root
 
 --dofile("test_buttons_element.lua")
---dofile("test_ta.lua")
---coroutine.yield()
+dofile("test_ta.lua")
+coroutine.yield()
 
 SoundEffect("audio/enter.wav"):play()
 dofile("s_1_1.lua")

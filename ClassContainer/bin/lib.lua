@@ -207,8 +207,8 @@ CompositeItem = function(...)
 
 	-- TODO: think again about "growing" and "shrinking" containers as in GTK
 	
-	self.adjustSize = function()
-		print("+adjustSize", self.id)
+	self.onRequestSize = function()
+		print("+onRequestSize", self.id)
 		local saved = {}
 		
 		-- ask
@@ -247,7 +247,7 @@ CompositeItem = function(...)
 		-- return booleans
 		local rigid_w = self.width == 0
 		local rigid_h = self.height == 0
-		print("-adjustSize", self.id, rigid_w, rigid_h)		
+		print("-onRequestSize", self.id, rigid_w, rigid_h)		
 		return rigid_w, rigid_h
 	end
 	
@@ -403,11 +403,11 @@ function TextButton(...)
 		if self.onClick then self:onClick() end
 	end
 	
-	self.adjustSize = function()
-		print("+adjustSize", self.id)
+	self.onRequestSize = function()
+		print("+onRequestSize", self.id)
 		self.width = 2*padding + text_item.oneLineWidth
 		self.height = 2*padding + text_item.height	-- TODO: better use Cassowary for this!
-		print("-adjustSize", self.id)		
+		print("-onRequestSize", self.id)		
 		return false, false
 	end
 	

@@ -7,6 +7,7 @@
 #include <luabind/object.hpp>
 #include <luabind/adopt_policy.hpp>
 #include <luabind/dependency_policy.hpp>
+#include <luabind/out_value_policy.hpp>
 
 int rec_depth = 0;
 
@@ -39,6 +40,35 @@ LuaCompositeItem* LuaScreenItem::getParent(){
 	LuaCompositeItem* ret = dynamic_cast<LuaCompositeItem*>(ScreenItem::getParent());
 	assert(ret || !ScreenItem::getParent());		// should be convertible! (or null)
 	return ret;
+}
+
+void LuaCompositeItem::adjustSize(bool& rigid_width, bool& rigid_height){
+	// if no callback - we are rigid
+	if(!onRequestSize_cb){
+		rigid_width = true;
+		rigid_height = true;
+		return;
+	}
+
+	// if there are no changes
+	if(!need_lay_out && !need_lay_out_children &&
+		this->getWidth()==last_requested_width && this->getHeight()==last_requested_height)
+	{
+		rigid_width = last_requested_rigid_width;
+		rigid_height = last_requested_rigid_height;
+		return;
+	}// if
+
+	// call and cache
+	luabind::call_function<luabind::object>(L, onRequestSize_cb, this);
+	rigid_width = lua_toboolean(L, -2);
+	rigid_height = lua_toboolean(L, -1);
+		lua_pop(L, 2);
+
+	last_requested_rigid_width = rigid_width;
+	last_requested_rigid_height = rigid_height;
+	last_requested_width = getWidth();
+	last_requested_height = getHeight();
 }
 
 void LuaCompositeItem::adjustLayout(){
@@ -192,6 +222,7 @@ void LuaCompositeItem::luabind(lua_State* L){
 		.def_readwrite("onRequestSize", &LuaCompositeItem::onRequestSize_cb)
 		.def("requestLayOut", &LuaCompositeItem::requestLayOut)
 		.def("adjustLayout", &LuaCompositeItem::adjustLayout)
+		.def("adjustSize", &LuaCompositeItem::adjustSize, luabind::pure_out_value(_2) + luabind::pure_out_value(_3))
 		// TODO: should be readonly: used only once as hack!
 		.def_readwrite("need_lay_out", &LuaCompositeItem::need_lay_out)
 		.def_readonly("need_lay_out_children", &LuaCompositeItem::need_lay_out_children)
