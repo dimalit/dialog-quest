@@ -95,6 +95,8 @@ class LuaCompositeItem: public LuaScreenItem, public CompositeItem{
 public:
 	bool operator == (LuaScreenItem&){return false;}
 	LuaCompositeItem():CompositeItem(), LuaScreenItem(), ScreenItem(){
+		last_requested_width = -1;			// will break comparison to cached in adjustSize()
+		last_requested_height = -1;
 	}
 	static void luabind(lua_State* L);
 
@@ -107,10 +109,17 @@ public:
 		CompositeItem::remove(child);
 		return this;
 	}
+
 private:
 	LuaCompositeItem(const LuaCompositeItem&):CompositeItem(){assert(false);}
 	LuaCompositeItem& operator=(const LuaCompositeItem&){assert(false);}
+	
 	luabind::object onRequestLayOut_cb;
 	luabind::object onRequestSize_cb;
 	virtual void adjustLayout();
+	void adjustSize(bool& rigid_width, bool& rigid_height);
+
+	// "cache" vars for adjustSize
+	int last_requested_width, last_requested_height;
+	bool last_requested_rigid_width, last_requested_rigid_height;
 };
