@@ -60,7 +60,12 @@ void LuaCompositeItem::adjustSize(bool& rigid_width, bool& rigid_height){
 	}// if
 
 	// call and cache
-	luabind::call_function<luabind::object>(L, onRequestSize_cb, this);
+//	cout << "C++ calls" << endl;
+	// TODO: for some reason I couldn't make this work and used raw lua_call :(
+//	std::pair<bool, bool> p = luabind::call_function< std::pair<bool, bool> >(L, onRequestSize_cb, this);
+	onRequestSize_cb.push(L);
+	lua_pushlightuserdata(L, (void*)this);
+	lua_call(L, 1, 2);
 	rigid_width = lua_toboolean(L, -2);
 	rigid_height = lua_toboolean(L, -1);
 		lua_pop(L, 2);
@@ -69,6 +74,8 @@ void LuaCompositeItem::adjustSize(bool& rigid_width, bool& rigid_height){
 	last_requested_rigid_height = rigid_height;
 	last_requested_width = getWidth();
 	last_requested_height = getHeight();
+
+//	cout << "C++ returns " << rigid_width << " " << rigid_height << endl;
 }
 
 void LuaCompositeItem::adjustLayout(){
