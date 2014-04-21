@@ -7,7 +7,7 @@ root:add(scene)
 scene.background.texture = "interface/summary_bg.rttex"
 scene.title.text = "Unit 2 шаг1"
 
-local p1 = FlowLayout(50)--!!!0,50)
+local p1 = FlowLayout(50)
 p1.id = "p1"
 -- default width = 0 and font = 0
 -- for phonetic we use width=0, font=3 => TextBoxItem("[x]", 3) (Phonetic TM)

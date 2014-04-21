@@ -22,6 +22,8 @@ void ImageTestOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity se
 	}
 }
 
+lua_State* T;
+
 Entity * ImageTestMenuCreate(Entity *pParentEnt)
 {
 	Entity *pBG = 0;//CreateOverlayEntity(pParentEnt, "TouchTest", "interface/summary_bg.rttex", 0,0);
@@ -115,10 +117,15 @@ Entity * ImageTestMenuCreate(Entity *pParentEnt)
 	//	return 0;
 	//};
 
+	void test_out();
+
+//	luaL_dostring(L, "print(1, test_out())");
+
+
 //	lua_pushcfunction(L, lua_error_handler);		// don't move it below: order matters
-	lua_State* T = lua_newthread(L);
+	T = lua_newthread(L);
 	if(luaL_loadfile(T, "init.lua")!=0){
-		std::cout << lua_tostring(L,-1) << "\n";
+		std::cout << lua_tostring(T,-1) << "\n";
 		return 0;
 	}
 //	lua_pcall(L, 0, LUA_MULTRET, -2);

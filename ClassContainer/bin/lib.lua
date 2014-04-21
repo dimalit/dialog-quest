@@ -165,6 +165,8 @@ CompositeItem = function(...)
 	
 	-- add our own stuff
 
+	self.adjustSize = adjustSize
+	
 	self.link = function(_, patient, px, py, nurse, nx, ny, dx, dy)
 		if dx == nil then dx = 0 end
 		if dy == nil then dy = 0 end
@@ -215,7 +217,8 @@ CompositeItem = function(...)
 		-- ask
 		solver:beginEdit()
 		for ch,_ in pairs(self.children) do
-			local rigid_w, rigid_h = ch:adjustSize()
+			local rigid_w, rigid_h = ch.adjustSize(ch)
+			print(ch.id, "wants", rigid_w, rigid_h)
 			if not rigid_w then
 				solver:suggestValue(ch, "width")
 				table.insert(saved, {ch, "width"})
@@ -306,7 +309,7 @@ do
 	
 	-- new root will call adjustSize before onRequestLayOut
 	local old_onRequestLayOut = root.onRequestLayOut
-	root.onRequestLayOut = function(...)	
+	root.onRequestLayOut = function(...)
 		root:adjustSize()
 		if old_onRequestLayOut then old_onRequestLayOut(unpack(arg)) end
 		root.need_lay_out = false			-- HACK: beacause of adjustSize we had constant grow and shrink - and endless loop
@@ -359,36 +362,33 @@ function TextButton(...)
 			image_item.num_frames = 1					-- HACK: better add it to Image?
 			self:add(image_item)			
 		end
+		
+		-- link
+		image_item.rel_hpx, image_item.rel_hpy = 0, 0
+		image_item.x, image_item.y = 0, 0
+		self:link(image_item, 0, 0, self, 0, 0)
+		self:link(image_item, 1, 1, self, 1, 1)
 	end
 
-	local text_item = TextBoxItem(text)
-	if arg.one_line then text_item.oneLineMode = true end	
-	text_item.id = "but_text_item"
-	text_item.width = 100000					-- max: full line length	
-	self:add(text_item)
-	text_item.rel_hpx, text_item.rel_hpy = 0, 0
-	
-	image_item.debugDrawColor = 0xff0000ff	
-	text_item.debugDrawColor = 0x00ff00ff	
+	local text_item = nil
+	if text~=nil and text~="" then
+		text_item = TextBoxItem(text)
+		if arg.one_line then text_item.oneLineMode = true end	
+		text_item.id = "but_text_item"
+		text_item.width = 100000					-- max: full line length	
+		self:add(text_item)
+		text_item.rel_hpx, text_item.rel_hpy = 0, 0
+		
+		self:link(text_item, 0, 0, self, 0, 0, padding, padding)
+		self:link(text_item, 1, nil, self, 1, nil, -padding)		
+		self:link(self, nil, 1, text_item, nil, 1, 0, padding)		
+	end
 	
 	local padding = 10
 	if arg.padding then padding = arg.padding end
 	
 	local shrink = arg.shrink
 	local scaleFree = arg.scaleFree
-	
-	-- link dimensions
-	image_item.rel_hpx, image_item.rel_hpy = 0, 0
-	image_item.x, image_item.y = 0, 0
-	self:link(text_item, 0, 0, self, 0, 0, padding, padding)
-	self:link(text_item, 1, nil, self, 1, nil, -padding)
-	
-	self:link(image_item, 0, 0, self, 0, 0)
-	self:link(image_item, 1, 1, self, 1, 1)
-
-	if text ~= "" then					-- link self to text only if not empty!
-		self:link(self, nil, 1, text_item, nil, 1, 0, padding)
-	end
 
 	--  set self width as initial. BAD
 	--self.width = 80--text_item.width + padding*2
@@ -406,9 +406,16 @@ function TextButton(...)
 	
 	self.onRequestSize = function()
 		print("+onRequestSize", self.id)
-		self.width = 2*padding + text_item.oneLineWidth
-		self.height = 2*padding + text_item.height	-- TODO: better use Cassowary for this!
-		print("-onRequestSize", self.id)		
+		if text_item ~= nil then
+			self.width = 2*padding + text_item.oneLineWidth
+			self.height = 2*padding + text_item.height	-- TODO: better use Cassowary for this!
+		elseif image_item ~= nil then
+			self.width = image_item.width
+			self.height = image_item.height
+		else
+			assert(false)
+		end
+		print("-onRequestSize", self.id, self.width, self.height)
 		return false, false
 	end
 	
@@ -644,7 +651,7 @@ end -- FlowLayout
 
 function TableLayout(nrows, ncols)
 	local self = CompositeItem()
-	self.id = "table"
+	self.id = "TableLayout"
 	self.rows = {}
 	self.columns = {}
 	
@@ -687,12 +694,12 @@ function TableLayout(nrows, ncols)
 	end	
 	
 	local elements = {}				-- 2d array of keys + hspan + vspan
-											-- spanned cells are ignored when computing widths/heights
+														-- spanned cells are ignored when computing widths/heights
 	
 	-- create rows
 	for i=1,nrows do
 		local it = ScreenItem()
-		it.id = "row"..i
+		it.id = "row_"..i
 		it.rel_hpx, it.rel_hpy = 0, 0
 		self:add(it)
 --		it.debugDrawBox = true
@@ -704,7 +711,7 @@ function TableLayout(nrows, ncols)
 	-- create cols
 	for i=1,ncols do
 		local it = ScreenItem()
-		it.id = "col"..i
+		it.id = "col_"..i
 		it.rel_hpx, it.rel_hpy = 0, 0		
 		self:add(it)
 --		it.debugDrawBox = true
@@ -719,6 +726,7 @@ function TableLayout(nrows, ncols)
 		if hspan==nil then hspan = 1 end
 		if vspan==nil then vspan = 1 end
 		old_add(self, item)
+		item.id = "cell_"..row.."_"..col
 		elements[row][col][item] = true
 		elements[row][col].hspan = hspan
 		elements[row][col].vspan = vspan
@@ -728,11 +736,22 @@ function TableLayout(nrows, ncols)
 		return elements[r][c].vspan, elements[r][c].hspan
 	end
 	
-	local old_onRequestLayOut = self.onRequestLayOut
-	self.onRequestLayOut = function(...)	
-		if old_onRequestLayOut then old_onRequestLayOut(unpack(arg)) end
-		
-		local padding = 10
+	local padding = 10	
+	
+	self.onRequestSize = function(...)
+	
+		-- adjust sizes of children before
+		for i=1,nrows do
+			for j=1,ncols do
+				for k,_ in pairs(elements[i][j]) do
+					if type(k)~="string" and k~=nil then
+						-- store rigidness for later
+						k.rigid_width, k.rigid_height = k:adjustSize()
+						print("cell:", k.rigid_width, k.rigid_height)
+					end
+				end -- for elements
+			end -- cols
+		end -- rows		
 		
 		local max_max_h = 0
 		local max_max_w = 0
@@ -826,14 +845,148 @@ function TableLayout(nrows, ncols)
 					end
 				end -- for elements
 			end -- cols
-		end -- rows		
+		end -- rows
+
+--		print("RETURNING1", false, false)		
+		return false, false
 	end	
+	
+	self.onRequestLayOut = function(...)
+		print("+onRequestLayOut", self.id, self.width, self.height)
+	
+		local max_max_h = 0
+		local max_max_w = 0
+		
+		self.rows[1].y = 0
+		
+		-- for rows
+		for i=1,nrows do
+			local max_h = 0
+			for j=1,ncols do
+				for k,_ in pairs(elements[i][j]) do
+					if elements[i][j].vspan~=1 then break end			-- ignore spanned				
+					if type(k)~="string" and not elements[i][j].rigid_height and k.height+2*padding > max_h then	-- string for hspan and vspan
+						max_h = k.height+2*padding
+					end
+				end -- for elements
+			end -- cols
+
+			-- if fixed
+			if rows_fixed[i] ~= nil then
+				max_h = rows_fixed[i]
+			end
+			
+			-- apply
+			if not equalize_rows then
+				self.rows[i].height = max_h						-- will be 0 if "rigid"
+			else
+				max_max_h = max(max_h, max_max_h)
+			end
+		end -- rows
+		
+		self.columns[1].x = 0
+		
+		-- for cols
+		for j=1,ncols do
+			local max_w = 0
+			for i=1,nrows do
+				for k,_ in pairs(elements[i][j]) do
+					if elements[i][j].hspan~=1 then break end			-- ignore spanned
+					if type(k)~="string" and not elements[i][j].rigid_width and k.width+2*padding > max_w then
+						max_w = k.width+2*padding
+					end
+				end -- for elements
+			end -- rows
+			
+			-- if fixed
+			if columns_fixed[j] ~= nil then
+				max_w = columns_fixed[j]
+			end
+			
+			-- apply
+			if not equalize_columns then
+				self.columns[j].width = max_w
+			else
+				max_max_w = max(max_w, max_max_w)
+			end
+		end -- cols
+
+		-- make rigid rows and cols equal
+		do		
+			local free_height = self.height
+			local n_rigid_rows = 0
+			for i=1,nrows do
+				free_height = free_height - self.rows[i].height
+				if self.rows[i].height == 0 then n_rigid_rows = n_rigid_rows + 1 end
+			end
+			
+			local free_width = self.width
+			local n_rigid_cols = 0
+			for j=1,ncols do
+				free_width = free_width - self.columns[j].width
+				if self.columns[j].width == 0 then n_rigid_cols = n_rigid_cols + 1 end
+			end
+			
+			print("layout:", free_width, free_height, n_rigid_cols, n_rigid_rows)
+			
+			-- set them
+			
+			for i=1,nrows do
+				if self.rows[i].height == 0 then self.rows[i].height = free_height / n_rigid_rows end
+			end
+			
+			for j=1,ncols do
+				if self.columns[j].width == 0 then self.columns[j].width = free_width / n_rigid_cols end
+			end
+			
+		end -- make rigid rows and cols equal
+		
+		for j=1,ncols do
+			if equalize_columns then self.columns[j].width = max_max_w end
+			if j~=1 then self.columns[j].x = self.columns[j-1].right end
+		end
+
+		for i=1,nrows do
+			if equalize_rows then	self.rows[i].height = max_max_h end
+			if i~=1 then self.rows[i].y = self.rows[i-1].bottom end
+		end
+		
+		self.height = self.rows[nrows].bottom;		
+		self.width = self.columns[ncols].right;
+		
+		-- make grid
+		for i=1,nrows do
+			self.rows[i].x = 0
+			self.rows[i].width = self.width
+		end -- cols		
+		for j=1,ncols do
+			self.columns[j].y = 0
+			self.columns[j].height = self.height
+		end
+
+		-- move elements
+		for i=1,nrows do
+			for j=1,ncols do
+				for k,_ in pairs(elements[i][j]) do
+					if type(k)~="string" then					-- TODO Remove "hspan" and "vspan" strings from here
+						k.x = padding + self.columns[j].left + k.hpx
+						k.y = padding + self.rows[i].top + k.hpy
+						if elements[i][j].rigid_width then k.width = self.columns[j].width end
+						if elements[i][j].rigid_height then k.height = self.rows[i].height end
+					end
+				end -- for elements
+			end -- cols
+		end -- rows	
+		
+		print("-onRequestLayOut", self.id, self.width, self.height)			
+	end -- onRequestLayOut
 	
 	return self
 end
 
 function Table(rows, cols, data)
 	local self = CompositeItem()
+	self.id = "Table"
 	
 	local lay = TableLayout(rows, cols)
 	lay.rel_hpx, lay.rel_hpy = 0, 0
@@ -878,12 +1031,12 @@ function Table(rows, cols, data)
 		cell_frames = {}
 		if cell_frames_path == nil then return end
 		
-		print("creating");
 		for i=1,#lay.rows do
 			table.insert(cell_frames, {})
 			for j=1,#lay.columns do
 				if data[i][j] ~= nil then
 					local f = FrameItem(cell_frames_path)
+					f.id="frame_"..i.."_"..j
 					f.rel_hpx, f.rel_hpy = 0, 0
 					self:add(f)
 					cell_frames[i][j] = f
@@ -933,9 +1086,28 @@ function Table(rows, cols, data)
 		create_cell_frames()
 	end -- if data
 	
-	local old_onRequestLayOut = self.onRequestLayOut
-	self.onRequestLayOut = function(...)	
-		if old_onRequestLayOut then old_onRequestLayOut(unpack(arg)) end
+	self.onRequestSize = function(_)
+		local rigid_width, rigid_height = lay:adjustSize()
+		
+		self.width = lay.width
+		self.height = lay.height
+		
+		if frame ~= nil then
+			frame.width = self.width
+			frame.height = self.height
+		end
+		
+		resize_cell_frames()
+		
+--		print("Table returns", rigid_width, rigid_height)
+		return rigid_width, rigid_height
+	end
+	
+	self.onRequestLayOut = function(_)
+		
+		lay.width, lay.height = self.width, self.height
+		
+		lay:onRequestLayOut()
 		
 		self.width = lay.width
 		self.height = lay.height
