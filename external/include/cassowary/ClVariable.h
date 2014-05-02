@@ -141,7 +141,7 @@ inline bool ClApprox(double a, double b)
 {
   //!!!const double epsilon = 1.0e-8;
   // we had difference in 6-th digit after dot
-  const double epsilon = 1.0e-3;
+  const double epsilon = 1.0e-2;
   if (a > b) {
     return (a - b) < epsilon;
   } else {

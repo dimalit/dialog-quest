@@ -210,43 +210,45 @@ CompositeItem = function(...)
 
 	-- TODO: think again about "growing" and "shrinking" containers as in GTK
 	
+	local requested_w, requested_h
+	
 	self.onRequestSize = function()
 		print("+onRequestSize", self.id)
-		local saved = {}
 		
 		-- ask
 		solver:beginEdit()
 		for ch,_ in pairs(self.children) do
 			local rigid_w, rigid_h = ch.adjustSize(ch)
-			print(ch.id, "wants", rigid_w, rigid_h)
 			if not rigid_w then
-				solver:suggestValue(ch, "width")
-				table.insert(saved, {ch, "width"})
+				solver:addEditVariable(ch, "width")
 			end
 			if not rigid_h then
-				solver:suggestValue(ch, "height")
-				table.insert(saved, {ch, "height"})
+				solver:addEditVariable(ch, "height")
 			end
 		end
 		
 		-- adjust
 		-- here we can force child for different size - and he may want to change it!
-		solver:endEdit()
-		
-		-- add weak stays
-		for _,e in ipairs(saved) do
-			solver:addExternalStay(e[1], e[2])
+		local num_changed = -1
+		while num_changed ~= 0 do
+			print("num_changed = ", num_changed)
+			solver:suggestAllValues()
+			
+			-- ask children again:
+			for ch,_ in pairs(self.children) do
+				if ch.adjustLayout then
+					ch:adjustLayout()
+				end
+			end		
+			
+			-- TODO Here we sould do loop - until everything gets constant!!
+			num_changed = solver:addEditExternalVariables()
 		end
 		
-		-- ask children again:
-		for ch,_ in pairs(self.children) do
-			if ch.adjustLayout then
-				ch:adjustLayout()
-			end
-		end		
+		solver:endEdit()
 		
-		-- TODO Here we sould do loop - until everything gets constant!!
-		solver:getExternalVariables()
+		-- remember for detecting canges
+		requested_w, requested_h = self.width, self.height
 		
 		-- return booleans
 		local rigid_w = self.width == 0
@@ -257,29 +259,42 @@ CompositeItem = function(...)
 	
 	self.onRequestLayOut = function()
 	
+		if self.width == requested_w and self.height == requested_h then
+			return
+		end
+	
 		print("+onRequestLayOut", self.id)
 	
 		solver:beginEdit()
 
 		-- add required stays on width and height if rigid
-		-- TODO not sure if ~= 0 will always work: should check what adjustSize returns
-		if self.width ~= 0 then
-			solver:suggestValue(self, "width")
+		-- TODO should check what adjustSize returns?
+		if self.width ~= requested_w then
+			solver:addEditVariable(self, "width")
 		end
-		if self.height ~= 0 then
-			solver:suggestValue(self, "height")
+		if self.height ~= requested_h then
+			solver:addEditVariable(self, "height")
 		end
 
-		solver:endEdit()		
+		-- here we can force child for different size - and he may want to change it!
+		local num_changed = -1
+		while num_changed ~= 0 do
+			print("num_changed = ", num_changed)
+			solver:suggestAllValues()
+			
+			-- ask children again:
+			for ch,_ in pairs(self.children) do
+				if ch.adjustLayout then
+					ch:adjustLayout()
+				end
+			end		
+			
+			-- TODO Here we sould do loop - until everything gets constant!!
+			num_changed = solver:addEditExternalVariables()
+		end		
 		
-		-- ask children again:
-		for ch,_ in pairs(self.children) do
-			if ch.adjustLayout then
-				ch:adjustLayout()
-			end
-		end			
+		solver:endEdit()
 		
-		solver:getExternalVariables()		-- accomodate changed height after changing width of some child
 --		solver:solve()								-- updates vars in, solve and updates out
 -- when solving and changing width, item may change its height
 -- will solve again with no difference otherwise
@@ -649,7 +664,20 @@ function FlowLayout(indent)
   return self
 end -- FlowLayout
 
-function TableLayout(nrows, ncols)
+function TableLayout(rows_rigidness, columns_rigidness)
+
+	-- allow both numbers and arrays
+	local nrows, ncols
+	if type(rows_rigidness)=="number" then
+		nrows, ncols = rows_rigidness, columns_rigidness
+		rows_rigidness, columns_rigidness = {}, {}
+		for i=1,nrows do table.insert(rows_rigidness, 0) end
+		for i=1,ncols do table.insert(columns_rigidness, 0) end
+	else
+		nrows, ncols = #rows_rigidness, #columns_rigidness
+	end
+	
+	
 	local self = CompositeItem()
 	self.id = "TableLayout"
 	self.rows = {}
@@ -658,6 +686,8 @@ function TableLayout(nrows, ncols)
 	local equalize_columns, equalize_rows = false, false
 	local rows_fixed = {}
 	local columns_fixed = {}
+
+	local padding = 10	
 	
 	self.equalizeRows = function(_, arg)
 		if arg==nil then arg = true end
@@ -702,6 +732,18 @@ function TableLayout(nrows, ncols)
 		it.id = "row_"..i
 		it.rel_hpx, it.rel_hpy = 0, 0
 		self:add(it)
+		
+		self:link(it, 0, nil, self, 0, nil)
+		self:link(it, 1, nil, self, 1, nil)
+		if i==1 then
+			self:link(it, nil, 0, self, nil, 0)
+		else
+			self:link(it, nil, 0, self.rows[i-1], nil, 1, 0, padding)
+		end
+		if i==nrows then
+			self:link(it, nil, 1, self, nil, 1)
+		end
+		
 --		it.debugDrawBox = true
 		table.insert(self.rows, it)
 		table.insert(elements, {})			-- add rows to matrix
@@ -714,9 +756,23 @@ function TableLayout(nrows, ncols)
 		it.id = "col_"..i
 		it.rel_hpx, it.rel_hpy = 0, 0		
 		self:add(it)
+		
+		self:link(it, nil, 0, self, nil, 0)
+		self:link(it, nil, 1, self, nil, 1)
+		if i==1 then
+			self:link(it, 0, nil, self, 0, nil)
+		else
+			self:link(it, 0, nil, self.columns[i-1], 1, nil, 0, padding)
+		end
+		if i==ncols then
+			self:link(it, 1, nil, self, 1, nil)
+		end
+		
 --		it.debugDrawBox = true
 		table.insert(self.columns, it)
 	end	
+	
+	self:minimize(Expr(self.columns[1], "width"))
 	
 	local old_add = self.add
 	self.add = function(_, item, row, col, vspan, hspan)
@@ -725,261 +781,22 @@ function TableLayout(nrows, ncols)
 		assert(col>=1 and col<=ncols)
 		if hspan==nil then hspan = 1 end
 		if vspan==nil then vspan = 1 end
+		assert(col+hspan-1 <= ncols)
+		assert(row+vspan-1 <= nrows)
 		old_add(self, item)
 		item.id = "cell_"..row.."_"..col
 		elements[row][col][item] = true
 		elements[row][col].hspan = hspan
 		elements[row][col].vspan = vspan
+		self:link(item, 0, nil, self.columns[col], 0, nil)
+		self:link(item, nil, 0, self.rows[row], nil, 0)
+		self:restrict(Expr(item, "x") + Expr(item, "width"), "<=", Expr(self.columns[col+hspan-1], "x")+Expr(self.columns[col+hspan-1], "width"))
+		self:restrict(Expr(item, "y") + Expr(item, "height"), "<=", Expr(self.rows[row+vspan-1], "y")+Expr(self.rows[row+vspan-1], "height"))
 	end
 
 	self.getSpans = function(_, r, c)
-		return elements[r][c].vspan, elements[r][c].hspan
+		return elements[r][c].hspan, elements[r][c].vspan
 	end
-	
-	local padding = 10	
-	
-	self.onRequestSize = function(...)
-	
-		-- adjust sizes of children before
-		for i=1,nrows do
-			for j=1,ncols do
-				for k,_ in pairs(elements[i][j]) do
-					if type(k)~="string" and k~=nil then
-						-- store rigidness for later
-						k.rigid_width, k.rigid_height = k:adjustSize()
-						print("cell:", k.rigid_width, k.rigid_height)
-					end
-				end -- for elements
-			end -- cols
-		end -- rows		
-		
-		local max_max_h = 0
-		local max_max_w = 0
-		
-		self.rows[1].y = 0
-		
-		-- for rows
-		for i=1,nrows do
-			local max_h = 0
-			for j=1,ncols do
-				for k,_ in pairs(elements[i][j]) do
-					if elements[i][j].vspan~=1 then break end			-- ignore spanned				
-					if type(k)~="string" and k.height+2*padding > max_h then max_h = k.height+2*padding end	-- string for hspan and vspan
-				end -- for elements
-			end -- cols
-
-			-- if fixed
-			if rows_fixed[i] ~= nil then
-				max_h = rows_fixed[i]
-			end
-			
-			-- apply
-			if not equalize_rows then
-				self.rows[i].height = max_h
-				if i~=1 then self.rows[i].y = self.rows[i-1].bottom end
-			else
-				max_max_h = max(max_h, max_max_h)
-			end
-		end -- rows
-		
-		self.columns[1].x = 0
-		
-		-- for cols
-		for j=1,ncols do
-			local max_w = 0
-			for i=1,nrows do
-				for k,_ in pairs(elements[i][j]) do
-					if elements[i][j].hspan~=1 then break end			-- ignore spanned
-					if type(k)~="string" and k.width+2*padding > max_w then max_w = k.width+2*padding end
-				end -- for elements
-			end -- rows
-			
-			-- if fixed
-			if columns_fixed[j] ~= nil then
-				max_w = columns_fixed[j]
-			end
-			
-			-- apply
-			if not equalize_columns then
-				self.columns[j].width = max_w
-				if j~=1 then self.columns[j].x = self.columns[j-1].right end				
-			else
-				max_max_w = max(max_w, max_max_w)
-			end
-		end -- cols
-
-		if equalize_columns then
-			for j=1,ncols do
-				self.columns[j].width = max_max_w
-				if j~=1 then self.columns[j].x = self.columns[j-1].right end
-			end
-		end
-
-		if equalize_rows then
-			for i=1,nrows do
-				self.rows[i].height = max_max_h
-				if i~=1 then self.rows[i].y = self.rows[i-1].bottom end				
-			end
-		end		
-		
-		self.height = self.rows[nrows].bottom;		
-		self.width = self.columns[ncols].right;
-		
-		-- make grid
-		for i=1,nrows do
-			self.rows[i].x = 0
-			self.rows[i].width = self.width
-		end -- cols		
-		for j=1,ncols do
-			self.columns[j].y = 0
-			self.columns[j].height = self.height
-		end
-
-		-- move elements
-		for i=1,nrows do
-			for j=1,ncols do
-				for k,_ in pairs(elements[i][j]) do
-					if type(k)~="string" then					-- TODO Remove "hspan" and "vspan" strings from here
-						k.x = padding + self.columns[j].left + k.hpx
-						k.y = padding + self.rows[i].top + k.hpy
-					end
-				end -- for elements
-			end -- cols
-		end -- rows
-
---		print("RETURNING1", false, false)		
-		return false, false
-	end	
-	
-	self.onRequestLayOut = function(...)
-		print("+onRequestLayOut", self.id, self.width, self.height)
-	
-		local max_max_h = 0
-		local max_max_w = 0
-		
-		self.rows[1].y = 0
-		
-		-- for rows
-		for i=1,nrows do
-			local max_h = 0
-			for j=1,ncols do
-				for k,_ in pairs(elements[i][j]) do
-					if elements[i][j].vspan~=1 then break end			-- ignore spanned				
-					if type(k)~="string" and not elements[i][j].rigid_height and k.height+2*padding > max_h then	-- string for hspan and vspan
-						max_h = k.height+2*padding
-					end
-				end -- for elements
-			end -- cols
-
-			-- if fixed
-			if rows_fixed[i] ~= nil then
-				max_h = rows_fixed[i]
-			end
-			
-			-- apply
-			if not equalize_rows then
-				self.rows[i].height = max_h						-- will be 0 if "rigid"
-			else
-				max_max_h = max(max_h, max_max_h)
-			end
-		end -- rows
-		
-		self.columns[1].x = 0
-		
-		-- for cols
-		for j=1,ncols do
-			local max_w = 0
-			for i=1,nrows do
-				for k,_ in pairs(elements[i][j]) do
-					if elements[i][j].hspan~=1 then break end			-- ignore spanned
-					if type(k)~="string" and not elements[i][j].rigid_width and k.width+2*padding > max_w then
-						max_w = k.width+2*padding
-					end
-				end -- for elements
-			end -- rows
-			
-			-- if fixed
-			if columns_fixed[j] ~= nil then
-				max_w = columns_fixed[j]
-			end
-			
-			-- apply
-			if not equalize_columns then
-				self.columns[j].width = max_w
-			else
-				max_max_w = max(max_w, max_max_w)
-			end
-		end -- cols
-
-		-- make rigid rows and cols equal
-		do		
-			local free_height = self.height
-			local n_rigid_rows = 0
-			for i=1,nrows do
-				free_height = free_height - self.rows[i].height
-				if self.rows[i].height == 0 then n_rigid_rows = n_rigid_rows + 1 end
-			end
-			
-			local free_width = self.width
-			local n_rigid_cols = 0
-			for j=1,ncols do
-				free_width = free_width - self.columns[j].width
-				if self.columns[j].width == 0 then n_rigid_cols = n_rigid_cols + 1 end
-			end
-			
-			print("layout:", free_width, free_height, n_rigid_cols, n_rigid_rows)
-			
-			-- set them
-			
-			for i=1,nrows do
-				if self.rows[i].height == 0 then self.rows[i].height = free_height / n_rigid_rows end
-			end
-			
-			for j=1,ncols do
-				if self.columns[j].width == 0 then self.columns[j].width = free_width / n_rigid_cols end
-			end
-			
-		end -- make rigid rows and cols equal
-		
-		for j=1,ncols do
-			if equalize_columns then self.columns[j].width = max_max_w end
-			if j~=1 then self.columns[j].x = self.columns[j-1].right end
-		end
-
-		for i=1,nrows do
-			if equalize_rows then	self.rows[i].height = max_max_h end
-			if i~=1 then self.rows[i].y = self.rows[i-1].bottom end
-		end
-		
-		self.height = self.rows[nrows].bottom;		
-		self.width = self.columns[ncols].right;
-		
-		-- make grid
-		for i=1,nrows do
-			self.rows[i].x = 0
-			self.rows[i].width = self.width
-		end -- cols		
-		for j=1,ncols do
-			self.columns[j].y = 0
-			self.columns[j].height = self.height
-		end
-
-		-- move elements
-		for i=1,nrows do
-			for j=1,ncols do
-				for k,_ in pairs(elements[i][j]) do
-					if type(k)~="string" then					-- TODO Remove "hspan" and "vspan" strings from here
-						k.x = padding + self.columns[j].left + k.hpx
-						k.y = padding + self.rows[i].top + k.hpy
-						if elements[i][j].rigid_width then k.width = self.columns[j].width end
-						if elements[i][j].rigid_height then k.height = self.rows[i].height end
-					end
-				end -- for elements
-			end -- cols
-		end -- rows	
-		
-		print("-onRequestLayOut", self.id, self.width, self.height)			
-	end -- onRequestLayOut
 	
 	return self
 end
@@ -992,6 +809,9 @@ function Table(rows, cols, data)
 	lay.rel_hpx, lay.rel_hpy = 0, 0
 	lay.x, lay.y = 0, 0	
 	self:add(lay)
+	
+	self:link(lay, 0, 0, self, 0, 0)
+	self:link(self, 1, 1, lay, 1, 1)
 	
 	local frame
 	local cell_frames = {}
@@ -1039,31 +859,21 @@ function Table(rows, cols, data)
 					f.id="frame_"..i.."_"..j
 					f.rel_hpx, f.rel_hpy = 0, 0
 					self:add(f)
+					
+					local hspan, vspan = lay:getSpans(i, j)
+					
+					self:link(f, 0, nil, lay.columns[j], 0, nil)
+					self:link(f, nil, 0, lay.rows[i], nil, 0)
+					self:link(f, 1, nil, lay.columns[j+hspan-1], 1, nil)
+					self:link(f, nil, 1, lay.rows[i+vspan-1], nil, 1)										
+					
 					cell_frames[i][j] = f
 				end -- if
 			end -- for j
 		end -- for i
-		
-		resize_cell_frames()
+
 	end	
 	
-	resize_cell_frames = function()
-		for i=1,#cell_frames do
-			for j,v in pairs(cell_frames[i]) do
-				if data[i][j] ~= nil then
-					local vspan, hspan = lay:getSpans(i, j)
-					local h = 0
-					for d=1,vspan do h = h + lay.rows[i-1+d].height end
-					local w = 0
-					for d=1,hspan do w = w + lay.columns[j-1+d].width end
-					
-					v.x, v.width = lay.columns[j].left, w
-					v.y, v.height = lay.rows[i].top, h
-				end -- if
-			end -- for j
-		end -- for i
-	end	
-
 	if data~=nil then
 		for i=1,rows do
 			for j=1,cols do
@@ -1085,41 +895,6 @@ function Table(rows, cols, data)
 		
 		create_cell_frames()
 	end -- if data
-	
-	self.onRequestSize = function(_)
-		local rigid_width, rigid_height = lay:adjustSize()
-		
-		self.width = lay.width
-		self.height = lay.height
-		
-		if frame ~= nil then
-			frame.width = self.width
-			frame.height = self.height
-		end
-		
-		resize_cell_frames()
-		
---		print("Table returns", rigid_width, rigid_height)
-		return rigid_width, rigid_height
-	end
-	
-	self.onRequestLayOut = function(_)
-		
-		lay.width, lay.height = self.width, self.height
-		
-		lay:onRequestLayOut()
-		
-		self.width = lay.width
-		self.height = lay.height
-		
-		if frame ~= nil then
-			frame.width = self.width
-			frame.height = self.height
-		end
-		
-		resize_cell_frames()
-		
-	end
 	
 	-- composition!
 	self.equalizeRows = function(_, arg) lay.equalizeRows(lay, arg) end
@@ -1217,10 +992,10 @@ local function TwoStateAnimation4(i1, i2)
     elseif arg==false
     then
 		i1.visible, i2.visible = true, false
-		print (self.width, self.height, i2.width, i2.height,	i2.x, i2.y, i2.hpx, i2.hpy)		
+--		print (self.width, self.height, i2.width, i2.height,	i2.x, i2.y, i2.hpx, i2.hpy)		
 		self.width, self.height = i1.width, i1.height
 		i1.x, i1.y = i1.hpx, i1.hpy
-		print (self.width, self.height, i2.width, i2.height,	i2.x, i2.y, i2.hpx, i2.hpy)		
+--		print (self.width, self.height, i2.width, i2.height,	i2.x, i2.y, i2.hpx, i2.hpy)		
     else
       return i2.visible
     end

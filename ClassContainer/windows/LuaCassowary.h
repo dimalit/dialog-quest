@@ -25,6 +25,7 @@ public:
 	virtual double PendingValue() const {
 		lua_rawgeti(L, LUA_REGISTRYINDEX, obj_ref);
 		luabind::object obj(luabind::from_stack(L, -1));
+			lua_pop(L, 1);
 		double val = luabind::object_cast<double>(obj[key]);
 		assert(_finite(val));
 		return val;
@@ -42,6 +43,7 @@ public:
 		assert(_finite(val));
 		lua_rawgeti(L, LUA_REGISTRYINDEX, obj_ref);
 		luabind::object obj(luabind::from_stack(L, -1));
+			lua_pop(L, 1);
 		std::cout << "Setting " << *this << " = " << val << std::endl;
 		obj[key] = val;
 		value_in_table = val;
@@ -50,7 +52,8 @@ public:
 		assert(_finite(val));
 		lua_rawgeti(L, LUA_REGISTRYINDEX, obj_ref);
 		luabind::object obj(luabind::from_stack(L, -1));
-		std::cout << "Changing " << *this << " = " << val << std::endl;
+			lua_pop(L, 1);
+//		std::cout << "Changing " << *this << " = " << val << std::endl;
 		obj[key] = val; 
 		value_in_table = val;
 	}
@@ -150,15 +153,17 @@ public:
 	void addExternalStay(luabind::object obj, std::string key);
 
 	void beginEdit();
-	void suggestValue(luabind::object obj, std::string key);
+	void addEditVariable(luabind::object obj, std::string key);
+	void suggestAllValues();
 	void endEdit();
 
-	void getExternalVariables();
+	int addEditExternalVariables();
 
 private:
 	ClSimplexSolver solver;
 	bool need_resolve;
-	std::map<LuaClVariable*, double> edit_list;
+	struct val_strength{double val; double strength;};
+	std::map<LuaClVariable*, val_strength> edit_list;
 	bool edit_mode;
 
 	typedef std::pair<luabind::object, std::string> obj_key;
@@ -173,6 +178,8 @@ private:
 
 	// if somebody wants to add existing var - take it from here
 	// true means it should be made stay weak
-	std::map<LuaClVariable*, bool, CompareVarsUnderPtr> cl_vars;
+//	std::map<LuaClVariable*, bool, CompareVarsUnderPtr> cl_vars;
+	std::set<LuaClVariable*, CompareVarsUnderPtr> cl_vars;
 //	std::set<LuaClVariable*, CompareVarsUnderPtr> cl_stays;					// who stays with strength=2.0 (self width and height)
+	bool first_time;
 };

@@ -550,7 +550,7 @@ class ClSimplexSolver : public ClSolver, public ClTableau {
   void SetExternalVariables();
 
   // !!!
-  void GetExternalVariables();
+	const std::map<ClVariable, double>& GetExternallyEdited();
 
   // this gets called by RemoveConstraint and by AddConstraint when the
   // contraint we're trying to Add is inconsistent
