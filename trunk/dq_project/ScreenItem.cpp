@@ -36,7 +36,7 @@ ScreenItem::ScreenItem()
 
 	entity->GetVar("size2d")->GetSigOnChanged()->connect(1, boost::bind(&ScreenItem::OnSizeChange, this, _1));
 	entity->GetVar("pos2d")->GetSigOnChanged()->connect(1, boost::bind(&ScreenItem::onMove, this, _1));
-	entity->GetFunction("OnRender")->sig_function.connect(1, boost::bind(&draw_item_rect, this, _1));
+	entity->GetFunction("PostOnRender")->sig_function.connect(1, boost::bind(&draw_item_rect, this, _1));
 	//entity->GetFunction("OnRender")->sig_function.connect(0, my_bind<void (*)(ScreenItem*), ScreenItem*>(&draw_item_rect, this));
 }
 

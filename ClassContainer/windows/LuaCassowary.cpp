@@ -427,6 +427,11 @@ int LuaCassowary::addEditExternalVariables(){
 		
 		if(!ClApprox(lv->Value(), lv->PendingValue())){
 			cout << "found changed " << *lv << " -> " << lv->PendingValue() << endl;
+
+			if(edit_list.find(lv)!=edit_list.end()){
+				edit_list[lv].val = lv->PendingValue();		// update value
+				// TODO: HACK: maybe assert here? it's undesired to change after being edited!
+			}
 			res++;
 		}
 

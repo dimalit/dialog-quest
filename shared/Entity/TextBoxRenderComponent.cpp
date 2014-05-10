@@ -333,6 +333,6 @@ void TextBoxRenderComponent::OnRender(VariantList *pVList)
 #ifdef _DEBUG
 	
 	//useful for debugging where the text area rect really is
-	DrawRect(vFinalPos, *m_pSize2d, MAKE_RGBA(200,200,0,200**m_pAlpha));
+	//!!DrawRect(vFinalPos, *m_pSize2d, MAKE_RGBA(200,200,0,200**m_pAlpha));
 #endif
 }

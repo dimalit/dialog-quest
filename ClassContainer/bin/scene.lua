@@ -61,8 +61,8 @@ Scene = function(conf)
   return self
 end
 
+dofile("page.lua")
 dofile("scene_mosaic.lua")
-dofile("scene_explain_rel.lua")
 dofile("scene_basket.lua")
 dofile("scene_baloons.lua")
 dofile("scene_buttons.lua")

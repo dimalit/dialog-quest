@@ -158,13 +158,6 @@ CompositeItem = function(...)
 	local self = old_CompositeItem(unpack(arg))
 	local solver = Cassowary()
 	
-	-- make 2.0-strength Stay on them, so inner vals were prefereble to change
-	-- TODO: No id at this moment - so var will have partial name
-	-- solver:addExternalStay(self, "width")
-	-- solver:addExternalStay(self, "height")
-	
-	-- add our own stuff
-
 	self.adjustSize = adjustSize
 	
 	self.link = function(_, patient, px, py, nurse, nx, ny, dx, dy)
@@ -218,11 +211,14 @@ CompositeItem = function(...)
 		-- ask
 		solver:beginEdit()
 		for ch,_ in pairs(self.children) do
-			local rigid_w, rigid_h = ch.adjustSize(ch)
+			local rigid_w, rigid_h = ch:adjustSize()
+			local w, h = ch.width, ch.height			-- HACK: here h changes after addEdit to w - because of autosolve. think about other consequences!!
+			
 			if not rigid_w then
 				solver:addEditVariable(ch, "width")
 			end
 			if not rigid_h then
+				ch.height = h												-- HACK: see above
 				solver:addEditVariable(ch, "height")
 			end
 		end
@@ -253,7 +249,7 @@ CompositeItem = function(...)
 		-- return booleans
 		local rigid_w = self.width == 0
 		local rigid_h = self.height == 0
-		print("-onRequestSize", self.id, rigid_w, rigid_h)		
+		print("-onRequestSize", self.id, rigid_w, rigid_h, self.width, self.height)		
 		return rigid_w, rigid_h
 	end
 	
@@ -304,9 +300,47 @@ CompositeItem = function(...)
 		do return end	-- our overloaded child should use editVar/editPoint!
 	end
 	
-	-- HACK: for manual onRequesrLayOut. Generally should be private!
-	self.solver = solver
+	self.addLayoutParameter = function(_, parname, value)
+		self[parname] = value
+		solver:addExternalStay(self, parname)
+	end
 	
+	self.setLayoutParameter = function(_, parname, value)
+		self[parname] = value
+		solver:beginEdit()
+		solver:addEditVariable(self, parname)
+		solver:suggestAllValues()
+		solver:endEdit()
+	end
+	
+	local added_at_bottom = {}
+	self.addAtBottom = function(_, ch, interval, align)
+		if interval == nil then interval = 0 end
+		if align == nil then align = "left" end
+		self:add(ch)
+		
+		-- link top
+		if #added_at_bottom == 0 then
+			self:link(ch, nil, 0, self, nil, 0, 0, interval)
+		else
+			self:link(ch, nil, 0, added_at_bottom[#added_at_bottom], nil, 1, 0, interval)
+		end
+		
+		-- link sides
+		if align=="left" then
+			self:link(ch, 0, nil, self, 0, nil)
+		elseif align=="right" then
+			self:link(ch, 1, nil, self, 1, nil)
+		elseif align=="center" then
+			self:link(ch, 0.5, nil, self, 0.5, nil)
+		end
+		
+		-- restrict width
+		self:restrict(Expr(ch, "width"), "<=", Expr(self, "width"))		
+		
+		table.insert(added_at_bottom, ch)
+	end
+
 	return self
 end -- CompositeItem:__init
 
@@ -335,7 +369,7 @@ end
 
 function PhonemicItem(text)
 	local self = TextItem("["..text.."]", 3)
-	local sound = SoundEffect("audio/p_"..text..".wav")
+	local sound = SoundEffect("audio/p_"..text..".mp3")
 	if sound then
 		self.onDragEnd = function()
 			sound:play()
@@ -363,6 +397,9 @@ function TextButton(...)
 	local self = CompositeItem()
 --	if not arg.one_line then rigid_width = true end
 	self.id="TextButton"
+		
+	local padding = 10
+	if arg.padding then padding = arg.padding end		
 		
 	local image_item = nil
 	if image then
@@ -398,9 +435,6 @@ function TextButton(...)
 		self:link(text_item, 1, nil, self, 1, nil, -padding)		
 		self:link(self, nil, 1, text_item, nil, 1, 0, padding)		
 	end
-	
-	local padding = 10
-	if arg.padding then padding = arg.padding end
 	
 	local shrink = arg.shrink
 	local scaleFree = arg.scaleFree
@@ -453,6 +487,7 @@ function FrameItem(...)
 	local name = arg[1]
 	
   local self = CompositeItem()
+	self.id = "FrameIttem"
 	self.width = arg.width or 0
 	self.height = arg.height or 0
 --	self.rigid_width, self.rigid_height = true, true
@@ -473,6 +508,11 @@ function FrameItem(...)
   self:add(tex.c1):add(tex.c2):add(tex.c3):add(tex.c4):add(tex.bl):add(tex.br):add(tex.bt):add(tex.bb)	
 	self.tex = tex
 
+	self.onRequestSize = function(_)
+		self.width, self.height = 0, 0
+		return true, true
+	end
+	
 	-- will be called on resize
 	self.onRequestLayOut = function(_)
 		tex.bl.height = self.height-8
@@ -503,6 +543,38 @@ function FrameItem(...)
 end
 
 ---------- Layouts -------------
+
+function VerticalLayout(arg)
+	if arg==nil then arg={} end
+
+	local self = CompositeItem()
+	self.id = "VerticalLayout"
+	
+	local prev_item = nil
+	
+	local old_add = self.add
+	self.add = function(_, item)
+		assert(item ~= nil)
+		old_add(self, item)
+		item.id = "child_"..#self.children
+		if prev_item == nil then
+			self:link(item, 0, 0, self, 0, 0)
+		else
+			self:link(item, 0, 0, prev_item, 0, 1)
+		end
+		
+		prev_item = item
+		self:restrict(Expr(item, "x") + Expr(item, "width"), "<=", Expr(self, "width"))
+		self:restrict(Expr(item, "y") + Expr(item, "height"), "<=", Expr(self, "height"))
+	end	
+	
+	-- add all {}-provided items
+	for _, v in ipairs(arg) do
+		self:add(v)
+	end
+	
+	return self
+end
 
 function FlowLayout(indent)
 	if indent==nil then indent = 0 end
@@ -552,6 +624,7 @@ function FlowLayout(indent)
 		end
 		
 		self.width, self.height = cur_x, self_height
+		print("+-onRequestSize", self.id, self.width, self.height)
 		return false, false
 	end
 	
@@ -583,7 +656,7 @@ function FlowLayout(indent)
 				item.x, item.y = cur_x, cur_y
 				cur_x = cur_x + item.width
 				while cur_x > self.width - profile.right:at(cur_y, item.height) do
-					cur_y = cur_y + 24							-- TODO Must know font line height here!!
+					cur_y = cur_y + 21							-- TODO Must know font line height here!!
 					cur_x = profile.left:at(cur_y, item.height)
 					item.x, item.y = cur_x, cur_y
 					cur_x = cur_x + item.width
@@ -601,7 +674,7 @@ function FlowLayout(indent)
 				cur_x, cur_y = item.lastLineEndX, cur_y + item.lastLineEndY
 			end -- select type
 		end -- for
-		local	self_height = cur_y + 24			-- same magic number!
+		local	self_height = cur_y + 21			-- same magic number!
 		
 		-- check also obstacles
 		for obst,_ in pairs(obstacles) do
@@ -677,7 +750,6 @@ function TableLayout(rows_rigidness, columns_rigidness)
 		nrows, ncols = #rows_rigidness, #columns_rigidness
 	end
 	
-	
 	local self = CompositeItem()
 	self.id = "TableLayout"
 	self.rows = {}
@@ -743,11 +815,25 @@ function TableLayout(rows_rigidness, columns_rigidness)
 		if i==nrows then
 			self:link(it, nil, 1, self, nil, 1)
 		end
-		
---		it.debugDrawBox = true
+
+		if rows_rigidness[i]==0 then
+			self:minimize(Expr(it, "height"))
+			print("minimize")
+		end
+
 		table.insert(self.rows, it)
 		table.insert(elements, {})			-- add rows to matrix
 		for j=1,ncols do table.insert(elements[i], {}) end
+	end
+	
+	-- add proportions to rigid rows
+	local base_row_index = nil
+	for i=1,nrows do											-- remember it
+		if rows_rigidness[i]~=0 and base_row_index == nil then
+			base_row_index = i
+		elseif rows_rigidness[i]~=0 then				-- use it
+			self:restrict(Expr(self.rows[i], "height")*Expr(rows_rigidness[base_row_index]), "==", Expr(self.rows[base_row_index], "height")*Expr(rows_rigidness[i]))
+		end
 	end
 	
 	-- create cols
@@ -762,17 +848,30 @@ function TableLayout(rows_rigidness, columns_rigidness)
 		if i==1 then
 			self:link(it, 0, nil, self, 0, nil)
 		else
-			self:link(it, 0, nil, self.columns[i-1], 1, nil, 0, padding)
+			self:link(it, 0, nil, self.columns[i-1], 1, nil, padding, 0)
 		end
 		if i==ncols then
 			self:link(it, 1, nil, self, 1, nil)
 		end
-		
---		it.debugDrawBox = true
+
+		if columns_rigidness[i]==0 then
+			print("minimize")
+			self:minimize(Expr(it, "width"))
+		end		
+
 		table.insert(self.columns, it)
 	end	
 	
-	self:minimize(Expr(self.columns[1], "width"))
+	-- add proportions to rigid rows
+	local base_col_index = nil
+	for i=1,ncols do											-- remember it
+		if columns_rigidness[i]~=0 and base_col_index == nil then
+			base_col_index = i
+		elseif columns_rigidness[i]~=0 then		-- use it
+			self:restrict(Expr(self.columns[i], "width")*Expr(columns_rigidness[base_col_index]), "==", Expr(self.columns[base_col_index], "width")*Expr(columns_rigidness[i]))
+		end
+	end	
+--	self:minimize(Expr(self.columns[1], "width"))
 	
 	local old_add = self.add
 	self.add = function(_, item, row, col, vspan, hspan)
@@ -801,14 +900,20 @@ function TableLayout(rows_rigidness, columns_rigidness)
 	return self
 end
 
+-- rows, cols may be either numbers or arrays!
 function Table(rows, cols, data)
 	local self = CompositeItem()
 	self.id = "Table"
+	
+	local padding = 6
 	
 	local lay = TableLayout(rows, cols)
 	lay.rel_hpx, lay.rel_hpy = 0, 0
 	lay.x, lay.y = 0, 0	
 	self:add(lay)
+	
+	if type(rows)=="table" then rows = #rows end
+	if type(cols)=="table" then cols = #cols end
 	
 	self:link(lay, 0, 0, self, 0, 0)
 	self:link(self, 1, 1, lay, 1, 1)
@@ -825,8 +930,8 @@ function Table(rows, cols, data)
 		if path ~= nil then
 			frame = FrameItem(path)
 			self:add(frame)
-			frame.rel_hpx, frame.rel_hpy = 0, 0
-			frame.x, frame.y = 0, 0
+			self:link(frame, 0, 0, self, 0, 0, -padding, -padding)
+			self:link(frame, 1, 1, self, 1, 1, padding, padding)
 		elseif frame ~= nil then
 			self:remove(frame)
 			frame = nil
@@ -862,10 +967,10 @@ function Table(rows, cols, data)
 					
 					local hspan, vspan = lay:getSpans(i, j)
 					
-					self:link(f, 0, nil, lay.columns[j], 0, nil)
-					self:link(f, nil, 0, lay.rows[i], nil, 0)
-					self:link(f, 1, nil, lay.columns[j+hspan-1], 1, nil)
-					self:link(f, nil, 1, lay.rows[i+vspan-1], nil, 1)										
+					self:link(f, 0, nil, lay.columns[j], 0, nil, -padding, 0)
+					self:link(f, nil, 0, lay.rows[i], nil, 0, 0, -padding)
+					self:link(f, 1, nil, lay.columns[j+hspan-1], 1, nil, padding, 0)
+					self:link(f, nil, 1, lay.rows[i+vspan-1], nil, 1, 0, padding)	
 					
 					cell_frames[i][j] = f
 				end -- if
@@ -1159,6 +1264,31 @@ function PackAsDragDrop(item)
 end -- PackAsDragDrop
 
 -------------- useful stuff ----------------
+
+function run_page(config_file)
+
+	-- create
+	page = Page()
+	root:add(page)
+	
+	-- intiate
+	dofile(config_file)
+	
+	-- lay-out
+	root:link(page, 0, 0, root, 0, 0)
+	root:link(page, 1, 1, root, 1, 1)
+	
+	-- run
+	page:run()
+
+	wait_for(page, "onFinish")
+	
+	print("PAGE", page.x, page.y, page.width, page.height, page.margin)
+	
+	-- remove	
+	page.visible = false
+	root:remove(page)
+end
 
 function max(a, b)
   if a > b then return a
